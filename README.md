@@ -152,6 +152,73 @@ The schema is expected to be **versioned** and treated as a **data contract**, n
 
 ---
 
+## Generate Dataset
+
+The current research baseline includes a working synthetic dataset generator aligned with `schema_v1.1`.
+
+### Windows Setup
+
+Create and activate a virtual environment from the repository root:
+
+PowerShell:
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+```
+
+Command Prompt:
+
+```bat
+python -m venv .venv
+.venv\Scripts\activate.bat
+```
+
+If PowerShell blocks script execution, run:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+```
+
+Then install the ML dependencies:
+
+```powershell
+python -m pip install --upgrade pip
+python -m pip install -e ./services/ml
+```
+
+Or install from a requirements file:
+
+```powershell
+python -m pip install -r services/ml/requirements.txt
+```
+
+### Run the Generator
+
+Run it from the ML service:
+
+```powershell
+cd services/ml
+python -m src.main --config configs/generator_v1.yaml
+```
+
+This command:
+- generates raw LMS-like tables,
+- generates weekly `student_twin_snapshots`,
+- validates the outputs against the schema contract,
+- writes CSV files into `data/raw/` and `data/processed/`,
+- writes snapshot Parquet output into `data/processed/`.
+
+### Run Tests
+
+From `services/ml`:
+
+```powershell
+python -m pytest tests/test_dataset_pipeline.py -p no:cacheprovider
+```
+
+---
+
 ## First-Phase Scope
 
 Initial scope is intentionally narrow.
@@ -291,14 +358,22 @@ The project should remain understandable, extensible, and academically defensibl
 At this stage, the repository is intended to provide:
 
 - project architecture,
-- documentation scaffolding,
-- contract scaffolding,
+- versioned data-model documentation,
+- versioned schema contracts,
+- a working synthetic dataset generator,
+- schema-aware dataset validation,
+- generated raw LMS-like outputs and processed twin snapshots,
 - backend/frontend/ML skeletons,
 - local development setup,
 - future-ready structure.
 
-It is **expected** that many parts remain unimplemented initially.  
-That is intentional.
+The repository still intentionally leaves major later-phase pieces unimplemented, especially:
+- baseline training workflows beyond data generation,
+- explainability outputs beyond scaffolding,
+- backend API endpoints,
+- teacher-facing UI flows.
+
+That is still intentional.
 
 ---
 
@@ -325,7 +400,7 @@ The recommended implementation order is:
 3. synthetic dataset generator,
 4. student twin snapshot pipeline,
 5. baseline ML models,
-6. explainability layer,()
+6. explainability layer,
 7. backend endpoints,
 8. teacher-facing UI,
 9. scenario simulation flow.

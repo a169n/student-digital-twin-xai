@@ -1,6 +1,8 @@
 # Data Dictionary
 
-This document summarizes the most important v1 fields in human-readable form. It is not meant to repeat every trivial identifier field, but it should cover the fields that define meaning, modeling intent, and visibility boundaries.
+This document summarizes the most important v1.1 fields in human-readable form. It is not meant to repeat every trivial identifier field, but it should cover the fields that define meaning, modeling intent, and visibility boundaries.
+
+The main sections below describe fields that are part of `schema_v1.1`. A final section lists research-backed candidate fields that are still outside the locked contract.
 
 ## Classification Legend
 
@@ -20,7 +22,7 @@ This document summarizes the most important v1 fields in human-readable form. It
 | `baseline_level` | Hidden starting academic capability parameter | decimal | `0.72` | generation-only | internal | Range `0.0..1.0` |
 | `motivation_level` | Hidden engagement/effort parameter | decimal | `0.61` | generation-only | internal | Range `0.0..1.0` |
 | `discipline_level` | Hidden punctuality/reliability parameter | decimal | `0.55` | generation-only | internal | Range `0.0..1.0` |
-| `trajectory_type` | Hidden behavioral trajectory archetype | enum | `declining` | generation-only | internal | Initial v1 values are provisional |
+| `trajectory_type` | Hidden behavioral trajectory archetype | enum | `declining` | generation-only | internal | v1.1 keeps `improving` and `consistently_at_risk`; in generator logic they correspond to recovering and chronic-risk patterns |
 
 ## `courses`
 
@@ -41,6 +43,7 @@ This document summarizes the most important v1 fields in human-readable form. It
 | `topic_title` | Topic taught in the week | string | `Loops and Iteration` | raw | user-facing | Teacher-facing topic label |
 | `topic_type` | Optional topic classification | enum | `lab` | raw | internal | Optional planning metadata |
 | `planned_assignment_count` | Planned workload hint for generation | integer | `2` | raw | internal | Optional and still provisional |
+| `topic_difficulty` | Normalized topic difficulty signal | decimal | `0.58` | raw | internal | Added in v1.1 as limited non-sensitive course context |
 
 ## `assignments`
 
@@ -110,15 +113,20 @@ This document summarizes the most important v1 fields in human-readable form. It
 | `on_time_submission_rate_to_date` | Share of required work submitted on time | decimal | `0.67` | derived | user-facing | Range `0.0..1.0` |
 | `missed_assignments_to_date` | Count of required missed items | integer | `1` | derived | user-facing | Non-negative |
 | `late_submissions_to_date` | Count of late submissions | integer | `2` | derived | user-facing | Non-negative |
+| `avg_attempt_count_to_date` | Mean number of attempts on due assessments so far | decimal | `1.25` | derived | user-facing | Added in v1.1 |
 | `activity_score_to_date` | Cumulative activity summary | decimal | `64.8` | derived | user-facing | Range `0..100` |
+| `time_spent_to_date` | Total time spent on the platform to date | decimal | `426.5` | derived | user-facing | Minutes accumulated through the snapshot week |
 | `score_trend_3w` | Short-horizon performance direction | decimal | `-0.12` | derived | user-facing | Negative means decline; scaling is provisional |
 | `activity_trend_3w` | Short-horizon activity direction | decimal | `-0.20` | derived | user-facing | Negative means reduced engagement |
 | `attendance_trend_3w` | Short-horizon attendance direction | decimal | `0.05` | derived | user-facing | Positive means improvement |
+| `current_topic_mastery` | Topic-specific mastery proxy for the current week | decimal | `69.4` | derived | user-facing | Added in v1.1 as a teacher-readable mastery signal |
+| `overall_mastery` | Cumulative mastery proxy across covered topics | decimal | `71.8` | derived | user-facing | Added in v1.1 |
 | `engagement_index` | Composite engagement indicator | decimal | `62.3` | derived | user-facing | Interpretable summary index |
 | `performance_index` | Composite performance indicator | decimal | `73.6` | derived | user-facing | Interpretable summary index |
 | `discipline_index` | Composite reliability indicator | decimal | `58.4` | derived | user-facing | Interpretable summary index |
 | `risk_score` | Internal continuous risk score | decimal | `0.68` | derived | internal | Maps to `risk_level` |
 | `risk_level` | Weekly teacher-facing risk label | enum | `high` | target | user-facing | Primary target, values: `low`, `medium`, `high` |
+| `predicted_final_grade` | Provisional end-of-course estimate available at the snapshot week | decimal | `74.9` | derived | user-facing | Snapshot estimate, not the realized final target |
 
 ## Interpretation Notes
 
@@ -126,3 +134,13 @@ This document summarizes the most important v1 fields in human-readable form. It
 - `risk_level` is weekly and belongs to the digital twin layer.
 - `final_grade` and `passed` are end-of-course outcomes and belong to the outcome layer.
 - If future versions rename or reinterpret any field here, the schema contract and changelog must be updated first.
+
+## Research-Backed Candidate Fields Still Outside the Locked Contract
+
+These fields are intentionally not part of `schema_v1.1` yet. They are listed here because the literature review suggests they are good candidates for future refinement once the first synthetic generator is working.
+
+| Candidate field | Intended location | Meaning | Why it may matter |
+| --- | --- | --- | --- |
+| `due_load` | `course_topics` or derived snapshot context | Number or normalized weight of items due in a given week | Helps interpret performance dips under heavier workload weeks |
+
+These fields should be added only through a versioned schema update if they remain optional and non-breaking.

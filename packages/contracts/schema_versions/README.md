@@ -6,6 +6,11 @@ This directory stores versioned schema contracts for the Student Digital Twin XA
 
 - `schema_v0.1.yaml`: bootstrap placeholder contract kept for history.
 - `schema_v1.0.yaml`: first formalized data-model contract for the synthetic LMS-like dataset and processed student twin snapshots.
+- `schema_v1.1.yaml`: additive contract update that supports the first usable synthetic data pipeline and weekly twin enrichment fields.
+
+## Active Baseline
+
+The current implementation baseline is `schema_v1.1.yaml`. New generator, validation, and downstream ML work should target that contract unless a later version is explicitly introduced.
 
 ## Versioning Rules
 

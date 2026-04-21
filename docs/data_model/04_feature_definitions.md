@@ -1,6 +1,6 @@
 # Feature Definitions
 
-This document describes the major v1 features used to represent the student digital twin. The emphasis is on clarity and interpretability, not on claiming that every formula is final.
+This document describes the major v1.1 features used to represent the student digital twin. The emphasis is on clarity and interpretability, not on claiming that every formula is final.
 
 ## Feature Design Principles
 
@@ -33,6 +33,15 @@ All features below are defined for `student_twin_snapshots` with the grain:
 | `avg_quiz_score_to_date` | Average quiz performance so far | Mean normalized score for `assignment_type = quiz` items completed to date | Nullable early in the course if no quiz exists yet |
 | `score_trend_3w` | Recent direction of academic performance | Rolling short-horizon change or slope in recent score history | Negative values indicate decline |
 
+### Mastery progression
+
+This family is now included in `schema_v1.1` as a controlled extension of the weekly twin state.
+
+| Feature | Conceptual meaning | Provisional definition direction | Notes |
+| --- | --- | --- | --- |
+| `current_topic_mastery` | Approximate mastery of the current or most recent topic | Topic-linked correctness or normalized recent performance on topic-related items | Added in v1.1 |
+| `overall_mastery` | Running mastery proxy across covered material | Aggregated topic-level mastery through the snapshot week | Added in v1.1 |
+
 ### Submission discipline
 
 | Feature | Conceptual meaning | Provisional v1 definition | Notes |
@@ -40,13 +49,24 @@ All features below are defined for `student_twin_snapshots` with the grain:
 | `on_time_submission_rate_to_date` | How reliably required work is submitted on time | `on_time_required_submissions_to_date / required_items_due_to_date` | Core punctuality feature |
 | `missed_assignments_to_date` | Total missed required workload so far | Count of required due items with `submission_status = missing` | Non-negative cumulative count |
 | `late_submissions_to_date` | Total late work so far | Count of submissions marked `late` up to the snapshot week | Non-negative cumulative count |
+| `avg_attempt_count_to_date` | Average number of attempts on due work so far | Mean `attempt_count` across due assessments up to the snapshot week | Added in v1.1 to reflect work persistence |
 
 ### LMS engagement
 
 | Feature | Conceptual meaning | Provisional v1 definition | Notes |
 | --- | --- | --- | --- |
 | `activity_score_to_date` | Overall level of LMS-related participation so far | Normalized aggregation of weekly activity through the snapshot week | Keeps raw counts interpretable while reducing dimensional noise |
+| `time_spent_to_date` | Cumulative platform time so far | Sum of `time_on_platform_minutes` through the snapshot week | Added in v1.1 |
 | `activity_trend_3w` | Whether activity is increasing or fading | Rolling short-horizon change or slope over recent weekly activity | Negative values indicate declining engagement |
+
+### Limited course-internal context
+
+This family should remain restrained in v1. The goal is to support interpretation without expanding into sensitive or institution-heavy context modeling.
+
+| Feature | Conceptual meaning | Provisional definition direction | Notes |
+| --- | --- | --- | --- |
+| `topic_difficulty` | Relative difficulty of the current week/topic | Course-authored tag or normalized difficulty score | Added in v1.1 as limited non-sensitive context metadata |
+| `due_load` | Assessment burden in the current week | Count or weighted sum of due items in the week | Can help interpret temporary stress or workload spikes |
 
 ## Composite Indices
 
@@ -55,7 +75,7 @@ Composite indices are allowed in v1 because they can support teacher interpretat
 | Feature | Intended interpretation | Provisional v1 construction idea | Notes |
 | --- | --- | --- | --- |
 | `engagement_index` | Overall course engagement | Weighted combination of attendance participation and LMS activity | Example inputs: attendance rate, activity score, active days |
-| `performance_index` | Overall academic performance state | Weighted combination of assignment and quiz results | Example inputs: assignment average, quiz average, score trend |
+| `performance_index` | Overall academic performance state | Weighted combination of assignment and quiz results, enriched by mastery proxies | Example inputs: assignment average, quiz average, score trend, and `overall_mastery` |
 | `discipline_index` | Reliability and submission discipline | Weighted combination of on-time rate with penalties for missed and late work | Helps explain risk from behavior rather than score alone |
 
 ## Risk-Oriented Fields
@@ -64,6 +84,7 @@ Composite indices are allowed in v1 because they can support teacher interpretat
 | --- | --- | --- | --- |
 | `risk_score` | Continuous internal risk measure | Monotonic combination of low performance, low engagement, poor attendance, and weak discipline | Must remain explainable and should stay within `0.0..1.0` |
 | `risk_level` | Teacher-facing categorical concern label | Thresholded mapping from `risk_score` | Current working levels are `low`, `medium`, `high` |
+| `predicted_final_grade` | Snapshot-level end-of-course estimate | Bounded estimate from current performance, mastery, discipline, and engagement | Useful for teacher interpretation, but not the realized target |
 
 ## Example V1 Assumptions
 
@@ -74,6 +95,18 @@ The following are acceptable as first-pass working assumptions, but they are int
 - Compute short-horizon trends from the most recent up to 3 weeks.
 - Let `engagement_index`, `performance_index`, and `discipline_index` stay on a `0..100` scale for easier teacher interpretation.
 - Keep the risk formula interpretable and monotonic rather than complex.
+- Treat limited course context conservatively and keep formulas explicitly provisional.
+
+## Suggested Feature Blocks for Validation
+
+The literature review supports testing feature usefulness by block rather than assuming every engineered feature is necessary.
+
+- Performance block: score averages and score trend.
+- Engagement block: attendance and activity signals.
+- Discipline block: on-time rate, late work, missed work.
+- Mastery block: topic-level mastery proxies.
+- Temporal block: short-window trend features.
+- Context block: limited course-internal context such as topic difficulty or due-load.
 
 ## Anti-Leakage Note
 
@@ -91,6 +124,7 @@ That means:
 - Exact weighting for the composite indices
 - Exact scaling for the trend features
 - Whether quiz and assignment categories need finer separation later
-- Whether extra features such as volatility or topic mastery proxies should enter v1.1
+- Whether `due_load` should enter a future minor schema version
+- Whether `predicted_final_grade` should remain purely heuristic or later be replaced by a trained estimate
 
 TODO(data-model): finalize the exact snapshot feature calculation spec together with the first dataset generator implementation.

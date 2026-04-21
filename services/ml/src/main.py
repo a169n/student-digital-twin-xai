@@ -1,17 +1,58 @@
-from src.common.settings import get_settings
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+
+from src.generator.config import load_generator_config
+from src.generator.pipeline import PipelineSummary
 from src.generator.synthetic import SyntheticDatasetGenerator
 
 
-def main() -> None:
-    """Entrypoint for local ML service tasks.
+def _build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Generate the synthetic Student Digital Twin dataset.")
+    parser.add_argument(
+        "--config",
+        default="configs/generator_v1.yaml",
+        help="Path to the generator YAML config.",
+    )
+    parser.add_argument("--seed", type=int, default=None, help="Optional seed override.")
+    parser.add_argument(
+        "--output-root",
+        type=Path,
+        default=None,
+        help="Optional output root; raw/processed/artifacts subdirectories will be created inside it.",
+    )
+    parser.add_argument(
+        "--skip-parquet",
+        action="store_true",
+        help="Skip writing the Parquet snapshot output.",
+    )
+    return parser
 
-    TODO: Add CLI-style task selection (generate/features/train/infer/explain/validate).
-    """
 
-    settings = get_settings()
-    generator = SyntheticDatasetGenerator()
-    print(f"ML service environment: {settings.ml_env}")
+def _print_summary(generator: SyntheticDatasetGenerator, summary: PipelineSummary) -> None:
     print(generator.describe())
+    print(f"Config: {summary.config_path}")
+    print(f"Seed: {summary.seed}")
+    print(f"Raw output: {summary.raw_output_dir}")
+    print(f"Processed output: {summary.processed_output_dir}")
+    print("Row counts:")
+    for table_name, row_count in summary.row_counts.items():
+        print(f"  - {table_name}: {row_count}")
+    print(f"Risk distribution: {summary.risk_distribution}")
+    print(f"Withdrawn students: {summary.withdrawal_count}")
+
+
+def main() -> None:
+    args = _build_parser().parse_args()
+    config, resolved_config_path = load_generator_config(
+        args.config,
+        seed_override=args.seed,
+        output_root=args.output_root,
+    )
+    generator = SyntheticDatasetGenerator(config)
+    result = generator.run(config_path=resolved_config_path, skip_parquet=args.skip_parquet)
+    _print_summary(generator, result.summary)
 
 
 if __name__ == "__main__":

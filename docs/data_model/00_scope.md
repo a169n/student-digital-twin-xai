@@ -4,7 +4,7 @@
 
 This document defines the scope of the first stable data-model foundation for the Student Digital Twin XAI research prototype.
 
-The goal of `schema_v1.0` is not to represent a full LMS. The goal is to provide a disciplined and versioned structure for:
+The goal of `schema_v1.1` is not to represent a full LMS. The goal is to provide a disciplined and versioned structure for:
 
 - synthetic LMS-like raw data,
 - weekly student digital twin snapshots,
@@ -65,7 +65,7 @@ The schema intentionally separates three layers:
 
 ### Versioning principle
 
-This scope is explicitly versioned. `schema_v1.0` is expected to evolve. Future revisions should change the schema deliberately rather than through silent field drift.
+This scope is explicitly versioned. `schema_v1.1` is the active contract baseline and is expected to evolve deliberately through future versioned updates rather than silent field drift.
 
 ## Research Prototype Reminder
 

@@ -1,6 +1,6 @@
 # Assumptions
 
-This document records the main working assumptions behind `schema_v1.0`. These assumptions are deliberate placeholders for a research prototype, not claims of finalized institutional policy.
+This document records the main working assumptions behind `schema_v1.1`. These assumptions are deliberate placeholders for a research prototype, not claims of finalized institutional policy.
 
 ## Structural Assumptions
 
@@ -30,6 +30,7 @@ This document records the main working assumptions behind `schema_v1.0`. These a
   - `improving`
   - `declining`
   - `consistently_at_risk`
+- In generator semantics, `improving` represents the recovering pattern and `consistently_at_risk` represents the chronic-risk pattern while preserving contract compatibility.
 
 ## Target Assumptions
 
@@ -37,7 +38,7 @@ This document records the main working assumptions behind `schema_v1.0`. These a
 - `risk_score` is the internal numeric precursor to `risk_level`.
 - `final_grade` is the secondary end-of-course target.
 - `passed` is derived from `final_grade` and the course pass policy.
-- The v1 risk threshold mapping is provisional and may change after initial experimentation.
+- The v1.1 risk threshold mapping is provisional and should be calibrated after the first synthetic distributions are inspected.
 
 ## Product Scope Assumptions
 
@@ -50,6 +51,7 @@ This document records the main working assumptions behind `schema_v1.0`. These a
 
 - This schema is designed to support future dataset generation, twin snapshot generation, baseline ML, XAI, backend endpoints, and restrained teacher-facing views.
 - Future versions may add entities such as enrollments, explanations, interventions, and model artifact references.
+- Future minor versions may also add extra context fields such as `due_load` if they improve interpretability and validation results.
 - Any change to field meaning, target logic, or relationship structure must be versioned and documented.
 
 ## Open TODOs

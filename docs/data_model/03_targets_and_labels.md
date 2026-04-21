@@ -1,6 +1,6 @@
 # Targets and Labels
 
-This document defines the v1 meaning of the project’s core targets and related outcome fields.
+This document defines the v1.1 meaning of the project’s core targets and related outcome fields.
 
 ## Target Hierarchy
 
@@ -44,13 +44,21 @@ In v1:
 
 ### Provisional v1 threshold policy
 
-The v1 documentation assumes the following working mapping:
+The v1 documentation uses an example mapping rather than a fixed institutional rule:
 
-- `low`: `risk_score < 0.35`
-- `medium`: `0.35 <= risk_score < 0.65`
-- `high`: `risk_score >= 0.65`
+- `low`: `risk_score < 0.40`
+- `medium`: `0.40 <= risk_score < 0.70`
+- `high`: `risk_score >= 0.70`
 
-This threshold policy is intentionally provisional. It is suitable for schema design and early synthetic-data work, but it should not be treated as finalized research science.
+This mapping is intentionally provisional. The literature-backed recommendation is to calibrate thresholds after inspecting the synthetic data distribution and early validation results, rather than treating one threshold set as universally correct.
+
+### Calibration note
+
+For the first dataset release, the safest interpretation is:
+
+- `risk_score` is the stable internal signal,
+- `risk_level` is the teacher-facing categorization,
+- the exact threshold cut points are dataset-specific and may be revised without changing the conceptual role of the target.
 
 ## `final_grade`
 
@@ -63,6 +71,12 @@ It represents the realized end-of-course numeric result stored in `final_results
 `final_grade` is an outcome observed at course completion. It should not be used as a feature when constructing weekly student twin snapshots.
 
 Downstream ML pipelines may join `final_results.final_grade` onto weekly snapshots for supervised learning, but the feature-generation side must remain temporally clean.
+
+## `predicted_final_grade`
+
+`predicted_final_grade` is a snapshot-level heuristic estimate, not the formal secondary target.
+
+In v1.1 it lives on `student_twin_snapshots` and exists to support teacher interpretation of the evolving digital twin. It should be derived only from information available up to the snapshot week and must not be confused with the realized `final_results.final_grade`.
 
 ## `passed`
 
@@ -90,7 +104,7 @@ The following rules are part of the v1 label design:
 
 - The exact mathematical formula for `risk_score`
 - The final operational definition of the risk horizon
-- Whether medium/high thresholds should be calibrated differently after empirical validation
+- The final calibrated threshold cut points after empirical validation
 - How withdrawals and incompletes should influence weekly risk labeling
 
 TODO(domain): clarify the final risk-threshold strategy after the first synthetic dataset and baseline evaluation are available.

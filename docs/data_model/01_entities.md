@@ -92,6 +92,8 @@ Each row is a time-aware student state snapshot derived from raw data available 
 
 - cumulative indicators,
 - short-horizon trends,
+- mastery-related proxies when enabled by a later minor schema revision,
+- limited course-internal context features when enabled by a later minor schema revision,
 - interpretable composite indices,
 - `risk_score`,
 - `risk_level`.
@@ -123,3 +125,18 @@ This layer is intentionally separate from weekly twin state so that downstream m
 `risk_level` belongs to the weekly twin state because it is a teacher-facing weekly concern label.
 
 `final_grade` and `passed` belong to the end-of-course outcome layer because they are realized results observed only after the course completes.
+
+## Research Alignment Note
+
+The current v1 structure already matches the main research recommendation:
+
+- raw LMS-like tables,
+- a weekly processed twin layer,
+- a separate outcome layer.
+
+After the literature review, two feature families look especially worthwhile to keep in view:
+
+- mastery progression proxies,
+- limited course-internal context such as topic difficulty and due-load.
+
+These do not require a structural redesign of the current v1 model. They can be introduced later as carefully versioned field additions or derived features once the first synthetic generator and validation pipeline are in place.
