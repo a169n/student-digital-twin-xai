@@ -1,0 +1,654 @@
+schema_version: "1.0"
+status: "stable-research-baseline"
+title: "Student Digital Twin XAI v1 data contract"
+description: >
+  First formal schema contract for the research prototype. It defines the
+  synthetic LMS-like raw data layer, the processed student digital twin
+  snapshot layer, and the final outcome layer for one course over ten weeks.
+
+scope:
+  primary_user: "teacher / instructor"
+  core_object: "student as a digital twin"
+  dataset_type: "synthetic but structurally realistic LMS-like"
+  initial_course_count: 1
+  initial_duration_weeks: 10
+  primary_target:
+    field: "student_twin_snapshots.risk_level"
+    description: "Teacher-facing categorical risk label at a weekly snapshot."
+  secondary_target:
+    field: "final_results.final_grade"
+    description: "End-of-course numeric outcome."
+  derived_metric:
+    field: "final_results.passed"
+    description: "Boolean pass/fail indicator derived from final_grade and pass policy."
+  internal_scoring:
+    field: "student_twin_snapshots.risk_score"
+    description: "Numeric internal risk score that maps to risk_level in v1."
+
+conventions:
+  id_type: "string"
+  week_number_range:
+    min: 1
+    max: 10
+  score_scale: "0 to 100 unless otherwise noted"
+  percentage_rate_scale: "0.0 to 1.0"
+  time_rule: >
+    Snapshot features must use only data available up to the end of the stated
+    week. End-of-course outcomes must not be used as snapshot features.
+
+tables:
+  - name: students
+    layer: "raw_lms"
+    description: >
+      Student roster for the synthetic cohort. Includes a small set of hidden
+      generation parameters used to create realistic trajectories.
+    grain: "1 row = 1 student in the v1 single-course cohort"
+    primary_key: "student_id"
+    unique_constraints:
+      - ["student_code"]
+    foreign_keys:
+      - field: "course_id"
+        references: "courses.course_id"
+        notes: >
+          v1 simplification for a single-course cohort. A dedicated enrollments
+          table may replace this relation in a later major version.
+    fields:
+      - name: "student_id"
+        type: "string"
+        required: true
+        description: "Internal unique identifier."
+      - name: "student_code"
+        type: "string"
+        required: true
+        description: "Teacher-visible pseudonymous code such as STU-001."
+      - name: "course_id"
+        type: "string"
+        required: true
+        description: "The single active course for the v1 dataset."
+      - name: "cohort_label"
+        type: "string"
+        required: false
+        description: "Optional cohort or section label."
+      - name: "enrollment_status"
+        type: "enum"
+        required: true
+        enum: ["active", "withdrawn", "completed"]
+        description: "Current enrollment state within the synthetic course."
+      - name: "baseline_level"
+        type: "decimal"
+        required: true
+        role: "generation_only"
+        constraints:
+          min: 0.0
+          max: 1.0
+        description: "Hidden baseline academic capability used during data generation."
+        notes: "Not intended for teacher-facing views."
+      - name: "motivation_level"
+        type: "decimal"
+        required: true
+        role: "generation_only"
+        constraints:
+          min: 0.0
+          max: 1.0
+        description: "Hidden generation parameter for engagement and effort."
+        notes: "Not intended for teacher-facing views."
+      - name: "discipline_level"
+        type: "decimal"
+        required: true
+        role: "generation_only"
+        constraints:
+          min: 0.0
+          max: 1.0
+        description: "Hidden generation parameter for punctuality and consistency."
+        notes: "Not intended for teacher-facing views."
+      - name: "trajectory_type"
+        type: "enum"
+        required: true
+        role: "generation_only"
+        enum: ["stable_high", "improving", "declining", "consistently_at_risk"]
+        description: "Hidden synthetic trajectory pattern used to shape weekly behavior."
+        notes: "May expand in later versions."
+
+  - name: courses
+    layer: "raw_lms"
+    description: "Course definition for the synthetic instructional context."
+    grain: "1 row = 1 course"
+    primary_key: "course_id"
+    fields:
+      - name: "course_id"
+        type: "string"
+        required: true
+        description: "Unique course identifier."
+      - name: "course_code"
+        type: "string"
+        required: true
+        description: "Human-readable course code such as CS101."
+      - name: "course_name"
+        type: "string"
+        required: true
+        description: "Course title."
+      - name: "term_label"
+        type: "string"
+        required: false
+        description: "Optional term label such as Fall 2026."
+      - name: "duration_weeks"
+        type: "integer"
+        required: true
+        constraints:
+          min: 1
+          max: 52
+        description: "Planned course duration in weeks."
+        notes: "Expected value is 10 in v1."
+      - name: "grading_policy_pass_mark"
+        type: "decimal"
+        required: true
+        constraints:
+          min: 0
+          max: 100
+        description: "Numeric threshold used to derive passed."
+      - name: "course_description"
+        type: "string"
+        required: false
+        description: "Optional short description for documentation purposes."
+
+  - name: course_topics
+    layer: "raw_lms"
+    description: "Weekly instructional topics that structure the course timeline."
+    grain: "1 row = 1 course topic, typically one per week"
+    primary_key: "topic_id"
+    unique_constraints:
+      - ["course_id", "week_number"]
+    foreign_keys:
+      - field: "course_id"
+        references: "courses.course_id"
+    fields:
+      - name: "topic_id"
+        type: "string"
+        required: true
+        description: "Unique topic identifier."
+      - name: "course_id"
+        type: "string"
+        required: true
+        description: "Owning course."
+      - name: "week_number"
+        type: "integer"
+        required: true
+        constraints:
+          min: 1
+          max: 10
+        description: "Instructional week number."
+      - name: "topic_title"
+        type: "string"
+        required: true
+        description: "Teacher-facing topic title."
+      - name: "topic_type"
+        type: "enum"
+        required: false
+        enum: ["lecture", "lab", "review", "assessment_week"]
+        description: "Optional topical classification."
+      - name: "planned_assignment_count"
+        type: "integer"
+        required: false
+        constraints:
+          min: 0
+          max: 10
+        description: "Planning metadata for synthetic generation."
+        notes: "Optional because exact per-week workload is still provisional."
+
+  - name: assignments
+    layer: "raw_lms"
+    description: "Assessment items such as assignments, quizzes, or lab checks."
+    grain: "1 row = 1 assessment item"
+    primary_key: "assignment_id"
+    foreign_keys:
+      - field: "course_id"
+        references: "courses.course_id"
+      - field: "topic_id"
+        references: "course_topics.topic_id"
+    fields:
+      - name: "assignment_id"
+        type: "string"
+        required: true
+        description: "Unique assessment identifier."
+      - name: "course_id"
+        type: "string"
+        required: true
+        description: "Owning course."
+      - name: "topic_id"
+        type: "string"
+        required: true
+        description: "Related weekly topic."
+      - name: "assignment_type"
+        type: "enum"
+        required: true
+        enum: ["assignment", "quiz", "lab"]
+        description: "Assessment category used in feature aggregation."
+      - name: "title"
+        type: "string"
+        required: true
+        description: "Teacher-facing assessment title."
+      - name: "max_score"
+        type: "decimal"
+        required: true
+        constraints:
+          min: 1
+        description: "Maximum obtainable points."
+      - name: "due_at"
+        type: "datetime"
+        required: true
+        description: "Submission deadline."
+      - name: "weight_percent"
+        type: "decimal"
+        required: false
+        constraints:
+          min: 0
+          max: 100
+        description: "Optional contribution to the final grade."
+      - name: "is_required"
+        type: "boolean"
+        required: true
+        description: "Whether the assessment counts as required coursework."
+
+  - name: attendance
+    layer: "raw_lms"
+    description: "Attendance records for scheduled instructional sessions."
+    grain: "1 row = 1 student x session"
+    primary_key: "attendance_id"
+    foreign_keys:
+      - field: "student_id"
+        references: "students.student_id"
+      - field: "course_id"
+        references: "courses.course_id"
+      - field: "topic_id"
+        references: "course_topics.topic_id"
+    fields:
+      - name: "attendance_id"
+        type: "string"
+        required: true
+        description: "Unique attendance record identifier."
+      - name: "student_id"
+        type: "string"
+        required: true
+        description: "Attending student."
+      - name: "course_id"
+        type: "string"
+        required: true
+        description: "Owning course."
+      - name: "topic_id"
+        type: "string"
+        required: true
+        description: "Weekly topic context."
+      - name: "week_number"
+        type: "integer"
+        required: true
+        constraints:
+          min: 1
+          max: 10
+        description: "Week associated with the session."
+      - name: "session_date"
+        type: "date"
+        required: true
+        description: "Scheduled date of the session."
+      - name: "session_type"
+        type: "enum"
+        required: false
+        enum: ["lecture", "lab", "tutorial"]
+        description: "Optional session subtype."
+      - name: "attendance_status"
+        type: "enum"
+        required: true
+        enum: ["present", "late", "absent", "excused"]
+        description: "Observed attendance outcome."
+
+  - name: submissions
+    layer: "raw_lms"
+    description: "Student submissions and grading outcomes for assignments."
+    grain: "1 row = 1 student x assignment"
+    primary_key: "submission_id"
+    unique_constraints:
+      - ["student_id", "assignment_id"]
+    foreign_keys:
+      - field: "student_id"
+        references: "students.student_id"
+      - field: "assignment_id"
+        references: "assignments.assignment_id"
+    fields:
+      - name: "submission_id"
+        type: "string"
+        required: true
+        description: "Unique submission identifier."
+      - name: "student_id"
+        type: "string"
+        required: true
+        description: "Submitting student."
+      - name: "assignment_id"
+        type: "string"
+        required: true
+        description: "Assessment item being attempted."
+      - name: "submitted_at"
+        type: "datetime"
+        required: false
+        description: "Submission timestamp."
+        notes: "May be null when submission_status is missing or excused."
+      - name: "submission_status"
+        type: "enum"
+        required: true
+        enum: ["submitted", "late", "missing", "excused"]
+        description: "Observed submission state."
+      - name: "score"
+        type: "decimal"
+        required: false
+        constraints:
+          min: 0
+        description: "Awarded points for the attempt."
+        notes: "Expected to fall within 0..assignment.max_score when present."
+      - name: "is_on_time"
+        type: "boolean"
+        required: false
+        role: "derived"
+        description: "Convenience flag derived from submitted_at and assignment due_at."
+      - name: "attempt_count"
+        type: "integer"
+        required: false
+        constraints:
+          min: 0
+        description: "Optional count of recorded attempts."
+
+  - name: weekly_activity
+    layer: "raw_lms"
+    description: >
+      Weekly aggregated LMS-like interaction signals. This remains part of the
+      raw layer because it represents observed platform behavior before twin
+      feature engineering.
+    grain: "1 row = 1 student x week"
+    primary_key: "weekly_activity_id"
+    unique_constraints:
+      - ["student_id", "course_id", "week_number"]
+    foreign_keys:
+      - field: "student_id"
+        references: "students.student_id"
+      - field: "course_id"
+        references: "courses.course_id"
+      - field: "topic_id"
+        references: "course_topics.topic_id"
+    fields:
+      - name: "weekly_activity_id"
+        type: "string"
+        required: true
+        description: "Unique weekly activity identifier."
+      - name: "student_id"
+        type: "string"
+        required: true
+        description: "Student generating the activity."
+      - name: "course_id"
+        type: "string"
+        required: true
+        description: "Owning course."
+      - name: "topic_id"
+        type: "string"
+        required: true
+        description: "Related weekly topic."
+      - name: "week_number"
+        type: "integer"
+        required: true
+        constraints:
+          min: 1
+          max: 10
+        description: "Instructional week number."
+      - name: "login_count"
+        type: "integer"
+        required: true
+        constraints:
+          min: 0
+        description: "Count of LMS logins during the week."
+      - name: "active_days"
+        type: "integer"
+        required: true
+        constraints:
+          min: 0
+          max: 7
+        description: "Distinct days with activity."
+      - name: "content_views"
+        type: "integer"
+        required: true
+        constraints:
+          min: 0
+        description: "Viewed course materials count."
+      - name: "practice_events"
+        type: "integer"
+        required: true
+        constraints:
+          min: 0
+        description: "Practice or coding-related interaction count."
+      - name: "forum_posts"
+        type: "integer"
+        required: false
+        constraints:
+          min: 0
+        description: "Optional discussion activity count."
+      - name: "time_on_platform_minutes"
+        type: "decimal"
+        required: true
+        constraints:
+          min: 0
+        description: "Approximate active time on the LMS platform."
+      - name: "activity_score"
+        type: "decimal"
+        required: false
+        role: "derived"
+        constraints:
+          min: 0
+          max: 100
+        description: "Normalized weekly activity summary."
+        notes: "Formula is provisional and documented in the feature definitions."
+
+  - name: final_results
+    layer: "outcome"
+    description: "End-of-course realized outcomes per student."
+    grain: "1 row = 1 student x course"
+    primary_key: "final_result_id"
+    unique_constraints:
+      - ["student_id", "course_id"]
+    foreign_keys:
+      - field: "student_id"
+        references: "students.student_id"
+      - field: "course_id"
+        references: "courses.course_id"
+    fields:
+      - name: "final_result_id"
+        type: "string"
+        required: true
+        description: "Unique final result identifier."
+      - name: "student_id"
+        type: "string"
+        required: true
+        description: "Student receiving the final outcome."
+      - name: "course_id"
+        type: "string"
+        required: true
+        description: "Course context."
+      - name: "completion_status"
+        type: "enum"
+        required: true
+        enum: ["completed", "withdrawn", "incomplete"]
+        description: "Resolved course completion state."
+      - name: "final_grade"
+        type: "decimal"
+        required: false
+        role: "target"
+        constraints:
+          min: 0
+          max: 100
+        description: "Final numeric course grade."
+        notes: "May be null for withdrawn students depending on generator policy."
+      - name: "passed"
+        type: "boolean"
+        required: false
+        role: "derived"
+        description: "Derived pass/fail outcome."
+        notes: "Typically derived from final_grade and grading_policy_pass_mark."
+      - name: "completed_weeks"
+        type: "integer"
+        required: false
+        constraints:
+          min: 0
+          max: 10
+        description: "Number of instructional weeks meaningfully completed."
+
+  - name: student_twin_snapshots
+    layer: "processed_twin"
+    description: >
+      Weekly processed state of the student digital twin. This is the canonical
+      feature table for teacher-facing risk monitoring and for downstream model
+      training after temporal filtering.
+    grain: "1 row = 1 student x week"
+    primary_key: "snapshot_id"
+    unique_constraints:
+      - ["student_id", "course_id", "week_number"]
+    foreign_keys:
+      - field: "student_id"
+        references: "students.student_id"
+      - field: "course_id"
+        references: "courses.course_id"
+    fields:
+      - name: "snapshot_id"
+        type: "string"
+        required: true
+        description: "Unique weekly snapshot identifier."
+      - name: "student_id"
+        type: "string"
+        required: true
+        description: "Student represented by the digital twin."
+      - name: "course_id"
+        type: "string"
+        required: true
+        description: "Course context."
+      - name: "week_number"
+        type: "integer"
+        required: true
+        constraints:
+          min: 1
+          max: 10
+        description: "Snapshot week."
+      - name: "snapshot_date"
+        type: "date"
+        required: true
+        description: "Date representing the end of the observation window."
+      - name: "attendance_rate_to_date"
+        type: "decimal"
+        required: true
+        role: "derived"
+        constraints:
+          min: 0.0
+          max: 1.0
+        description: "Cumulative attendance rate up to the snapshot week."
+      - name: "avg_assignment_score_to_date"
+        type: "decimal"
+        required: false
+        role: "derived"
+        constraints:
+          min: 0
+          max: 100
+        description: "Average score for assignment-type items completed to date."
+      - name: "avg_quiz_score_to_date"
+        type: "decimal"
+        required: false
+        role: "derived"
+        constraints:
+          min: 0
+          max: 100
+        description: "Average score for quiz-type items completed to date."
+      - name: "on_time_submission_rate_to_date"
+        type: "decimal"
+        required: true
+        role: "derived"
+        constraints:
+          min: 0.0
+          max: 1.0
+        description: "Share of required due items submitted on time."
+      - name: "missed_assignments_to_date"
+        type: "integer"
+        required: true
+        role: "derived"
+        constraints:
+          min: 0
+        description: "Count of required assignments missed by the snapshot week."
+      - name: "late_submissions_to_date"
+        type: "integer"
+        required: true
+        role: "derived"
+        constraints:
+          min: 0
+        description: "Count of late submissions up to the snapshot week."
+      - name: "activity_score_to_date"
+        type: "decimal"
+        required: true
+        role: "derived"
+        constraints:
+          min: 0
+          max: 100
+        description: "Cumulative activity score through the snapshot week."
+      - name: "score_trend_3w"
+        type: "decimal"
+        required: false
+        role: "derived"
+        description: "Short-horizon performance trend indicator."
+        notes: "Negative values indicate decline; exact scaling is provisional."
+      - name: "activity_trend_3w"
+        type: "decimal"
+        required: false
+        role: "derived"
+        description: "Short-horizon activity trend indicator."
+        notes: "Negative values indicate declining platform engagement."
+      - name: "attendance_trend_3w"
+        type: "decimal"
+        required: false
+        role: "derived"
+        description: "Short-horizon attendance trend indicator."
+        notes: "Negative values indicate worsening attendance."
+      - name: "engagement_index"
+        type: "decimal"
+        required: true
+        role: "derived"
+        constraints:
+          min: 0
+          max: 100
+        description: "Composite engagement-oriented index."
+      - name: "performance_index"
+        type: "decimal"
+        required: true
+        role: "derived"
+        constraints:
+          min: 0
+          max: 100
+        description: "Composite performance-oriented index."
+      - name: "discipline_index"
+        type: "decimal"
+        required: true
+        role: "derived"
+        constraints:
+          min: 0
+          max: 100
+        description: "Composite discipline and reliability index."
+      - name: "risk_score"
+        type: "decimal"
+        required: true
+        role: "derived"
+        constraints:
+          min: 0.0
+          max: 1.0
+        description: "Internal numeric risk score used to map to risk_level."
+        notes: "Exact formula and thresholds are provisional in v1."
+      - name: "risk_level"
+        type: "enum"
+        required: true
+        role: "target"
+        enum: ["low", "medium", "high"]
+        description: "Primary weekly teacher-facing academic risk label."
+        notes: "Derived from risk_score under the provisional v1 threshold policy."
+
+notes:
+  - "This contract intentionally supports later dataset generation, validation, and backend work without pretending domain logic is final."
+  - "Hidden generation-only fields must not appear in teacher-facing product views."
+  - "The student_twin_snapshots table is the canonical representation of 1 student x 1 week."
+  - "Future versions may introduce enrollments, intervention records, explanations, and model artifact references."

@@ -1,16 +1,128 @@
-# Data Dictionary (Placeholder)
+# Data Dictionary
 
-This document will host canonical field definitions per schema version.
+This document summarizes the most important v1 fields in human-readable form. It is not meant to repeat every trivial identifier field, but it should cover the fields that define meaning, modeling intent, and visibility boundaries.
 
-## v0.1 Status
-- Only high-level fields are proposed in `schema_v0.1.yaml`.
-- Semantics are intentionally lightweight.
+## Classification Legend
 
-## Planned Sections
-1. Identifier fields (`*_id` conventions)
-2. Time semantics (`event_time`, `snapshot_time`)
-3. Activity and assessment measures
-4. Prediction and explanation payload structures
-5. Intervention metadata
+- `raw`: observed LMS-like data.
+- `derived`: computed from raw data or aggregation logic.
+- `generation-only`: used to create synthetic realism, not intended for teacher-facing use.
+- `target`: used as a prediction label or outcome.
 
-> TODO: Add data types, allowed ranges, nullability, and provenance tags.
+## `students`
+
+| Field | Meaning | Type | Example | Class | Visibility | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| `student_id` | Internal unique identifier | string | `student_001` | raw | internal | Stable join key across tables |
+| `student_code` | Teacher-visible pseudonymous label | string | `STU-001` | raw | user-facing | Prefer this over real names in v1 |
+| `course_id` | The student’s active v1 course | string | `course_prog_101` | raw | internal | v1 simplification instead of an enrollments table |
+| `enrollment_status` | Current synthetic enrollment state | enum | `active` | raw | internal | Allowed values: `active`, `withdrawn`, `completed` |
+| `baseline_level` | Hidden starting academic capability parameter | decimal | `0.72` | generation-only | internal | Range `0.0..1.0` |
+| `motivation_level` | Hidden engagement/effort parameter | decimal | `0.61` | generation-only | internal | Range `0.0..1.0` |
+| `discipline_level` | Hidden punctuality/reliability parameter | decimal | `0.55` | generation-only | internal | Range `0.0..1.0` |
+| `trajectory_type` | Hidden behavioral trajectory archetype | enum | `declining` | generation-only | internal | Initial v1 values are provisional |
+
+## `courses`
+
+| Field | Meaning | Type | Example | Class | Visibility | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| `course_id` | Unique course identifier | string | `course_prog_101` | raw | internal | Primary key |
+| `course_code` | Human-readable course code | string | `CS101` | raw | user-facing | Teacher-friendly label |
+| `course_name` | Course title | string | `Introduction to Programming` | raw | user-facing | Main course label |
+| `duration_weeks` | Planned course duration | integer | `10` | raw | user-facing | Expected to be 10 in v1 |
+| `grading_policy_pass_mark` | Numeric pass threshold | decimal | `50` | raw | internal | Used to derive `passed` |
+
+## `course_topics`
+
+| Field | Meaning | Type | Example | Class | Visibility | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| `topic_id` | Unique topic identifier | string | `topic_w03` | raw | internal | Primary key |
+| `week_number` | Instructional week number | integer | `3` | raw | user-facing | Range `1..10` |
+| `topic_title` | Topic taught in the week | string | `Loops and Iteration` | raw | user-facing | Teacher-facing topic label |
+| `topic_type` | Optional topic classification | enum | `lab` | raw | internal | Optional planning metadata |
+| `planned_assignment_count` | Planned workload hint for generation | integer | `2` | raw | internal | Optional and still provisional |
+
+## `assignments`
+
+| Field | Meaning | Type | Example | Class | Visibility | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| `assignment_id` | Unique assessment identifier | string | `asg_w03_q1` | raw | internal | Primary key |
+| `assignment_type` | Assessment category | enum | `quiz` | raw | user-facing | Initial v1 values: `assignment`, `quiz`, `lab` |
+| `title` | Assessment title | string | `Quiz 3: Loops` | raw | user-facing | Teacher-facing |
+| `max_score` | Maximum points available | decimal | `100` | raw | internal | Used to normalize performance later |
+| `due_at` | Submission deadline | datetime | `2026-09-20T23:59:00` | raw | internal | Important for punctuality features |
+| `weight_percent` | Grade contribution | decimal | `5` | raw | internal | Optional in v1 |
+| `is_required` | Whether the item is required | boolean | `true` | raw | internal | Used when counting missed work |
+
+## `attendance`
+
+| Field | Meaning | Type | Example | Class | Visibility | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| `attendance_id` | Unique attendance record | string | `att_001003` | raw | internal | Primary key |
+| `week_number` | Week of the session | integer | `3` | raw | user-facing | Matches the course timeline |
+| `session_date` | Scheduled session date | date | `2026-09-18` | raw | internal | Raw time anchor |
+| `session_type` | Session subtype | enum | `lecture` | raw | internal | Optional |
+| `attendance_status` | Observed attendance outcome | enum | `late` | raw | user-facing | Initial values: `present`, `late`, `absent`, `excused` |
+
+## `submissions`
+
+| Field | Meaning | Type | Example | Class | Visibility | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| `submission_id` | Unique submission record | string | `sub_001_asg_w03_q1` | raw | internal | Primary key |
+| `submitted_at` | Timestamp of student submission | datetime | `2026-09-20T22:41:00` | raw | internal | Can be null for missing work |
+| `submission_status` | Recorded submission outcome | enum | `late` | raw | user-facing | Values: `submitted`, `late`, `missing`, `excused` |
+| `score` | Points awarded | decimal | `74` | raw | user-facing | Interpreted against `assignments.max_score` |
+| `is_on_time` | Convenience punctuality flag | boolean | `false` | derived | internal | Derived from due date and submission time |
+| `attempt_count` | Number of recorded attempts | integer | `1` | raw | internal | Optional in v1 |
+
+## `weekly_activity`
+
+| Field | Meaning | Type | Example | Class | Visibility | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| `weekly_activity_id` | Unique weekly activity record | string | `act_001_w03` | raw | internal | Primary key |
+| `week_number` | Activity week | integer | `3` | raw | user-facing | One row per student x week |
+| `login_count` | LMS login count for the week | integer | `6` | raw | internal | Non-negative |
+| `active_days` | Distinct active days during the week | integer | `4` | raw | internal | Range `0..7` |
+| `content_views` | Course material views | integer | `18` | raw | internal | Non-negative |
+| `practice_events` | Practice or coding events | integer | `9` | raw | internal | Non-negative |
+| `time_on_platform_minutes` | Approximate active time | decimal | `142` | raw | internal | Non-negative |
+| `activity_score` | Normalized weekly activity summary | decimal | `67.5` | derived | internal | Provisional v1 formula |
+
+## `final_results`
+
+| Field | Meaning | Type | Example | Class | Visibility | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| `completion_status` | Resolved course completion outcome | enum | `completed` | raw | user-facing | Values: `completed`, `withdrawn`, `incomplete` |
+| `final_grade` | Final numeric course grade | decimal | `78.4` | target | user-facing | Secondary target |
+| `passed` | Final pass/fail indicator | boolean | `true` | derived | user-facing | Derived from `final_grade` and pass policy |
+| `completed_weeks` | Weeks meaningfully completed | integer | `10` | derived | internal | Useful for analysis and withdrawals |
+
+## `student_twin_snapshots`
+
+| Field | Meaning | Type | Example | Class | Visibility | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| `snapshot_id` | Unique weekly twin snapshot | string | `snap_001_w03` | raw | internal | Primary key |
+| `week_number` | Snapshot week | integer | `3` | raw | user-facing | Canonical time axis |
+| `snapshot_date` | End date of the observation window | date | `2026-09-21` | raw | internal | Must reflect data available only up to that point |
+| `attendance_rate_to_date` | Cumulative attendance rate | decimal | `0.83` | derived | user-facing | Range `0.0..1.0` |
+| `avg_assignment_score_to_date` | Average assignment score so far | decimal | `76.2` | derived | user-facing | Based on assignment-type items |
+| `avg_quiz_score_to_date` | Average quiz score so far | decimal | `71.0` | derived | user-facing | Based on quiz-type items |
+| `on_time_submission_rate_to_date` | Share of required work submitted on time | decimal | `0.67` | derived | user-facing | Range `0.0..1.0` |
+| `missed_assignments_to_date` | Count of required missed items | integer | `1` | derived | user-facing | Non-negative |
+| `late_submissions_to_date` | Count of late submissions | integer | `2` | derived | user-facing | Non-negative |
+| `activity_score_to_date` | Cumulative activity summary | decimal | `64.8` | derived | user-facing | Range `0..100` |
+| `score_trend_3w` | Short-horizon performance direction | decimal | `-0.12` | derived | user-facing | Negative means decline; scaling is provisional |
+| `activity_trend_3w` | Short-horizon activity direction | decimal | `-0.20` | derived | user-facing | Negative means reduced engagement |
+| `attendance_trend_3w` | Short-horizon attendance direction | decimal | `0.05` | derived | user-facing | Positive means improvement |
+| `engagement_index` | Composite engagement indicator | decimal | `62.3` | derived | user-facing | Interpretable summary index |
+| `performance_index` | Composite performance indicator | decimal | `73.6` | derived | user-facing | Interpretable summary index |
+| `discipline_index` | Composite reliability indicator | decimal | `58.4` | derived | user-facing | Interpretable summary index |
+| `risk_score` | Internal continuous risk score | decimal | `0.68` | derived | internal | Maps to `risk_level` |
+| `risk_level` | Weekly teacher-facing risk label | enum | `high` | target | user-facing | Primary target, values: `low`, `medium`, `high` |
+
+## Interpretation Notes
+
+- Hidden generation-only fields exist to support realistic synthetic data generation, not to define the teacher-facing domain.
+- `risk_level` is weekly and belongs to the digital twin layer.
+- `final_grade` and `passed` are end-of-course outcomes and belong to the outcome layer.
+- If future versions rename or reinterpret any field here, the schema contract and changelog must be updated first.
