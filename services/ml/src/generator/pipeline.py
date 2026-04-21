@@ -15,6 +15,7 @@ from src.generator.snapshots import build_student_twin_snapshots
 from src.generator.students import StudentProfile, compute_effective_state, generate_student_profiles
 from src.generator.submissions import generate_submission_records
 from src.validation.quality import ValidationSuite
+from src.validation.realism import RealismAudit, write_reports
 
 
 RAW_TABLES = [
@@ -36,6 +37,7 @@ class PipelineSummary:
     seed: int
     raw_output_dir: Path
     processed_output_dir: Path
+    realism_report_dir: Path
     row_counts: dict[str, int]
     risk_distribution: dict[str, int]
     withdrawal_count: int
@@ -110,6 +112,7 @@ def _generate_weekly_raw_data(
                 profile,
                 week_number=week_number,
                 total_weeks=config.num_weeks,
+                trajectory_tuning=config.trajectory_tuning,
                 rng=rng,
             )
             weekly_attendance_records, attendance_rate = generate_attendance_records(
@@ -206,12 +209,17 @@ def run_generation_pipeline(
     validation_suite = ValidationSuite(config.contract_path, config)
     validation_suite.assert_valid(datasets)
     _write_outputs(datasets, config=config, validation_suite=validation_suite, skip_parquet=skip_parquet)
+    realism_report_dir = write_reports(
+        RealismAudit().run(datasets),
+        config.artifacts_output_dir / "reports",
+    )
 
     summary = PipelineSummary(
         config_path=config_path,
         seed=config.seed,
         raw_output_dir=config.raw_output_dir,
         processed_output_dir=config.processed_output_dir,
+        realism_report_dir=realism_report_dir,
         row_counts={name: len(frame) for name, frame in datasets.items()},
         risk_distribution={
             risk_level: int(

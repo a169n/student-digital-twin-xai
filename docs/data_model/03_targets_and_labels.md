@@ -1,19 +1,77 @@
 # Targets and Labels
 
-This document defines the v1.1 meaning of the project’s core targets and related outcome fields.
+This document defines the v1.2 meaning of the project’s core outcomes and teacher-facing labels.
 
 ## Target Hierarchy
 
-- Primary target: `risk_level`
-- Secondary target: `final_grade`
-- Derived metric: `passed`
-- Internal numeric score: `risk_score`
+### ML Experiment Targets
 
-## `risk_level`
+- Primary regression target: `final_grade`
+- Primary classification target: `passed`
 
-`risk_level` is the primary target for the research prototype.
+### Teacher-Facing Heuristic Labels
 
-In v1, it is defined as a weekly teacher-facing categorical label attached to `student_twin_snapshots`. It summarizes the current level of academic concern for a student at the end of a given week.
+- Weekly heuristic label: `risk_level`
+- Internal heuristic score: `risk_score`
+
+## Why This Changed in v1.2
+
+The methodological correction in `schema_v1.2` separates experimental outcomes from teacher-facing heuristic labels.
+
+`risk_level` is still important for the digital twin and for teacher-oriented analytics, but it is not suitable as ML ground truth because it is already derived from the same weekly feature space used to describe the twin. Training on it would mostly teach a model to reproduce the existing heuristic rather than learn a defensible external outcome.
+
+For baseline ML experiments:
+
+- use `final_results.final_grade` for regression
+- use `final_results.passed` for classification
+
+### `final_grade`
+
+`final_grade` is the primary supervised-learning outcome for regression experiments.
+
+It represents the realized end-of-course numeric result stored in `final_results`. In v1.2 it is assumed to use a `0..100` scale unless a later contract explicitly changes that interpretation.
+
+### Modeling note
+
+- `final_grade` is only observed after course completion.
+- It must not be used as an input feature when constructing weekly snapshots.
+- Downstream ML pipelines may join it onto weekly snapshots only after the snapshot table has been built in a temporally clean way.
+
+### `passed`
+
+`passed` is the primary supervised-learning outcome for classification experiments.
+
+It is derived from `final_grade` and the pass policy stored in `courses.grading_policy_pass_mark`.
+
+### Current rule
+
+- `passed = true` when `final_grade >= grading_policy_pass_mark`
+- otherwise `passed = false`
+
+If `final_grade` is missing because of withdrawal or incompletion, that handling must stay explicit in generator logic and later experiment code.
+
+### `risk_score`
+
+`risk_score` is the internal numeric heuristic used to support teacher interpretation and derive `risk_level`.
+
+In v1.2:
+
+- it lives on `student_twin_snapshots`
+- it is normalized to `0.0..1.0`
+- higher values indicate higher current academic concern
+- it is recalibrated to produce a more useful distribution for monitoring and realism checks
+
+### v1.2 threshold policy
+
+- `low`: `risk_score < 0.30`
+- `medium`: `0.30 <= risk_score < 0.55`
+- `high`: `risk_score >= 0.55`
+
+These thresholds are still heuristic and dataset-specific. They are not institutional policy and may evolve again in later versions.
+
+### `risk_level`
+
+`risk_level` is the weekly teacher-facing categorical concern label attached to `student_twin_snapshots`.
 
 Allowed values:
 
@@ -25,86 +83,40 @@ Allowed values:
 
 - `low`: the student currently appears comparatively stable.
 - `medium`: the student shows meaningful warning signs and should be monitored.
-- `high`: the student shows strong warning signs and is likely to require attention or intervention.
+- `high`: the student shows strong warning signs and likely warrants attention or intervention.
 
-### Important v1 note
+### Important methodological note
 
-`risk_level` is not meant to claim a finalized institutional policy. It is a research-oriented label that should be interpretable and useful for teacher reasoning. The exact thresholds and generation logic may evolve in later schema versions.
+`risk_level` is **not** the ML ground truth in v1.2.
 
-## `risk_score`
+It is a heuristic label derived from `risk_score`, which is itself derived from weekly twin features such as attendance, activity, performance, and submission discipline. Because of that:
 
-`risk_score` is the internal numeric value that supports `risk_level`.
+- it is valid for teacher-facing twin monitoring
+- it is valid for realism audits and descriptive analytics
+- it is **not** the primary supervised target for baseline dissertation experiments
 
-In v1:
+### `predicted_final_grade`
 
-- it lives on `student_twin_snapshots`,
-- it is expected to be normalized to the range `0.0..1.0`,
-- higher values indicate higher academic concern,
-- it is mapped to `risk_level` through provisional threshold rules.
+`predicted_final_grade` is a snapshot-level heuristic estimate, not the realized regression target.
 
-### Provisional v1 threshold policy
+It exists to support teacher interpretation of the evolving twin state and should be derived only from information available by the snapshot week.
 
-The v1 documentation uses an example mapping rather than a fixed institutional rule:
-
-- `low`: `risk_score < 0.40`
-- `medium`: `0.40 <= risk_score < 0.70`
-- `high`: `risk_score >= 0.70`
-
-This mapping is intentionally provisional. The literature-backed recommendation is to calibrate thresholds after inspecting the synthetic data distribution and early validation results, rather than treating one threshold set as universally correct.
-
-### Calibration note
-
-For the first dataset release, the safest interpretation is:
-
-- `risk_score` is the stable internal signal,
-- `risk_level` is the teacher-facing categorization,
-- the exact threshold cut points are dataset-specific and may be revised without changing the conceptual role of the target.
-
-## `final_grade`
-
-`final_grade` is the secondary target.
-
-It represents the realized end-of-course numeric result stored in `final_results`. In v1 it is assumed to use a `0..100` scale unless a later contract explicitly changes that interpretation.
-
-### Modeling note
-
-`final_grade` is an outcome observed at course completion. It should not be used as a feature when constructing weekly student twin snapshots.
-
-Downstream ML pipelines may join `final_results.final_grade` onto weekly snapshots for supervised learning, but the feature-generation side must remain temporally clean.
-
-## `predicted_final_grade`
-
-`predicted_final_grade` is a snapshot-level heuristic estimate, not the formal secondary target.
-
-In v1.1 it lives on `student_twin_snapshots` and exists to support teacher interpretation of the evolving digital twin. It should be derived only from information available up to the snapshot week and must not be confused with the realized `final_results.final_grade`.
-
-## `passed`
-
-`passed` is a derived end-of-course metric, not the main research target.
-
-It should be derived from `final_grade` and the course pass policy, represented in v1 by `courses.grading_policy_pass_mark`.
-
-### Provisional v1 rule
-
-- `passed = true` when `final_grade >= grading_policy_pass_mark`
-- otherwise `passed = false`
-
-If `final_grade` is missing because of withdrawal or incompletion, the exact handling should be explicit in generator logic and must not be silently assumed.
+It must not be confused with `final_results.final_grade`.
 
 ## Temporal and Leakage Rules
 
-The following rules are part of the v1 label design:
+The following rules remain non-negotiable:
 
 1. Weekly twin features must only use information available up to that week.
-2. End-of-course outcomes such as `final_grade` and `passed` belong to the outcome layer and should be joined later for training or evaluation.
-3. `risk_level` is a weekly concern label, not a retrospective final outcome label.
-4. Any later change to threshold logic, label meaning, or pass policy requires a schema and changelog update.
+2. End-of-course outcomes such as `final_grade` and `passed` belong to the outcome layer and are joined later for training or evaluation.
+3. `risk_level` is a weekly heuristic concern label, not an external ground-truth outcome.
+4. Any later change to threshold logic, target meaning, or pass policy requires a schema and changelog update.
 
 ## What Remains Provisional
 
 - The exact mathematical formula for `risk_score`
 - The final operational definition of the risk horizon
-- The final calibrated threshold cut points after empirical validation
-- How withdrawals and incompletes should influence weekly risk labeling
+- The final calibrated threshold cut points after empirical realism checks
+- How withdrawals and incompletes should influence weekly heuristic labeling
 
-TODO(domain): clarify the final risk-threshold strategy after the first synthetic dataset and baseline evaluation are available.
+TODO(domain): finalize the exact experimental evaluation strategy after baseline feature validation and first ML scaffolding are in place.

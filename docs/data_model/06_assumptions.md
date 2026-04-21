@@ -1,6 +1,6 @@
 # Assumptions
 
-This document records the main working assumptions behind `schema_v1.1`. These assumptions are deliberate placeholders for a research prototype, not claims of finalized institutional policy.
+This document records the main working assumptions behind `schema_v1.2`. These assumptions are deliberate placeholders for a research prototype, not claims of finalized institutional policy.
 
 ## Structural Assumptions
 
@@ -34,11 +34,11 @@ This document records the main working assumptions behind `schema_v1.1`. These a
 
 ## Target Assumptions
 
-- `risk_level` is the primary weekly teacher-facing target.
+- `risk_level` is the primary weekly teacher-facing heuristic label.
 - `risk_score` is the internal numeric precursor to `risk_level`.
-- `final_grade` is the secondary end-of-course target.
-- `passed` is derived from `final_grade` and the course pass policy.
-- The v1.1 risk threshold mapping is provisional and should be calibrated after the first synthetic distributions are inspected.
+- `final_grade` is the primary end-of-course regression target for experiments.
+- `passed` is derived from `final_grade` and the course pass policy and acts as the primary classification target for experiments.
+- The v1.2 risk threshold mapping is provisional and should continue to be checked through realism audits rather than treated as institutional policy.
 
 ## Product Scope Assumptions
 

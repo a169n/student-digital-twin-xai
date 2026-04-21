@@ -1,6 +1,6 @@
 # Feature Definitions
 
-This document describes the major v1.1 features used to represent the student digital twin. The emphasis is on clarity and interpretability, not on claiming that every formula is final.
+This document describes the major v1.2 features used to represent the student digital twin. The emphasis is on clarity and interpretability, not on claiming that every formula is final.
 
 ## Feature Design Principles
 
@@ -31,11 +31,13 @@ All features below are defined for `student_twin_snapshots` with the grain:
 | --- | --- | --- | --- |
 | `avg_assignment_score_to_date` | Average performance on assignment-type tasks so far | Mean normalized score for `assignment_type = assignment` items completed to date | Excludes future assignments |
 | `avg_quiz_score_to_date` | Average quiz performance so far | Mean normalized score for `assignment_type = quiz` items completed to date | Nullable early in the course if no quiz exists yet |
+| `has_assignment_score_to_date` | Explicit indicator that assignment scores exist by the snapshot week | `true` when at least one assignment score is available to aggregate | Added in v1.2 to make early missingness explicit |
+| `has_quiz_score_to_date` | Explicit indicator that quiz scores exist by the snapshot week | `true` when at least one quiz score is available to aggregate | Added in v1.2 to distinguish “not yet observed” from error |
 | `score_trend_3w` | Recent direction of academic performance | Rolling short-horizon change or slope in recent score history | Negative values indicate decline |
 
 ### Mastery progression
 
-This family is now included in `schema_v1.1` as a controlled extension of the weekly twin state.
+This family is now included in `schema_v1.2` as part of the weekly twin state.
 
 | Feature | Conceptual meaning | Provisional definition direction | Notes |
 | --- | --- | --- | --- |
@@ -65,7 +67,7 @@ This family should remain restrained in v1. The goal is to support interpretatio
 
 | Feature | Conceptual meaning | Provisional definition direction | Notes |
 | --- | --- | --- | --- |
-| `topic_difficulty` | Relative difficulty of the current week/topic | Course-authored tag or normalized difficulty score | Added in v1.1 as limited non-sensitive context metadata |
+| `topic_difficulty` | Relative difficulty of the current week/topic | Course-authored tag or normalized difficulty score | Included as limited non-sensitive context metadata |
 | `due_load` | Assessment burden in the current week | Count or weighted sum of due items in the week | Can help interpret temporary stress or workload spikes |
 
 ## Composite Indices
@@ -83,8 +85,19 @@ Composite indices are allowed in v1 because they can support teacher interpretat
 | Feature | Intended interpretation | Provisional v1 construction idea | Notes |
 | --- | --- | --- | --- |
 | `risk_score` | Continuous internal risk measure | Monotonic combination of low performance, low engagement, poor attendance, and weak discipline | Must remain explainable and should stay within `0.0..1.0` |
-| `risk_level` | Teacher-facing categorical concern label | Thresholded mapping from `risk_score` | Current working levels are `low`, `medium`, `high` |
+| `risk_level` | Teacher-facing categorical concern label | Thresholded mapping from `risk_score` | Not ML ground truth in v1.2; current heuristic thresholds are `0.30` and `0.55` |
 | `predicted_final_grade` | Snapshot-level end-of-course estimate | Bounded estimate from current performance, mastery, discipline, and engagement | Useful for teacher interpretation, but not the realized target |
+
+## Missing-Data Policy
+
+Early in the course, score-based aggregates may legitimately be null because the relevant assessment type has not yet produced any graded observations.
+
+In v1.2 this is handled explicitly:
+
+- `avg_assignment_score_to_date = null` with `has_assignment_score_to_date = false` means no assignment scores exist yet
+- `avg_quiz_score_to_date = null` with `has_quiz_score_to_date = false` means no quiz scores exist yet
+
+This is different from a data-quality problem. Downstream analysis and ML scaffolding should use the indicator fields to distinguish structural early-course missingness from true errors.
 
 ## Example V1 Assumptions
 

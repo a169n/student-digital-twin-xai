@@ -1,0 +1,1241 @@
+{
+  "left_label": "v1_2_baseline",
+  "right_label": "v1_3_refined",
+  "left_root": "C:\\Users\\a1byn\\Desktop\\dev\\aitu\\student-digital-twin-xai\\tmp_dataset_v1_2_baseline",
+  "right_root": "C:\\Users\\a1byn\\Desktop\\dev\\aitu\\student-digital-twin-xai\\tmp_dataset_v1_3_refined",
+  "left_metrics": {
+    "row_counts": {
+      "students": 120,
+      "courses": 1,
+      "course_topics": 10,
+      "assignments": 20,
+      "attendance": 2400,
+      "submissions": 2400,
+      "weekly_activity": 1200,
+      "final_results": 120,
+      "student_twin_snapshots": 1200
+    },
+    "risk_distribution": {
+      "counts": {
+        "low": 668,
+        "medium": 415,
+        "high": 117
+      },
+      "shares": {
+        "low": 0.5567,
+        "medium": 0.3458,
+        "high": 0.0975
+      },
+      "target_bands": {
+        "high": [
+          0.08,
+          0.15
+        ],
+        "medium": [
+          0.2,
+          0.35
+        ]
+      },
+      "high_within_target": true,
+      "medium_within_target": true
+    },
+    "final_grade_distribution": {
+      "count": 114,
+      "mean": 59.4668,
+      "std": 22.6013,
+      "min": 19.94,
+      "q25": 29.455,
+      "median": 63.735,
+      "q75": 72.3425,
+      "max": 94.07,
+      "within_sanity_bounds": true
+    },
+    "passed_rate": {
+      "completed_count": 114,
+      "pass_rate": 0.7368,
+      "target_range": [
+        0.6,
+        0.9
+      ],
+      "within_target": true
+    },
+    "attendance_distribution": {
+      "count": 120,
+      "mean": 0.565,
+      "std": 0.4034,
+      "min": 0.0,
+      "q25": 0.0,
+      "median": 0.5,
+      "q75": 1.0,
+      "max": 1.0,
+      "week_number": 10
+    },
+    "activity_distribution": {
+      "week_number": 10,
+      "activity_score": {
+        "count": 120,
+        "mean": 44.6507,
+        "std": 24.6756,
+        "min": 3.45,
+        "q25": 17.5875,
+        "median": 46.955,
+        "q75": 65.2525,
+        "max": 83.85
+      },
+      "time_on_platform_minutes": {
+        "count": 120,
+        "mean": 129.3686,
+        "std": 76.7071,
+        "min": 5.0,
+        "q25": 53.81,
+        "median": 138.38,
+        "q75": 193.8575,
+        "max": 270.47
+      }
+    },
+    "submission_discipline": {
+      "required_count": 2400,
+      "late_count": 639,
+      "missed_count": 576,
+      "late_rate": 0.2662,
+      "missed_rate": 0.24,
+      "attempt_count": {
+        "count": 1792,
+        "mean": 1.2907,
+        "std": 0.502,
+        "min": 1.0,
+        "q25": 1.0,
+        "median": 1.0,
+        "q75": 2.0,
+        "max": 3.0
+      }
+    },
+    "correlations": {
+      "attendance_grade_r": 0.9495,
+      "missed_grade_r": -0.7802,
+      "activity_performance_r": 0.9905,
+      "checks": {
+        "attendance_grade_gt_0_3": true,
+        "missed_grade_lt_minus_0_2": true,
+        "activity_performance_positive": true
+      }
+    },
+    "risk_by_trajectory": {
+      "final_week": 10,
+      "mean_risk_score": {
+        "consistently_at_risk": 0.5375,
+        "declining": 0.2493,
+        "improving": 0.2775,
+        "stable_high": 0.0898
+      },
+      "ordering_expected": [
+        "consistently_at_risk",
+        "declining",
+        "improving",
+        "stable_high"
+      ],
+      "ordering_valid": false
+    },
+    "outcome_by_trajectory": {
+      "mean_final_grade": {
+        "consistently_at_risk": 25.6883,
+        "declining": 67.4133,
+        "improving": 61.2917,
+        "stable_high": 88.3484
+      },
+      "pass_rate": {
+        "consistently_at_risk": 0.0,
+        "declining": 1.0,
+        "improving": 1.0,
+        "stable_high": 1.0
+      },
+      "grade_ordering_expected": [
+        "stable_high",
+        "improving",
+        "declining",
+        "consistently_at_risk"
+      ],
+      "pass_ordering_expected": [
+        "stable_high",
+        "improving",
+        "declining",
+        "consistently_at_risk"
+      ],
+      "grade_ordering_valid": false,
+      "pass_ordering_valid": false
+    },
+    "risk_distribution_by_week": {
+      "1": {
+        "counts": {
+          "low": 61,
+          "medium": 45,
+          "high": 14
+        },
+        "shares": {
+          "low": 0.5083,
+          "medium": 0.375,
+          "high": 0.1167
+        }
+      },
+      "2": {
+        "counts": {
+          "low": 71,
+          "medium": 38,
+          "high": 11
+        },
+        "shares": {
+          "low": 0.5917,
+          "medium": 0.3167,
+          "high": 0.0917
+        }
+      },
+      "3": {
+        "counts": {
+          "low": 65,
+          "medium": 39,
+          "high": 16
+        },
+        "shares": {
+          "low": 0.5417,
+          "medium": 0.325,
+          "high": 0.1333
+        }
+      },
+      "4": {
+        "counts": {
+          "low": 64,
+          "medium": 43,
+          "high": 13
+        },
+        "shares": {
+          "low": 0.5333,
+          "medium": 0.3583,
+          "high": 0.1083
+        }
+      },
+      "5": {
+        "counts": {
+          "low": 66,
+          "medium": 44,
+          "high": 10
+        },
+        "shares": {
+          "low": 0.55,
+          "medium": 0.3667,
+          "high": 0.0833
+        }
+      },
+      "6": {
+        "counts": {
+          "low": 70,
+          "medium": 38,
+          "high": 12
+        },
+        "shares": {
+          "low": 0.5833,
+          "medium": 0.3167,
+          "high": 0.1
+        }
+      },
+      "7": {
+        "counts": {
+          "low": 69,
+          "medium": 43,
+          "high": 8
+        },
+        "shares": {
+          "low": 0.575,
+          "medium": 0.3583,
+          "high": 0.0667
+        }
+      },
+      "8": {
+        "counts": {
+          "low": 64,
+          "medium": 45,
+          "high": 11
+        },
+        "shares": {
+          "low": 0.5333,
+          "medium": 0.375,
+          "high": 0.0917
+        }
+      },
+      "9": {
+        "counts": {
+          "low": 68,
+          "medium": 41,
+          "high": 11
+        },
+        "shares": {
+          "low": 0.5667,
+          "medium": 0.3417,
+          "high": 0.0917
+        }
+      },
+      "10": {
+        "counts": {
+          "low": 70,
+          "medium": 39,
+          "high": 11
+        },
+        "shares": {
+          "low": 0.5833,
+          "medium": 0.325,
+          "high": 0.0917
+        }
+      }
+    },
+    "risk_score_by_trajectory_week": {
+      "consistently_at_risk": {
+        "1": 0.5135,
+        "2": 0.5208,
+        "3": 0.5372,
+        "4": 0.5341,
+        "5": 0.5264,
+        "6": 0.5253,
+        "7": 0.5276,
+        "8": 0.5342,
+        "9": 0.5347,
+        "10": 0.5375
+      },
+      "declining": {
+        "1": 0.1789,
+        "2": 0.171,
+        "3": 0.1857,
+        "4": 0.1981,
+        "5": 0.1981,
+        "6": 0.2067,
+        "7": 0.2228,
+        "8": 0.2351,
+        "9": 0.2399,
+        "10": 0.2493
+      },
+      "improving": {
+        "1": 0.3267,
+        "2": 0.3114,
+        "3": 0.3193,
+        "4": 0.3241,
+        "5": 0.3139,
+        "6": 0.3005,
+        "7": 0.2947,
+        "8": 0.2968,
+        "9": 0.29,
+        "10": 0.2775
+      },
+      "stable_high": {
+        "1": 0.07,
+        "2": 0.0765,
+        "3": 0.08,
+        "4": 0.0783,
+        "5": 0.0738,
+        "6": 0.0762,
+        "7": 0.0825,
+        "8": 0.0866,
+        "9": 0.0938,
+        "10": 0.0898
+      }
+    },
+    "predicted_final_grade_by_trajectory_week": {
+      "consistently_at_risk": {
+        "1": 29.0556,
+        "2": 28.3803,
+        "3": 26.4478,
+        "4": 26.1147,
+        "5": 26.6331,
+        "6": 26.6656,
+        "7": 26.3689,
+        "8": 25.9042,
+        "9": 25.7906,
+        "10": 25.7236
+      },
+      "declining": {
+        "1": 72.4137,
+        "2": 73.992,
+        "3": 73.5007,
+        "4": 71.7497,
+        "5": 71.0503,
+        "6": 69.72,
+        "7": 68.254,
+        "8": 66.645,
+        "9": 65.218,
+        "10": 63.914
+      },
+      "improving": {
+        "1": 53.3434,
+        "2": 55.4028,
+        "3": 54.7724,
+        "4": 54.2759,
+        "5": 54.9569,
+        "6": 56.0003,
+        "7": 56.7014,
+        "8": 57.219,
+        "9": 57.9128,
+        "10": 58.8597
+      },
+      "stable_high": {
+        "1": 85.8424,
+        "2": 85.678,
+        "3": 85.294,
+        "4": 85.226,
+        "5": 85.346,
+        "6": 84.7836,
+        "7": 84.5312,
+        "8": 84.07,
+        "9": 83.6424,
+        "10": 83.3924
+      }
+    },
+    "attendance_by_week_trajectory": {
+      "consistently_at_risk": {
+        "1": 0.2681,
+        "2": 0.3389,
+        "3": 0.2444,
+        "4": 0.1812,
+        "5": 0.2326,
+        "6": 0.2562,
+        "7": 0.1993,
+        "8": 0.2326,
+        "9": 0.1812,
+        "10": 0.1736
+      },
+      "declining": {
+        "1": 0.7867,
+        "2": 0.7783,
+        "3": 0.7567,
+        "4": 0.7092,
+        "5": 0.7733,
+        "6": 0.7542,
+        "7": 0.5608,
+        "8": 0.4683,
+        "9": 0.4867,
+        "10": 0.5458
+      },
+      "improving": {
+        "1": 0.5629,
+        "2": 0.6517,
+        "3": 0.6069,
+        "4": 0.531,
+        "5": 0.5853,
+        "6": 0.7009,
+        "7": 0.7034,
+        "8": 0.6052,
+        "9": 0.6026,
+        "10": 0.7552
+      },
+      "stable_high": {
+        "1": 0.871,
+        "2": 0.951,
+        "3": 0.94,
+        "4": 0.854,
+        "5": 0.985,
+        "6": 0.994,
+        "7": 0.902,
+        "8": 0.891,
+        "9": 0.762,
+        "10": 0.931
+      }
+    },
+    "activity_by_week_trajectory": {
+      "consistently_at_risk": {
+        "1": 15.0583,
+        "2": 13.9339,
+        "3": 13.7367,
+        "4": 14.5764,
+        "5": 14.6003,
+        "6": 14.5878,
+        "7": 14.4964,
+        "8": 13.7533,
+        "9": 13.0669,
+        "10": 12.7119
+      },
+      "declining": {
+        "1": 62.4783,
+        "2": 61.7907,
+        "3": 61.4313,
+        "4": 57.678,
+        "5": 57.5667,
+        "6": 53.681,
+        "7": 49.0513,
+        "8": 44.9847,
+        "9": 43.37,
+        "10": 41.4643
+      },
+      "improving": {
+        "1": 42.0007,
+        "2": 45.3417,
+        "3": 44.7855,
+        "4": 42.4662,
+        "5": 47.0559,
+        "6": 50.5497,
+        "7": 53.0621,
+        "8": 54.8545,
+        "9": 57.5414,
+        "10": 61.0662
+      },
+      "stable_high": {
+        "1": 75.6432,
+        "2": 76.4524,
+        "3": 76.2204,
+        "4": 73.8224,
+        "5": 76.8296,
+        "6": 75.5728,
+        "7": 76.1032,
+        "8": 74.5856,
+        "9": 72.8164,
+        "10": 75.424
+      }
+    },
+    "missingness_by_week": {
+      "1": {
+        "assignment_score_missing_share": 0.2333,
+        "quiz_score_missing_share": 0.2583,
+        "has_assignment_score_false_share": 0.2333,
+        "has_quiz_score_false_share": 0.2583
+      },
+      "2": {
+        "assignment_score_missing_share": 0.0667,
+        "quiz_score_missing_share": 0.1083,
+        "has_assignment_score_false_share": 0.0667,
+        "has_quiz_score_false_share": 0.1083
+      },
+      "3": {
+        "assignment_score_missing_share": 0.0417,
+        "quiz_score_missing_share": 0.05,
+        "has_assignment_score_false_share": 0.0417,
+        "has_quiz_score_false_share": 0.05
+      },
+      "4": {
+        "assignment_score_missing_share": 0.0,
+        "quiz_score_missing_share": 0.0167,
+        "has_assignment_score_false_share": 0.0,
+        "has_quiz_score_false_share": 0.0167
+      },
+      "5": {
+        "assignment_score_missing_share": 0.0,
+        "quiz_score_missing_share": 0.0,
+        "has_assignment_score_false_share": 0.0,
+        "has_quiz_score_false_share": 0.0
+      },
+      "6": {
+        "assignment_score_missing_share": 0.0,
+        "quiz_score_missing_share": 0.0,
+        "has_assignment_score_false_share": 0.0,
+        "has_quiz_score_false_share": 0.0
+      },
+      "7": {
+        "assignment_score_missing_share": 0.0,
+        "quiz_score_missing_share": 0.0,
+        "has_assignment_score_false_share": 0.0,
+        "has_quiz_score_false_share": 0.0
+      },
+      "8": {
+        "assignment_score_missing_share": 0.0,
+        "quiz_score_missing_share": 0.0,
+        "has_assignment_score_false_share": 0.0,
+        "has_quiz_score_false_share": 0.0
+      },
+      "9": {
+        "assignment_score_missing_share": 0.0,
+        "quiz_score_missing_share": 0.0,
+        "has_assignment_score_false_share": 0.0,
+        "has_quiz_score_false_share": 0.0
+      },
+      "10": {
+        "assignment_score_missing_share": 0.0,
+        "quiz_score_missing_share": 0.0,
+        "has_assignment_score_false_share": 0.0,
+        "has_quiz_score_false_share": 0.0
+      }
+    },
+    "early_warning": {
+      "weeks_considered": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "high_risk_share_before_week_5": 0.1125,
+      "weekly_high_risk_share_before_week_5": {
+        "1": 0.1167,
+        "2": 0.0917,
+        "3": 0.1333,
+        "4": 0.1083
+      },
+      "pre_week_5_high_risk_nonzero": true,
+      "declining_risk_delta_week1_to_week4": 0.0192,
+      "declining_risk_delta_week1_to_week10": 0.0704,
+      "declining_activity_delta_week1_to_week4": -4.8003,
+      "improving_risk_delta_week6_to_week10": -0.023,
+      "declining_degrades_early_enough": false,
+      "improving_recovers_in_late_weeks": true
+    },
+    "warnings": [
+      "Final-week risk ordering is weak or inverted; expected consistently_at_risk > declining > improving > stable_high.",
+      "Final-grade ordering is weak or inverted; expected stable_high > improving > declining > consistently_at_risk.",
+      "Pass-rate ordering is weak or inverted; expected stable_high >= improving > declining > consistently_at_risk.",
+      "Declining trajectories do not worsen early enough to support early-warning claims."
+    ]
+  },
+  "right_metrics": {
+    "row_counts": {
+      "students": 120,
+      "courses": 1,
+      "course_topics": 10,
+      "assignments": 20,
+      "attendance": 2400,
+      "submissions": 2400,
+      "weekly_activity": 1200,
+      "final_results": 120,
+      "student_twin_snapshots": 1200
+    },
+    "risk_distribution": {
+      "counts": {
+        "low": 663,
+        "medium": 403,
+        "high": 134
+      },
+      "shares": {
+        "low": 0.5525,
+        "medium": 0.3358,
+        "high": 0.1117
+      },
+      "target_bands": {
+        "high": [
+          0.08,
+          0.15
+        ],
+        "medium": [
+          0.2,
+          0.35
+        ]
+      },
+      "high_within_target": true,
+      "medium_within_target": true
+    },
+    "final_grade_distribution": {
+      "count": 114,
+      "mean": 58.8186,
+      "std": 22.8556,
+      "min": 21.04,
+      "q25": 29.845,
+      "median": 62.905,
+      "q75": 73.5575,
+      "max": 93.27,
+      "within_sanity_bounds": true
+    },
+    "passed_rate": {
+      "completed_count": 114,
+      "pass_rate": 0.7281,
+      "target_range": [
+        0.6,
+        0.9
+      ],
+      "within_target": true
+    },
+    "attendance_distribution": {
+      "count": 120,
+      "mean": 0.5387,
+      "std": 0.4001,
+      "min": 0.0,
+      "q25": 0.0,
+      "median": 0.5,
+      "q75": 1.0,
+      "max": 1.0,
+      "week_number": 10
+    },
+    "activity_distribution": {
+      "week_number": 10,
+      "activity_score": {
+        "count": 120,
+        "mean": 44.0038,
+        "std": 27.2894,
+        "min": 1.65,
+        "q25": 19.43,
+        "median": 38.705,
+        "q75": 71.8675,
+        "max": 84.55
+      },
+      "time_on_platform_minutes": {
+        "count": 120,
+        "mean": 125.6297,
+        "std": 82.798,
+        "min": 0.05,
+        "q25": 45.7125,
+        "median": 108.525,
+        "q75": 210.0525,
+        "max": 268.08
+      }
+    },
+    "submission_discipline": {
+      "required_count": 2400,
+      "late_count": 664,
+      "missed_count": 568,
+      "late_rate": 0.2767,
+      "missed_rate": 0.2367,
+      "attempt_count": {
+        "count": 1802,
+        "mean": 1.3085,
+        "std": 0.5217,
+        "min": 1.0,
+        "q25": 1.0,
+        "median": 1.0,
+        "q75": 2.0,
+        "max": 3.0
+      }
+    },
+    "correlations": {
+      "attendance_grade_r": 0.9534,
+      "missed_grade_r": -0.8298,
+      "activity_performance_r": 0.9897,
+      "checks": {
+        "attendance_grade_gt_0_3": true,
+        "missed_grade_lt_minus_0_2": true,
+        "activity_performance_positive": true
+      }
+    },
+    "risk_by_trajectory": {
+      "final_week": 10,
+      "mean_risk_score": {
+        "consistently_at_risk": 0.5414,
+        "declining": 0.3208,
+        "improving": 0.2257,
+        "stable_high": 0.0854
+      },
+      "ordering_expected": [
+        "consistently_at_risk",
+        "declining",
+        "improving",
+        "stable_high"
+      ],
+      "ordering_valid": true
+    },
+    "outcome_by_trajectory": {
+      "mean_final_grade": {
+        "consistently_at_risk": 25.6087,
+        "declining": 57.573,
+        "improving": 68.6769,
+        "stable_high": 88.7296
+      },
+      "pass_rate": {
+        "consistently_at_risk": 0.0,
+        "declining": 0.9667,
+        "improving": 1.0,
+        "stable_high": 1.0
+      },
+      "grade_ordering_expected": [
+        "stable_high",
+        "improving",
+        "declining",
+        "consistently_at_risk"
+      ],
+      "pass_ordering_expected": [
+        "stable_high",
+        "improving",
+        "declining",
+        "consistently_at_risk"
+      ],
+      "grade_ordering_valid": true,
+      "pass_ordering_valid": true
+    },
+    "risk_distribution_by_week": {
+      "1": {
+        "counts": {
+          "low": 66,
+          "medium": 42,
+          "high": 12
+        },
+        "shares": {
+          "low": 0.55,
+          "medium": 0.35,
+          "high": 0.1
+        }
+      },
+      "2": {
+        "counts": {
+          "low": 68,
+          "medium": 45,
+          "high": 7
+        },
+        "shares": {
+          "low": 0.5667,
+          "medium": 0.375,
+          "high": 0.0583
+        }
+      },
+      "3": {
+        "counts": {
+          "low": 62,
+          "medium": 45,
+          "high": 13
+        },
+        "shares": {
+          "low": 0.5167,
+          "medium": 0.375,
+          "high": 0.1083
+        }
+      },
+      "4": {
+        "counts": {
+          "low": 68,
+          "medium": 34,
+          "high": 18
+        },
+        "shares": {
+          "low": 0.5667,
+          "medium": 0.2833,
+          "high": 0.15
+        }
+      },
+      "5": {
+        "counts": {
+          "low": 70,
+          "medium": 34,
+          "high": 16
+        },
+        "shares": {
+          "low": 0.5833,
+          "medium": 0.2833,
+          "high": 0.1333
+        }
+      },
+      "6": {
+        "counts": {
+          "low": 67,
+          "medium": 39,
+          "high": 14
+        },
+        "shares": {
+          "low": 0.5583,
+          "medium": 0.325,
+          "high": 0.1167
+        }
+      },
+      "7": {
+        "counts": {
+          "low": 65,
+          "medium": 40,
+          "high": 15
+        },
+        "shares": {
+          "low": 0.5417,
+          "medium": 0.3333,
+          "high": 0.125
+        }
+      },
+      "8": {
+        "counts": {
+          "low": 67,
+          "medium": 39,
+          "high": 14
+        },
+        "shares": {
+          "low": 0.5583,
+          "medium": 0.325,
+          "high": 0.1167
+        }
+      },
+      "9": {
+        "counts": {
+          "low": 66,
+          "medium": 42,
+          "high": 12
+        },
+        "shares": {
+          "low": 0.55,
+          "medium": 0.35,
+          "high": 0.1
+        }
+      },
+      "10": {
+        "counts": {
+          "low": 64,
+          "medium": 43,
+          "high": 13
+        },
+        "shares": {
+          "low": 0.5333,
+          "medium": 0.3583,
+          "high": 0.1083
+        }
+      }
+    },
+    "risk_score_by_trajectory_week": {
+      "consistently_at_risk": {
+        "1": 0.5004,
+        "2": 0.5076,
+        "3": 0.5249,
+        "4": 0.533,
+        "5": 0.5343,
+        "6": 0.5354,
+        "7": 0.5387,
+        "8": 0.5418,
+        "9": 0.5404,
+        "10": 0.5414
+      },
+      "declining": {
+        "1": 0.1895,
+        "2": 0.209,
+        "3": 0.2438,
+        "4": 0.2457,
+        "5": 0.2462,
+        "6": 0.2638,
+        "7": 0.2905,
+        "8": 0.2941,
+        "9": 0.3079,
+        "10": 0.3208
+      },
+      "improving": {
+        "1": 0.2701,
+        "2": 0.2707,
+        "3": 0.2911,
+        "4": 0.2771,
+        "5": 0.2677,
+        "6": 0.2619,
+        "7": 0.2557,
+        "8": 0.2489,
+        "9": 0.2365,
+        "10": 0.2257
+      },
+      "stable_high": {
+        "1": 0.0671,
+        "2": 0.086,
+        "3": 0.0879,
+        "4": 0.0893,
+        "5": 0.0818,
+        "6": 0.0841,
+        "7": 0.0858,
+        "8": 0.0854,
+        "9": 0.0892,
+        "10": 0.0854
+      }
+    },
+    "predicted_final_grade_by_trajectory_week": {
+      "consistently_at_risk": {
+        "1": 31.6581,
+        "2": 30.3572,
+        "3": 28.4767,
+        "4": 27.2247,
+        "5": 27.1619,
+        "6": 26.6617,
+        "7": 26.415,
+        "8": 25.9061,
+        "9": 25.6719,
+        "10": 25.5228
+      },
+      "declining": {
+        "1": 70.7543,
+        "2": 69.548,
+        "3": 67.056,
+        "4": 65.2533,
+        "5": 64.2153,
+        "6": 62.1603,
+        "7": 60.045,
+        "8": 58.3403,
+        "9": 56.4603,
+        "10": 54.856
+      },
+      "improving": {
+        "1": 58.5555,
+        "2": 59.2724,
+        "3": 57.9414,
+        "4": 58.8845,
+        "5": 59.8617,
+        "6": 61.1269,
+        "7": 61.8697,
+        "8": 62.8583,
+        "9": 64.1893,
+        "10": 65.5179
+      },
+      "stable_high": {
+        "1": 85.6188,
+        "2": 85.088,
+        "3": 84.51,
+        "4": 84.3724,
+        "5": 84.8008,
+        "6": 84.4424,
+        "7": 84.2272,
+        "8": 84.1308,
+        "9": 83.8844,
+        "10": 83.7096
+      }
+    },
+    "attendance_by_week_trajectory": {
+      "consistently_at_risk": {
+        "1": 0.1812,
+        "2": 0.2306,
+        "3": 0.1771,
+        "4": 0.2049,
+        "5": 0.2486,
+        "6": 0.1535,
+        "7": 0.2819,
+        "8": 0.1792,
+        "9": 0.2778,
+        "10": 0.2049
+      },
+      "declining": {
+        "1": 0.775,
+        "2": 0.6658,
+        "3": 0.575,
+        "4": 0.67,
+        "5": 0.6992,
+        "6": 0.54,
+        "7": 0.4158,
+        "8": 0.52,
+        "9": 0.4083,
+        "10": 0.4342
+      },
+      "improving": {
+        "1": 0.6422,
+        "2": 0.6474,
+        "3": 0.5216,
+        "4": 0.5905,
+        "5": 0.6625,
+        "6": 0.7578,
+        "7": 0.6888,
+        "8": 0.7828,
+        "9": 0.8147,
+        "10": 0.7405
+      },
+      "stable_high": {
+        "1": 0.919,
+        "2": 0.911,
+        "3": 0.997,
+        "4": 0.888,
+        "5": 0.954,
+        "6": 0.951,
+        "7": 0.894,
+        "8": 0.891,
+        "9": 0.842,
+        "10": 0.911
+      }
+    },
+    "activity_by_week_trajectory": {
+      "consistently_at_risk": {
+        "1": 13.1031,
+        "2": 14.5208,
+        "3": 13.2383,
+        "4": 14.08,
+        "5": 14.2958,
+        "6": 13.0053,
+        "7": 15.0164,
+        "8": 13.4911,
+        "9": 15.6156,
+        "10": 13.3778
+      },
+      "declining": {
+        "1": 55.8353,
+        "2": 53.9697,
+        "3": 50.6937,
+        "4": 48.321,
+        "5": 46.552,
+        "6": 41.5,
+        "7": 36.712,
+        "8": 36.6457,
+        "9": 31.8713,
+        "10": 29.472
+      },
+      "improving": {
+        "1": 48.0638,
+        "2": 48.4841,
+        "3": 45.4562,
+        "4": 51.0331,
+        "5": 54.0155,
+        "6": 58.8638,
+        "7": 61.3783,
+        "8": 63.0917,
+        "9": 67.2262,
+        "10": 69.5831
+      },
+      "stable_high": {
+        "1": 75.9048,
+        "2": 75.6568,
+        "3": 76.9196,
+        "4": 74.0156,
+        "5": 75.508,
+        "6": 76.034,
+        "7": 76.4424,
+        "8": 76.6732,
+        "9": 74.0712,
+        "10": 75.8716
+      }
+    },
+    "missingness_by_week": {
+      "1": {
+        "assignment_score_missing_share": 0.2167,
+        "quiz_score_missing_share": 0.2083,
+        "has_assignment_score_false_share": 0.2167,
+        "has_quiz_score_false_share": 0.2083
+      },
+      "2": {
+        "assignment_score_missing_share": 0.0833,
+        "quiz_score_missing_share": 0.05,
+        "has_assignment_score_false_share": 0.0833,
+        "has_quiz_score_false_share": 0.05
+      },
+      "3": {
+        "assignment_score_missing_share": 0.0333,
+        "quiz_score_missing_share": 0.025,
+        "has_assignment_score_false_share": 0.0333,
+        "has_quiz_score_false_share": 0.025
+      },
+      "4": {
+        "assignment_score_missing_share": 0.0167,
+        "quiz_score_missing_share": 0.0,
+        "has_assignment_score_false_share": 0.0167,
+        "has_quiz_score_false_share": 0.0
+      },
+      "5": {
+        "assignment_score_missing_share": 0.0083,
+        "quiz_score_missing_share": 0.0,
+        "has_assignment_score_false_share": 0.0083,
+        "has_quiz_score_false_share": 0.0
+      },
+      "6": {
+        "assignment_score_missing_share": 0.0,
+        "quiz_score_missing_share": 0.0,
+        "has_assignment_score_false_share": 0.0,
+        "has_quiz_score_false_share": 0.0
+      },
+      "7": {
+        "assignment_score_missing_share": 0.0,
+        "quiz_score_missing_share": 0.0,
+        "has_assignment_score_false_share": 0.0,
+        "has_quiz_score_false_share": 0.0
+      },
+      "8": {
+        "assignment_score_missing_share": 0.0,
+        "quiz_score_missing_share": 0.0,
+        "has_assignment_score_false_share": 0.0,
+        "has_quiz_score_false_share": 0.0
+      },
+      "9": {
+        "assignment_score_missing_share": 0.0,
+        "quiz_score_missing_share": 0.0,
+        "has_assignment_score_false_share": 0.0,
+        "has_quiz_score_false_share": 0.0
+      },
+      "10": {
+        "assignment_score_missing_share": 0.0,
+        "quiz_score_missing_share": 0.0,
+        "has_assignment_score_false_share": 0.0,
+        "has_quiz_score_false_share": 0.0
+      }
+    },
+    "early_warning": {
+      "weeks_considered": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "high_risk_share_before_week_5": 0.1042,
+      "weekly_high_risk_share_before_week_5": {
+        "1": 0.1,
+        "2": 0.0583,
+        "3": 0.1083,
+        "4": 0.15
+      },
+      "pre_week_5_high_risk_nonzero": true,
+      "declining_risk_delta_week1_to_week4": 0.0562,
+      "declining_risk_delta_week1_to_week10": 0.1313,
+      "declining_activity_delta_week1_to_week4": -7.5143,
+      "improving_risk_delta_week6_to_week10": -0.0362,
+      "declining_degrades_early_enough": true,
+      "improving_recovers_in_late_weeks": true
+    },
+    "warnings": []
+  },
+  "key_metrics": [
+    {
+      "metric": "student_twin_snapshots_rows",
+      "left": 1200,
+      "right": 1200,
+      "delta": 0
+    },
+    {
+      "metric": "risk_high_share",
+      "left": 0.0975,
+      "right": 0.1117,
+      "delta": 0.0142
+    },
+    {
+      "metric": "risk_medium_share",
+      "left": 0.3458,
+      "right": 0.3358,
+      "delta": -0.01
+    },
+    {
+      "metric": "pass_rate",
+      "left": 0.7368,
+      "right": 0.7281,
+      "delta": -0.0087
+    },
+    {
+      "metric": "final_grade_mean",
+      "left": 59.4668,
+      "right": 58.8186,
+      "delta": -0.6482
+    },
+    {
+      "metric": "attendance_last_week_mean",
+      "left": 0.565,
+      "right": 0.5387,
+      "delta": -0.0263
+    },
+    {
+      "metric": "activity_last_week_mean",
+      "left": 44.6507,
+      "right": 44.0038,
+      "delta": -0.6469
+    },
+    {
+      "metric": "late_submission_rate",
+      "left": 0.2662,
+      "right": 0.2767,
+      "delta": 0.0105
+    },
+    {
+      "metric": "missed_submission_rate",
+      "left": 0.24,
+      "right": 0.2367,
+      "delta": -0.0033
+    },
+    {
+      "metric": "high_risk_share_before_week_5",
+      "left": 0.1125,
+      "right": 0.1042,
+      "delta": -0.0083
+    },
+    {
+      "metric": "declining_final_week_risk",
+      "left": 0.2493,
+      "right": 0.3208,
+      "delta": 0.0715
+    },
+    {
+      "metric": "improving_final_week_risk",
+      "left": 0.2775,
+      "right": 0.2257,
+      "delta": -0.0518
+    },
+    {
+      "metric": "trajectory_risk_ordering_valid",
+      "left": false,
+      "right": true,
+      "delta": null
+    },
+    {
+      "metric": "trajectory_grade_ordering_valid",
+      "left": false,
+      "right": true,
+      "delta": null
+    },
+    {
+      "metric": "trajectory_pass_ordering_valid",
+      "left": false,
+      "right": true,
+      "delta": null
+    }
+  ]
+}

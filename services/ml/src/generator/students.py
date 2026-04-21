@@ -27,7 +27,20 @@ TRAJECTORY_RANGES: dict[str, tuple[tuple[float, float], tuple[float, float], tup
     "stable_high": ((0.74, 0.95), (0.72, 0.95), (0.70, 0.93)),
     "improving": ((0.34, 0.58), (0.38, 0.68), (0.40, 0.70)),
     "declining": ((0.60, 0.83), (0.56, 0.81), (0.52, 0.78)),
-    "consistently_at_risk": ((0.14, 0.36), (0.12, 0.38), (0.14, 0.42)),
+    "consistently_at_risk": ((0.10, 0.30), (0.08, 0.32), (0.10, 0.36)),
+}
+
+TRAJECTORY_RANGES_BY_TUNING: dict[
+    str,
+    dict[str, tuple[tuple[float, float], tuple[float, float], tuple[float, float]]],
+] = {
+    "v1_2_baseline": TRAJECTORY_RANGES,
+    "v1_3_refined": {
+        "stable_high": ((0.74, 0.95), (0.72, 0.95), (0.70, 0.93)),
+        "improving": ((0.38, 0.62), (0.42, 0.72), (0.44, 0.74)),
+        "declining": ((0.56, 0.78), (0.50, 0.74), (0.46, 0.70)),
+        "consistently_at_risk": ((0.10, 0.30), (0.08, 0.32), (0.10, 0.36)),
+    },
 }
 
 
@@ -36,9 +49,10 @@ def _sample_parameter_range(rng: np.random.Generator, value_range: tuple[float, 
 
 
 def _sample_hidden_parameters(
-    rng: np.random.Generator, trajectory_type: str
+    rng: np.random.Generator, trajectory_type: str, *, trajectory_tuning: str
 ) -> tuple[float, float, float]:
-    baseline_range, motivation_range, discipline_range = TRAJECTORY_RANGES[trajectory_type]
+    trajectory_ranges = TRAJECTORY_RANGES_BY_TUNING[trajectory_tuning]
+    baseline_range, motivation_range, discipline_range = trajectory_ranges[trajectory_type]
     return (
         _sample_parameter_range(rng, baseline_range),
         _sample_parameter_range(rng, motivation_range),
@@ -60,7 +74,11 @@ def generate_student_profiles(
     provisional_profiles: list[StudentProfile] = []
     withdrawal_scores: list[float] = []
     for index, trajectory_type in enumerate(trajectory_choices, start=1):
-        baseline, motivation, discipline = _sample_hidden_parameters(rng, str(trajectory_type))
+        baseline, motivation, discipline = _sample_hidden_parameters(
+            rng,
+            str(trajectory_type),
+            trajectory_tuning=config.trajectory_tuning,
+        )
         student_id = f"student_{index:03d}"
         student_code = f"STU-{index:03d}"
         cohort_label = f"G{((index - 1) % config.num_groups) + 1}"
@@ -69,7 +87,13 @@ def generate_student_profiles(
             + 0.30 * (1 - motivation)
             + 0.24 * (1 - discipline)
             + (0.10 if trajectory_type == "consistently_at_risk" else 0.0)
-            + (0.04 if trajectory_type == "declining" else 0.0)
+            + (
+                0.06
+                if trajectory_type == "declining" and config.trajectory_tuning == "v1_3_refined"
+                else 0.04
+                if trajectory_type == "declining"
+                else 0.0
+            )
         )
         withdrawal_scores.append(risk_propensity + float(rng.uniform(0.0, 0.08)))
         provisional_profiles.append(
@@ -140,20 +164,33 @@ def compute_effective_state(
     *,
     week_number: int,
     total_weeks: int,
+    trajectory_tuning: str,
     rng: np.random.Generator,
 ) -> dict[str, float | bool]:
     progress = 0.0 if total_weeks <= 1 else (week_number - 1) / (total_weeks - 1)
 
-    if profile.trajectory_type == "stable_high":
-        deltas = (0.10 - 0.02 * progress, 0.10 - 0.01 * progress, 0.08 - 0.01 * progress)
-    elif profile.trajectory_type == "declining":
-        decline = max(0.0, (week_number - 4) / max(total_weeks - 4, 1))
-        deltas = (0.05 - 0.28 * decline, 0.03 - 0.22 * decline, 0.02 - 0.18 * decline)
-    elif profile.trajectory_type == "improving":
-        recovery = max(0.0, (week_number - 4) / max(total_weeks - 4, 1))
-        deltas = (-0.08 + 0.30 * recovery, -0.05 + 0.26 * recovery, -0.04 + 0.22 * recovery)
+    if trajectory_tuning == "v1_3_refined":
+        if profile.trajectory_type == "stable_high":
+            deltas = (0.10 - 0.01 * progress, 0.11 - 0.01 * progress, 0.09 - 0.01 * progress)
+        elif profile.trajectory_type == "declining":
+            decline = max(0.0, (week_number - 2) / max(total_weeks - 2, 1))
+            deltas = (0.02 - 0.42 * decline, -0.01 - 0.38 * decline, -0.02 - 0.34 * decline)
+        elif profile.trajectory_type == "improving":
+            recovery = max(0.0, (week_number - 3) / max(total_weeks - 3, 1))
+            deltas = (-0.04 + 0.36 * recovery, -0.02 + 0.32 * recovery, -0.01 + 0.28 * recovery)
+        else:
+            deltas = (-0.26 - 0.08 * progress, -0.24 - 0.07 * progress, -0.22 - 0.08 * progress)
     else:
-        deltas = (-0.22 - 0.06 * progress, -0.20 - 0.05 * progress, -0.18 - 0.06 * progress)
+        if profile.trajectory_type == "stable_high":
+            deltas = (0.10 - 0.02 * progress, 0.10 - 0.01 * progress, 0.08 - 0.01 * progress)
+        elif profile.trajectory_type == "declining":
+            decline = max(0.0, (week_number - 3) / max(total_weeks - 3, 1))
+            deltas = (0.05 - 0.34 * decline, 0.03 - 0.28 * decline, 0.02 - 0.24 * decline)
+        elif profile.trajectory_type == "improving":
+            recovery = max(0.0, (week_number - 4) / max(total_weeks - 4, 1))
+            deltas = (-0.08 + 0.30 * recovery, -0.05 + 0.26 * recovery, -0.04 + 0.22 * recovery)
+        else:
+            deltas = (-0.26 - 0.08 * progress, -0.24 - 0.07 * progress, -0.22 - 0.08 * progress)
 
     baseline = clamp(profile.baseline_level + deltas[0] + float(rng.normal(0.0, 0.025)), 0.02, 0.99)
     motivation = clamp(

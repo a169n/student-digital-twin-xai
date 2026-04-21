@@ -36,6 +36,7 @@ def _print_summary(generator: SyntheticDatasetGenerator, summary: PipelineSummar
     print(f"Seed: {summary.seed}")
     print(f"Raw output: {summary.raw_output_dir}")
     print(f"Processed output: {summary.processed_output_dir}")
+    print(f"Realism reports: {summary.realism_report_dir}")
     print("Row counts:")
     for table_name, row_count in summary.row_counts.items():
         print(f"  - {table_name}: {row_count}")

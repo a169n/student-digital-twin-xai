@@ -11,6 +11,7 @@ from pandas.testing import assert_frame_equal
 
 from src.generator.config import SERVICE_ROOT, GeneratorConfig, load_generator_config
 from src.generator.pipeline import run_generation_pipeline
+from src.generator.snapshots import RISK_THRESHOLD_HIGH, RISK_THRESHOLD_LOW
 from src.validation.quality import DatasetValidationError, ValidationSuite
 
 
@@ -71,6 +72,8 @@ def test_pipeline_smoke_writes_outputs() -> None:
 
         assert (config.processed_output_dir / "student_twin_snapshots.csv").exists()
         assert (config.processed_output_dir / "student_twin_snapshots.parquet").exists()
+        assert (config.artifacts_output_dir / "reports" / "realism_metrics.json").exists()
+        assert (config.artifacts_output_dir / "reports" / "realism_report.md").exists()
         assert result.summary.row_counts["student_twin_snapshots"] == config.num_students * config.num_weeks
 
 
@@ -190,8 +193,10 @@ def test_generator_relationship_sanity() -> None:
         improving_end = improving.loc[improving["week_number"] == final_week, "risk_score"].mean()
         assert improving_end < improving_start
 
-        assert (snapshots.loc[snapshots["risk_level"] == "low", "risk_score"] < 0.40).all()
+        assert (snapshots.loc[snapshots["risk_level"] == "low", "risk_score"] < RISK_THRESHOLD_LOW).all()
         assert (
-            snapshots.loc[snapshots["risk_level"] == "medium", "risk_score"].between(0.40, 0.70, inclusive="left")
+            snapshots.loc[snapshots["risk_level"] == "medium", "risk_score"].between(
+                RISK_THRESHOLD_LOW, RISK_THRESHOLD_HIGH, inclusive="left"
+            )
         ).all()
-        assert (snapshots.loc[snapshots["risk_level"] == "high", "risk_score"] >= 0.70).all()
+        assert (snapshots.loc[snapshots["risk_level"] == "high", "risk_score"] >= RISK_THRESHOLD_HIGH).all()

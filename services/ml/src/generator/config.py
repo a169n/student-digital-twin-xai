@@ -50,7 +50,8 @@ class OutputConfig(BaseModel):
 
 
 class GeneratorConfig(BaseModel):
-    schema_version: str = "1.1"
+    schema_version: str = "1.2"
+    trajectory_tuning: str = "v1_3_refined"
     num_students: int = 120
     num_weeks: int = 10
     num_groups: int = 3
@@ -64,10 +65,10 @@ class GeneratorConfig(BaseModel):
     outputs: OutputConfig = Field(default_factory=OutputConfig)
     trajectory_weights: dict[str, float] = Field(
         default_factory=lambda: {
-            "stable_high": 0.28,
-            "improving": 0.24,
+            "stable_high": 0.26,
+            "improving": 0.22,
             "declining": 0.22,
-            "consistently_at_risk": 0.26,
+            "consistently_at_risk": 0.30,
         }
     )
 
@@ -93,6 +94,8 @@ class GeneratorConfig(BaseModel):
             raise ValueError("trajectory_weights must not be empty")
         if any(weight <= 0 for weight in self.trajectory_weights.values()):
             raise ValueError("trajectory_weights must be positive")
+        if self.trajectory_tuning not in {"v1_2_baseline", "v1_3_refined"}:
+            raise ValueError("trajectory_tuning must be one of: v1_2_baseline, v1_3_refined")
         return self
 
     @property
@@ -109,7 +112,7 @@ class GeneratorConfig(BaseModel):
 
     @property
     def contract_path(self) -> Path:
-        return REPO_ROOT / "packages" / "contracts" / "schema_versions" / "schema_v1.1.yaml"
+        return REPO_ROOT / "packages" / "contracts" / "schema_versions" / "schema_v1.2.yaml"
 
 
 def _resolve_config_path(config_path: str | Path) -> Path:

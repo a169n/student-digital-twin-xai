@@ -1,5 +1,5 @@
 schema_version: "1.2"
-trajectory_tuning: "v1_3_refined"
+trajectory_tuning: "v1_2_baseline"
 num_students: 120
 num_weeks: 10
 num_groups: 3

@@ -101,17 +101,16 @@ A student-facing interface may be considered later, but it is **not the main sco
 
 ## Main Targets
 
-### Primary target
+### Teacher-facing heuristic label
 - `risk_level`
 
-### Secondary target
+### Primary ML target
 - `final_grade`
 
-### Derived metric
+### Primary ML classification metric
 - `passed`
 
-`passed` should not be treated as the main research target.  
-It is considered a simpler derived outcome based on thresholds.
+In `schema_v1.2`, `risk_level` remains important for the digital twin and teacher monitoring, but it is treated as a heuristic label rather than the main supervised-learning ground truth. For ML experiments, `final_grade` and `passed` are the main outcomes.
 
 ---
 
@@ -154,7 +153,7 @@ The schema is expected to be **versioned** and treated as a **data contract**, n
 
 ## Generate Dataset
 
-The current research baseline includes a working synthetic dataset generator aligned with `schema_v1.1`.
+The current research baseline includes a working synthetic dataset generator aligned with `schema_v1.2`.
 
 ### Windows Setup
 
@@ -206,8 +205,21 @@ This command:
 - generates raw LMS-like tables,
 - generates weekly `student_twin_snapshots`,
 - validates the outputs against the schema contract,
+- writes realism audit reports into `data/artifacts/reports/`,
 - writes CSV files into `data/raw/` and `data/processed/`,
 - writes snapshot Parquet output into `data/processed/`.
+
+For benchmarked realism runs, use the versioned configs in `services/ml/configs/`:
+
+- `generator_v1_2_baseline.yaml`
+- `generator_v1_3_refined.yaml`
+
+To compare two generated runs:
+
+```powershell
+cd services/ml
+python -m src.compare --left C:\path\to\dataset_v1_2 --right C:\path\to\dataset_v1_3
+```
 
 ### Run Tests
 
@@ -324,8 +336,8 @@ The experimental side of the project is expected to include:
 1. generation of a realistic synthetic educational dataset,
 2. construction of weekly student twin snapshots,
 3. training baseline models for:
-   - risk level prediction,
-   - optionally final grade prediction,
+   - final grade prediction,
+   - pass/fail classification,
 4. evaluation of prediction quality,
 5. generation of interpretable explanations,
 6. scenario analysis such as:

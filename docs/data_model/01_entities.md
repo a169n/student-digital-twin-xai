@@ -92,8 +92,8 @@ Each row is a time-aware student state snapshot derived from raw data available 
 
 - cumulative indicators,
 - short-horizon trends,
-- mastery-related proxies when enabled by a later minor schema revision,
-- limited course-internal context features when enabled by a later minor schema revision,
+- mastery-related proxies,
+- limited course-internal context features,
 - interpretable composite indices,
 - `risk_score`,
 - `risk_level`.
@@ -122,9 +122,9 @@ This layer is intentionally separate from weekly twin state so that downstream m
 
 ## Modeling Note
 
-`risk_level` belongs to the weekly twin state because it is a teacher-facing weekly concern label.
+`risk_level` belongs to the weekly twin state because it is a teacher-facing weekly concern label derived from the current heuristic state of the twin.
 
-`final_grade` and `passed` belong to the end-of-course outcome layer because they are realized results observed only after the course completes.
+`final_grade` and `passed` belong to the end-of-course outcome layer because they are realized results observed only after the course completes and are the primary supervised-learning outcomes for future baseline experiments.
 
 ## Research Alignment Note
 
@@ -134,9 +134,9 @@ The current v1 structure already matches the main research recommendation:
 - a weekly processed twin layer,
 - a separate outcome layer.
 
-After the literature review, two feature families look especially worthwhile to keep in view:
+After the methodological correction review, two feature families remain especially worthwhile to keep in view:
 
 - mastery progression proxies,
 - limited course-internal context such as topic difficulty and due-load.
 
-These do not require a structural redesign of the current v1 model. They can be introduced later as carefully versioned field additions or derived features once the first synthetic generator and validation pipeline are in place.
+The first of those is already partially represented in `schema_v1.2` through `current_topic_mastery`, `overall_mastery`, and `topic_difficulty`. Broader context such as `due_load` still remains a future candidate and should only be introduced through another versioned schema update.

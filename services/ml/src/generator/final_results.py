@@ -22,6 +22,8 @@ def generate_final_results(
     submissions_df: pd.DataFrame,
     config: GeneratorConfig,
 ) -> pd.DataFrame:
+    # End-of-course outcomes are the experimental targets for supervised ML.
+    # Keep them separate from weekly heuristic labels to avoid target conflation.
     assignment_context = assignments_df[["assignment_id", "assignment_type", "max_score", "is_required"]].copy()
     submission_context = submissions_df.merge(assignment_context, on="assignment_id", how="left")
     attendance_context = attendance_df.copy()

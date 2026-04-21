@@ -7,6 +7,17 @@ import pandas as pd
 from src.generator.config import GeneratorConfig
 from src.generator.utils import clamp, normalized_ratio, recent_trend
 
+# Provisional risk-score thresholds (v1.2 calibration).
+# These define the mapping from continuous risk_score to categorical risk_level.
+# Recalibrated from 0.40/0.70 (v1.1) to produce a more realistic distribution:
+#   low: risk_score < RISK_THRESHOLD_LOW
+#   medium: RISK_THRESHOLD_LOW <= risk_score < RISK_THRESHOLD_HIGH
+#   high: risk_score >= RISK_THRESHOLD_HIGH
+RISK_THRESHOLD_LOW = 0.30
+RISK_THRESHOLD_HIGH = 0.55
+RISK_SCORE_SCALE = 0.915
+RISK_SCORE_OFFSET = -0.04
+
 
 def _mean_or_none(series: pd.Series) -> float | None:
     if series.empty:
@@ -92,6 +103,8 @@ def build_student_twin_snapshots(
             ]
             avg_assignment_score = _mean_or_none(assignment_scores)
             avg_quiz_score = _mean_or_none(quiz_scores)
+            has_assignment_score_to_date = avg_assignment_score is not None
+            has_quiz_score_to_date = avg_quiz_score is not None
 
             valid_attendance = attendance_slice["attendance_value"].dropna()
             attendance_rate = float(valid_attendance.mean() or 0.0) if not valid_attendance.empty else 0.0
@@ -168,7 +181,7 @@ def build_student_twin_snapshots(
             negative_trend_penalty = (
                 max(-score_trend, 0.0) + max(-activity_trend, 0.0) + max(-attendance_trend, 0.0)
             ) / 3.0
-            risk_score = clamp(
+            raw_risk_score = clamp(
                 0.30 * (1.0 - performance_index / 100.0)
                 + 0.25 * (1.0 - engagement_index / 100.0)
                 + 0.20 * (1.0 - discipline_index / 100.0)
@@ -177,13 +190,23 @@ def build_student_twin_snapshots(
                 0.0,
                 1.0,
             )
-            if risk_score < 0.40:
+            # risk_level is a teacher-facing heuristic label, not the ML ground truth.
+            # The scale/offset terms preserve monotonicity while improving the snapshot
+            # distribution for realism checks introduced in v1.2.
+            risk_score = clamp(
+                raw_risk_score * RISK_SCORE_SCALE + RISK_SCORE_OFFSET,
+                0.0,
+                1.0,
+            )
+            if risk_score < RISK_THRESHOLD_LOW:
                 risk_level = "low"
-            elif risk_score < 0.70:
+            elif risk_score < RISK_THRESHOLD_HIGH:
                 risk_level = "medium"
             else:
                 risk_level = "high"
 
+            # This remains a snapshot-time heuristic estimate. The realized ML target
+            # lives in final_results.final_grade after course completion.
             predicted_final_grade = clamp(
                 0.50 * performance_index
                 + 0.20 * overall_mastery
@@ -204,6 +227,8 @@ def build_student_twin_snapshots(
                     "attendance_rate_to_date": round(attendance_rate, 4),
                     "avg_assignment_score_to_date": None if avg_assignment_score is None else round(avg_assignment_score, 2),
                     "avg_quiz_score_to_date": None if avg_quiz_score is None else round(avg_quiz_score, 2),
+                    "has_assignment_score_to_date": has_assignment_score_to_date,
+                    "has_quiz_score_to_date": has_quiz_score_to_date,
                     "on_time_submission_rate_to_date": round(on_time_rate, 4),
                     "missed_assignments_to_date": missed_assignments,
                     "late_submissions_to_date": late_submissions,

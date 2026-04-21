@@ -4,11 +4,12 @@
 
 This document defines the scope of the first stable data-model foundation for the Student Digital Twin XAI research prototype.
 
-The goal of `schema_v1.1` is not to represent a full LMS. The goal is to provide a disciplined and versioned structure for:
+The goal of `schema_v1.2` is not to represent a full LMS. The goal is to provide a disciplined and versioned structure for:
 
 - synthetic LMS-like raw data,
 - weekly student digital twin snapshots,
-- end-of-course outcomes used for prediction targets,
+- end-of-course outcomes used as the primary ML experiment targets,
+- teacher-facing weekly heuristic risk labels,
 - later dataset generation, validation, backend access, and explainability work.
 
 ## In Scope for v1
@@ -18,10 +19,10 @@ The goal of `schema_v1.1` is not to represent a full LMS. The goal is to provide
 - A 10-week instructional structure.
 - Raw LMS-like entities for students, topics, assignments, attendance, submissions, activity, and final results.
 - A processed `student_twin_snapshots` table with the canonical grain `1 row = 1 student x 1 week`.
-- Primary weekly target `risk_level`.
+- Teacher-facing weekly heuristic label `risk_level`.
 - Internal numeric score `risk_score` that maps to `risk_level`.
-- Secondary end-of-course target `final_grade`.
-- Derived end-of-course metric `passed`.
+- Primary end-of-course regression target `final_grade`.
+- Primary end-of-course classification target `passed`.
 - Hidden generation-only fields where needed to make synthetic behavior structurally realistic.
 - Versioned documentation and change tracking.
 
@@ -65,7 +66,7 @@ The schema intentionally separates three layers:
 
 ### Versioning principle
 
-This scope is explicitly versioned. `schema_v1.1` is the active contract baseline and is expected to evolve deliberately through future versioned updates rather than silent field drift.
+This scope is explicitly versioned. `schema_v1.2` is the active contract baseline and is expected to evolve deliberately through future versioned updates rather than silent field drift.
 
 ## Research Prototype Reminder
 

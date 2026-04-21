@@ -1,5 +1,38 @@
 # Data Model Change Log
 
+## v1.2
+
+- Date: 2026-04-21
+- Status: methodological correction update
+
+### Summary
+
+- Added `packages/contracts/schema_versions/schema_v1.2.yaml`.
+- Recalibrated the `risk_score -> risk_level` heuristic thresholds from `0.40/0.70` to `0.30/0.55`.
+- Steepened at-risk and declining synthetic trajectories to produce a more realistic weekly risk distribution.
+- Added explicit missing-data indicator fields to `student_twin_snapshots`:
+  - `has_assignment_score_to_date`
+  - `has_quiz_score_to_date`
+- Reclassified `risk_level` from an ML target concept to a teacher-facing heuristic label.
+- Clarified that supervised experiments should use:
+  - `final_grade` for regression
+  - `passed` for classification
+- Added a realism-audit layer and report outputs in `data/artifacts/reports/`.
+- Added leakage-safe split utilities for student-group and temporal-forward experiments.
+
+### Impact
+
+This version is the intended baseline for:
+
+- methodologically safer synthetic dataset generation,
+- realism auditing beyond structural schema validation,
+- future baseline ML experiments without row-wise leakage,
+- clearer separation between dashboard heuristics and experimental outcomes.
+
+### Compatibility Note
+
+This is a minor version bump because the schema changes are additive and clarifying, while the methodological interpretation of `risk_level` has been made explicit rather than silently assumed.
+
 ## v1.1
 
 - Date: 2026-04-21
