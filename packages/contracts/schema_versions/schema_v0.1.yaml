@@ -1,0 +1,72 @@
+version: "0.1"
+status: "draft"
+description: >
+  Bootstrap schema for student digital twin research prototype.
+  This is intentionally incomplete and designed for iterative refinement.
+
+entities:
+  student:
+    required_fields:
+      - student_id
+    optional_fields:
+      - cohort_label
+      - enrollment_status
+  course:
+    required_fields:
+      - course_id
+    optional_fields:
+      - term_label
+  activity_event:
+    required_fields:
+      - event_id
+      - student_id
+      - event_time
+      - event_type
+    optional_fields:
+      - numeric_value
+      - metadata
+  assessment_record:
+    required_fields:
+      - assessment_id
+      - student_id
+      - score
+      - max_score
+      - timestamp
+    optional_fields:
+      - category
+  twin_snapshot:
+    required_fields:
+      - twin_snapshot_id
+      - student_id
+      - snapshot_time
+    optional_fields:
+      - feature_vector_ref
+      - state_summary
+  prediction_record:
+    required_fields:
+      - prediction_id
+      - student_id
+      - prediction_time
+      - risk_level
+    optional_fields:
+      - final_grade
+      - passed
+      - model_version
+  explanation_record:
+    required_fields:
+      - explanation_id
+      - prediction_id
+    optional_fields:
+      - method
+      - top_factors
+      - confidence_notes
+
+targets:
+  primary: risk_level
+  secondary: final_grade
+  derived:
+    - passed
+
+notes:
+  - "Exact field types and ranges are deferred to future versions."
+  - "Institution-specific policies are intentionally excluded in v0.1."
