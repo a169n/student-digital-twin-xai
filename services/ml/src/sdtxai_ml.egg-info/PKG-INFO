@@ -1,0 +1,12 @@
+Metadata-Version: 2.4
+Name: sdtxai-ml
+Version: 0.1.0
+Summary: ML scaffold for student digital twin xai prototype
+Requires-Python: >=3.11
+Requires-Dist: pydantic>=2.8.0
+Requires-Dist: pydantic-settings>=2.4.0
+Requires-Dist: pyyaml>=6.0.2
+Requires-Dist: numpy>=2.1.0
+Requires-Dist: pandas>=2.2.2
+Requires-Dist: pyarrow>=17.0.0
+Requires-Dist: scikit-learn>=1.5.0

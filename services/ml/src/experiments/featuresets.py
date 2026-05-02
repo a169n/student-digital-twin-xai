@@ -1,0 +1,196 @@
+"""Explicit, reusable feature-set definitions for the baseline experiments.
+
+The first dissertation comparison asks whether richer Digital Twin features
+improve predictive usefulness compared with simpler academic and LMS-style
+baselines. To make that comparison auditable, each feature set is declared as
+an explicit list of column names taken from `student_twin_snapshots`.
+
+Three feature sets are exposed:
+
+- ``A_simple``: minimal academic baseline (averages and attendance only).
+- ``B_lms``: stronger LMS baseline that adds behavioral and discipline signals.
+- ``C_twin``: the full Digital Twin representation including trends, mastery,
+  composite indices, and explicit missingness indicators.
+
+Membership and provenance are documented per set so reviewers can see exactly
+what each model was trained on. Feature lists must remain in sync with
+``student_twin_snapshots`` as defined in
+``packages/contracts/schema_versions/schema_v1.2.yaml``.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+from src.experiments.config import FeatureSetName
+
+# Columns that must never enter a feature set because they are identifiers,
+# bookkeeping fields, or directly leak the outcome.
+FORBIDDEN_FEATURE_COLUMNS: frozenset[str] = frozenset(
+    {
+        # identifiers / bookkeeping
+        "snapshot_id",
+        "student_id",
+        "course_id",
+        "snapshot_date",
+        # heuristic teacher-facing label (already derived from snapshot features)
+        "risk_score",
+        "risk_level",
+        # snapshot-level estimate of the outcome (would short-circuit modeling)
+        "predicted_final_grade",
+        # outcome-layer fields joined for training (must remain targets only)
+        "final_grade",
+        "passed",
+        "completion_status",
+        "completed_weeks",
+        # generation-only hidden fields (must not be visible to models)
+        "baseline_level",
+        "motivation_level",
+        "discipline_level",
+        "trajectory_type",
+    }
+)
+
+
+@dataclass(frozen=True)
+class FeatureSet:
+    """A named, immutable feature-set definition."""
+
+    name: FeatureSetName
+    description: str
+    columns: tuple[str, ...]
+    indicator_columns: tuple[str, ...] = ()
+
+    def all_columns(self) -> tuple[str, ...]:
+        return tuple(list(self.columns) + list(self.indicator_columns))
+
+
+# ---------------------------------------------------------------------------
+# Feature Set A — Simple academic baseline
+# ---------------------------------------------------------------------------
+FEATURE_SET_A_SIMPLE = FeatureSet(
+    name="A_simple",
+    description=(
+        "Minimal academic baseline. Uses only the most basic teacher-visible "
+        "performance and attendance signals available from the LMS. Intended "
+        "as a deliberately weak reference point."
+    ),
+    columns=(
+        "avg_assignment_score_to_date",
+        "avg_quiz_score_to_date",
+        "attendance_rate_to_date",
+    ),
+    indicator_columns=(
+        "has_assignment_score_to_date",
+        "has_quiz_score_to_date",
+    ),
+)
+
+
+# ---------------------------------------------------------------------------
+# Feature Set B — Enriched LMS baseline
+# ---------------------------------------------------------------------------
+FEATURE_SET_B_LMS = FeatureSet(
+    name="B_lms",
+    description=(
+        "Stronger non-twin LMS baseline. Adds broader behavioral and "
+        "submission-discipline signals that a typical LMS analytics view "
+        "could plausibly expose without any digital-twin engineering."
+    ),
+    columns=(
+        # academic
+        "avg_assignment_score_to_date",
+        "avg_quiz_score_to_date",
+        # attendance / activity
+        "attendance_rate_to_date",
+        "activity_score_to_date",
+        "time_spent_to_date",
+        # discipline
+        "on_time_submission_rate_to_date",
+        "missed_assignments_to_date",
+        "late_submissions_to_date",
+        "avg_attempt_count_to_date",
+    ),
+    indicator_columns=(
+        "has_assignment_score_to_date",
+        "has_quiz_score_to_date",
+    ),
+)
+
+
+# ---------------------------------------------------------------------------
+# Feature Set C — Digital Twin feature set
+# ---------------------------------------------------------------------------
+FEATURE_SET_C_TWIN = FeatureSet(
+    name="C_twin",
+    description=(
+        "Full Digital Twin representation. Includes the LMS baseline plus "
+        "short-horizon trend features, mastery proxies, and composite "
+        "engagement / performance / discipline indices."
+    ),
+    columns=(
+        # academic
+        "avg_assignment_score_to_date",
+        "avg_quiz_score_to_date",
+        # attendance / activity
+        "attendance_rate_to_date",
+        "activity_score_to_date",
+        "time_spent_to_date",
+        # discipline
+        "on_time_submission_rate_to_date",
+        "missed_assignments_to_date",
+        "late_submissions_to_date",
+        "avg_attempt_count_to_date",
+        # trends (twin-specific temporal aggregates)
+        "score_trend_3w",
+        "activity_trend_3w",
+        "attendance_trend_3w",
+        # mastery (twin-specific)
+        "current_topic_mastery",
+        "overall_mastery",
+        # composite indices (twin-specific)
+        "engagement_index",
+        "performance_index",
+        "discipline_index",
+        # week context (allowed because it is a structural input, not the outcome)
+        "week_number",
+    ),
+    indicator_columns=(
+        "has_assignment_score_to_date",
+        "has_quiz_score_to_date",
+    ),
+)
+
+
+_REGISTRY: dict[FeatureSetName, FeatureSet] = {
+    FEATURE_SET_A_SIMPLE.name: FEATURE_SET_A_SIMPLE,
+    FEATURE_SET_B_LMS.name: FEATURE_SET_B_LMS,
+    FEATURE_SET_C_TWIN.name: FEATURE_SET_C_TWIN,
+}
+
+
+def get_feature_set(name: FeatureSetName) -> FeatureSet:
+    if name not in _REGISTRY:
+        raise KeyError(f"Unknown feature set: {name}")
+    return _REGISTRY[name]
+
+
+def available_feature_sets() -> tuple[FeatureSet, ...]:
+    return tuple(_REGISTRY.values())
+
+
+def assert_no_forbidden_columns(feature_set: FeatureSet) -> None:
+    """Guard against accidental leakage when feature lists are edited."""
+
+    overlap = set(feature_set.all_columns()) & FORBIDDEN_FEATURE_COLUMNS
+    if overlap:
+        raise ValueError(
+            f"Feature set {feature_set.name} contains forbidden columns: {sorted(overlap)}"
+        )
+
+
+def validate_registry() -> None:
+    """Run all guards against the registered feature sets."""
+
+    for feature_set in _REGISTRY.values():
+        assert_no_forbidden_columns(feature_set)

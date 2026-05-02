@@ -1,5 +1,48 @@
 # Data Model Change Log
 
+## Experimental scaffold (post-v1.2)
+
+- Date: 2026-05-02
+- Status: experimental layer, no schema change
+
+### Summary
+
+The first experimental modeling phase was added on top of the v1.2 contract
+without modifying the schema. New code lives under `services/ml/src/experiments/`
+and produces reproducible artifacts under `data/artifacts/eda/` and
+`data/artifacts/experiments/baselines/`.
+
+- Three explicit feature sets are now declared:
+  - `A_simple` — minimal academic baseline (assignment / quiz averages plus
+    attendance rate, plus the explicit missingness indicators).
+  - `B_lms` — stronger LMS baseline that adds activity, time on platform, and
+    submission-discipline signals.
+  - `C_twin` — full Digital Twin representation that adds trend features,
+    mastery proxies, and composite indices.
+- A leakage-safe modeling pipeline:
+  - joins `student_twin_snapshots` with `final_results` for the supervised
+    targets `final_grade` and `passed`,
+  - excludes identifiers, the snapshot-level heuristic risk fields, the
+    snapshot-level `predicted_final_grade`, and all generation-only fields,
+  - uses student-grouped splits (default) and a stricter temporal-forward
+    split that also holds out students,
+  - fits median imputation on the training partition only.
+- Baseline models cover logistic regression, random forest, and gradient
+  boosting for classification, and Ridge, random forest, and gradient
+  boosting for regression.
+
+### Why this is methodologically meaningful
+
+`risk_level` continues to be excluded as a supervised target. The
+experimental pipeline aligns with the v1.2 clarification that supervised
+experiments use `final_grade` and `passed`, while `risk_level` stays as a
+teacher-facing heuristic label.
+
+### Compatibility Note
+
+No schema fields were added, removed, renamed, or reinterpreted. The data
+contract remains `schema_v1.2`.
+
 ## v1.2
 
 - Date: 2026-04-21

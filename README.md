@@ -231,6 +231,28 @@ python -m pytest tests/test_dataset_pipeline.py -p no:cacheprovider
 
 ---
 
+## Run Baseline Experiments
+
+The first dissertation-relevant experimental phase compares three feature sets
+across simple baseline models for `final_grade` (regression) and `passed`
+(classification). Run from `services/ml`:
+
+```powershell
+python -m src.experiments.run_baselines --config configs/experiments_baseline.yaml
+```
+
+This writes:
+
+- modeling-readiness EDA into `data/artifacts/eda/`,
+- per-model result tables and a markdown summary into
+  `data/artifacts/experiments/baselines/`.
+
+`risk_level` is intentionally NOT used as a supervised target. See
+[services/ml/README.md](services/ml/README.md) for full documentation of the
+feature sets, splits, and outputs.
+
+---
+
 ## First-Phase Scope
 
 Initial scope is intentionally narrow.
