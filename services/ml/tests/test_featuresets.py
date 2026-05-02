@@ -3,7 +3,13 @@ from __future__ import annotations
 from src.experiments.featuresets import (
     FEATURE_SET_A_SIMPLE,
     FEATURE_SET_B_LMS,
+    FEATURE_SET_B_LMS_PLUS_INDICES,
+    FEATURE_SET_B_LMS_PLUS_MASTERY,
+    FEATURE_SET_B_LMS_PLUS_TEMPORAL,
+    FEATURE_SET_B_LMS_PLUS_TRENDS,
+    FEATURE_SET_B_LMS_PLUS_TRENDS_MASTERY,
     FEATURE_SET_C_TWIN,
+    FEATURE_SET_C_TWIN_FULL,
     FORBIDDEN_FEATURE_COLUMNS,
     FeatureSet,
     available_feature_sets,
@@ -46,6 +52,26 @@ def test_feature_set_c_includes_twin_specific_features() -> None:
         "discipline_index",
     ):
         assert column in twin_columns, column
+
+
+def test_ablation_feature_sets_extend_lms_baseline_in_small_blocks() -> None:
+    lms_columns = set(FEATURE_SET_B_LMS.columns)
+    assert lms_columns.issubset(set(FEATURE_SET_B_LMS_PLUS_TRENDS.columns))
+    assert lms_columns.issubset(set(FEATURE_SET_B_LMS_PLUS_MASTERY.columns))
+    assert lms_columns.issubset(set(FEATURE_SET_B_LMS_PLUS_INDICES.columns))
+    assert lms_columns.issubset(set(FEATURE_SET_B_LMS_PLUS_TEMPORAL.columns))
+    assert lms_columns.issubset(set(FEATURE_SET_B_LMS_PLUS_TRENDS_MASTERY.columns))
+
+    assert "score_trend_3w" in FEATURE_SET_B_LMS_PLUS_TRENDS.columns
+    assert "overall_mastery" in FEATURE_SET_B_LMS_PLUS_MASTERY.columns
+    assert "performance_index" in FEATURE_SET_B_LMS_PLUS_INDICES.columns
+    assert "week_number" in FEATURE_SET_B_LMS_PLUS_TEMPORAL.columns
+    assert "discipline_index" not in FEATURE_SET_B_LMS_PLUS_TRENDS_MASTERY.columns
+
+
+def test_c_twin_full_alias_matches_baseline_c_twin_columns() -> None:
+    assert FEATURE_SET_C_TWIN_FULL.columns == FEATURE_SET_C_TWIN.columns
+    assert FEATURE_SET_C_TWIN_FULL.indicator_columns == FEATURE_SET_C_TWIN.indicator_columns
 
 
 def test_no_feature_set_contains_forbidden_columns() -> None:

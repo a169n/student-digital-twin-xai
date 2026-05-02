@@ -1,5 +1,28 @@
 # Data Model Change Log
 
+## Versioned experiment logbook and Twin ablation (post-v1.2)
+
+- Date: 2026-05-02
+- Status: experimental layer, no schema change
+
+### Summary
+
+The experiment layer now treats modeling runs as versioned research artifacts.
+This does not change the data model or schema contract.
+
+- Added `docs/experiments/` as the experiment logbook.
+- Preserved the existing baseline as `exp_001_baseline`.
+- Added `exp_002_twin_ablation` to test Twin subgroups beyond `B_lms`.
+- Added structured experiment metadata under each experiment artifact folder.
+- Added versioned configs under `services/ml/configs/experiments/`.
+- Added registry and comparison documentation for experiment history.
+
+### Compatibility Note
+
+No schema fields were added, removed, renamed, or reinterpreted. The active
+contract remains `schema_v1.2`; `risk_level` remains excluded from supervised
+training.
+
 ## Experimental scaffold (post-v1.2)
 
 - Date: 2026-05-02

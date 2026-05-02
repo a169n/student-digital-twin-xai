@@ -1,0 +1,296 @@
+{
+  "classification_best_by_feature_set": [
+    {
+      "accuracy": 1.0,
+      "f1": 1.0,
+      "feature_set": "B_lms",
+      "model": "logistic_regression",
+      "roc_auc": 1.0,
+      "split_strategy": "student_group"
+    },
+    {
+      "accuracy": 1.0,
+      "f1": 1.0,
+      "feature_set": "B_lms_plus_indices",
+      "model": "logistic_regression",
+      "roc_auc": 1.0,
+      "split_strategy": "student_group"
+    },
+    {
+      "accuracy": 1.0,
+      "f1": 1.0,
+      "feature_set": "B_lms_plus_mastery",
+      "model": "logistic_regression",
+      "roc_auc": 1.0,
+      "split_strategy": "student_group"
+    },
+    {
+      "accuracy": 1.0,
+      "f1": 1.0,
+      "feature_set": "B_lms_plus_temporal",
+      "model": "logistic_regression",
+      "roc_auc": 1.0,
+      "split_strategy": "student_group"
+    },
+    {
+      "accuracy": 1.0,
+      "f1": 1.0,
+      "feature_set": "B_lms_plus_trends",
+      "model": "logistic_regression",
+      "roc_auc": 1.0,
+      "split_strategy": "student_group"
+    },
+    {
+      "accuracy": 1.0,
+      "f1": 1.0,
+      "feature_set": "B_lms_plus_trends_mastery",
+      "model": "logistic_regression",
+      "roc_auc": 1.0,
+      "split_strategy": "student_group"
+    },
+    {
+      "accuracy": 1.0,
+      "f1": 1.0,
+      "feature_set": "C_twin_full",
+      "model": "logistic_regression",
+      "roc_auc": 1.0,
+      "split_strategy": "student_group"
+    },
+    {
+      "accuracy": 1.0,
+      "f1": 1.0,
+      "feature_set": "B_lms",
+      "model": "logistic_regression",
+      "roc_auc": 1.0,
+      "split_strategy": "temporal_forward"
+    },
+    {
+      "accuracy": 1.0,
+      "f1": 1.0,
+      "feature_set": "B_lms_plus_indices",
+      "model": "logistic_regression",
+      "roc_auc": 1.0,
+      "split_strategy": "temporal_forward"
+    },
+    {
+      "accuracy": 1.0,
+      "f1": 1.0,
+      "feature_set": "B_lms_plus_mastery",
+      "model": "logistic_regression",
+      "roc_auc": 1.0,
+      "split_strategy": "temporal_forward"
+    },
+    {
+      "accuracy": 1.0,
+      "f1": 1.0,
+      "feature_set": "B_lms_plus_temporal",
+      "model": "logistic_regression",
+      "roc_auc": 1.0,
+      "split_strategy": "temporal_forward"
+    },
+    {
+      "accuracy": 1.0,
+      "f1": 1.0,
+      "feature_set": "B_lms_plus_trends",
+      "model": "logistic_regression",
+      "roc_auc": 1.0,
+      "split_strategy": "temporal_forward"
+    },
+    {
+      "accuracy": 1.0,
+      "f1": 1.0,
+      "feature_set": "B_lms_plus_trends_mastery",
+      "model": "logistic_regression",
+      "roc_auc": 1.0,
+      "split_strategy": "temporal_forward"
+    },
+    {
+      "accuracy": 1.0,
+      "f1": 1.0,
+      "feature_set": "C_twin_full",
+      "model": "logistic_regression",
+      "roc_auc": 1.0,
+      "split_strategy": "temporal_forward"
+    }
+  ],
+  "experiment_id": "exp_002_twin_ablation",
+  "feature_counts": {
+    "B_lms": 11,
+    "B_lms_plus_indices": 14,
+    "B_lms_plus_mastery": 13,
+    "B_lms_plus_temporal": 12,
+    "B_lms_plus_trends": 14,
+    "B_lms_plus_trends_mastery": 16,
+    "C_twin_full": 20
+  },
+  "primary_split": "student_group",
+  "primary_target": "final_grade",
+  "recommendation": {
+    "best_full_rmse": 2.1491012852674984,
+    "best_full_set": "C_twin_full",
+    "best_lean_rmse": 1.8942486343694849,
+    "best_lean_set": "B_lms_plus_mastery",
+    "carry_forward_feature_set": "B_lms_plus_mastery",
+    "full_twin_justified": false,
+    "interpretation": "`B_lms_plus_mastery` improves on `B_lms` enough to justify carrying that compact subset forward. The full Twin set is not currently justified.",
+    "lean_rmse_tolerance": 0.05,
+    "short_conclusion": "Carry forward `B_lms_plus_mastery`; full Twin justified: False."
+  },
+  "regression_best_by_feature_set": [
+    {
+      "delta_vs_baseline_rmse": -0.20625676745243804,
+      "feature_set": "B_lms_plus_mastery",
+      "mae": 1.5104047091770574,
+      "model": "gradient_boosting",
+      "n_test_rows": 196,
+      "n_train_rows": 602,
+      "r2": 0.9916677110671815,
+      "rmse": 1.8942486343694849,
+      "split_strategy": "student_group"
+    },
+    {
+      "delta_vs_baseline_rmse": -0.12719204439645138,
+      "feature_set": "B_lms_plus_trends_mastery",
+      "mae": 1.57293550816071,
+      "model": "gradient_boosting",
+      "n_test_rows": 196,
+      "n_train_rows": 602,
+      "r2": 0.9909576259778604,
+      "rmse": 1.9733133574254715,
+      "split_strategy": "student_group"
+    },
+    {
+      "delta_vs_baseline_rmse": -0.06589151329917353,
+      "feature_set": "B_lms_plus_indices",
+      "mae": 1.5671279020528999,
+      "model": "gradient_boosting",
+      "n_test_rows": 196,
+      "n_train_rows": 602,
+      "r2": 0.9903871013160898,
+      "rmse": 2.0346138885227494,
+      "split_strategy": "student_group"
+    },
+    {
+      "delta_vs_baseline_rmse": -0.02268237934158268,
+      "feature_set": "B_lms_plus_temporal",
+      "mae": 1.6568687043359616,
+      "model": "gradient_boosting",
+      "n_test_rows": 196,
+      "n_train_rows": 602,
+      "r2": 0.9899744671678401,
+      "rmse": 2.0778230224803402,
+      "split_strategy": "student_group"
+    },
+    {
+      "delta_vs_baseline_rmse": -0.004857608019260606,
+      "feature_set": "B_lms_plus_trends",
+      "mae": 1.672192882821985,
+      "model": "gradient_boosting",
+      "n_test_rows": 196,
+      "n_train_rows": 602,
+      "r2": 0.9898017196946906,
+      "rmse": 2.0956477938026623,
+      "split_strategy": "student_group"
+    },
+    {
+      "delta_vs_baseline_rmse": 0.0,
+      "feature_set": "B_lms",
+      "mae": 1.6807847485928418,
+      "model": "gradient_boosting",
+      "n_test_rows": 196,
+      "n_train_rows": 602,
+      "r2": 0.9897543866809037,
+      "rmse": 2.100505401821923,
+      "split_strategy": "student_group"
+    },
+    {
+      "delta_vs_baseline_rmse": 0.04859588344557553,
+      "feature_set": "C_twin_full",
+      "mae": 1.7316394051530355,
+      "model": "random_forest",
+      "n_test_rows": 196,
+      "n_train_rows": 602,
+      "r2": 0.9892748315145331,
+      "rmse": 2.1491012852674984,
+      "split_strategy": "student_group"
+    },
+    {
+      "delta_vs_baseline_rmse": -0.06803951617062154,
+      "feature_set": "B_lms_plus_indices",
+      "mae": 1.7322034497016792,
+      "model": "linear_regression",
+      "n_test_rows": 112,
+      "n_train_rows": 258,
+      "r2": 0.9887377639494337,
+      "rmse": 2.202252618495831,
+      "split_strategy": "temporal_forward"
+    },
+    {
+      "delta_vs_baseline_rmse": 0.0,
+      "feature_set": "B_lms",
+      "mae": 1.7778865295966664,
+      "model": "linear_regression",
+      "n_test_rows": 112,
+      "n_train_rows": 258,
+      "r2": 0.988031110851561,
+      "rmse": 2.2702921346664526,
+      "split_strategy": "temporal_forward"
+    },
+    {
+      "delta_vs_baseline_rmse": 0.006055729981063518,
+      "feature_set": "B_lms_plus_mastery",
+      "mae": 1.7757139995752074,
+      "model": "linear_regression",
+      "n_test_rows": 112,
+      "n_train_rows": 258,
+      "r2": 0.9879671745624369,
+      "rmse": 2.276347864647516,
+      "split_strategy": "temporal_forward"
+    },
+    {
+      "delta_vs_baseline_rmse": 0.26055211755670227,
+      "feature_set": "B_lms_plus_trends",
+      "mae": 1.997365439413829,
+      "model": "linear_regression",
+      "n_test_rows": 112,
+      "n_train_rows": 258,
+      "r2": 0.9851262254371703,
+      "rmse": 2.530844252223155,
+      "split_strategy": "temporal_forward"
+    },
+    {
+      "delta_vs_baseline_rmse": 0.28441962283625877,
+      "feature_set": "B_lms_plus_trends_mastery",
+      "mae": 2.0239015199873753,
+      "model": "linear_regression",
+      "n_test_rows": 112,
+      "n_train_rows": 258,
+      "r2": 0.9848443638944167,
+      "rmse": 2.5547117575027114,
+      "split_strategy": "temporal_forward"
+    },
+    {
+      "delta_vs_baseline_rmse": 0.3878330697510317,
+      "feature_set": "B_lms_plus_temporal",
+      "mae": 2.166293315670468,
+      "model": "linear_regression",
+      "n_test_rows": 112,
+      "n_train_rows": 258,
+      "r2": 0.9835925449731121,
+      "rmse": 2.6581252044174843,
+      "split_strategy": "temporal_forward"
+    },
+    {
+      "delta_vs_baseline_rmse": 0.6670178867325149,
+      "feature_set": "C_twin_full",
+      "mae": 2.3959261464757065,
+      "model": "linear_regression",
+      "n_test_rows": 112,
+      "n_train_rows": 258,
+      "r2": 0.9799649731123659,
+      "rmse": 2.9373100213989676,
+      "split_strategy": "temporal_forward"
+    }
+  ],
+  "secondary_target": "passed"
+}

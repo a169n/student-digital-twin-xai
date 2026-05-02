@@ -5,12 +5,17 @@ improve predictive usefulness compared with simpler academic and LMS-style
 baselines. To make that comparison auditable, each feature set is declared as
 an explicit list of column names taken from `student_twin_snapshots`.
 
-Three feature sets are exposed:
+The baseline comparison exposes three main feature sets:
 
 - ``A_simple``: minimal academic baseline (averages and attendance only).
 - ``B_lms``: stronger LMS baseline that adds behavioral and discipline signals.
 - ``C_twin``: the full Digital Twin representation including trends, mastery,
   composite indices, and explicit missingness indicators.
+
+The ablation phase adds a small set of ``B_lms_plus_*`` feature sets. These are
+not new schema fields; they are disciplined regroupings of the existing
+``schema_v1.2`` snapshot columns so the project can ask which parts of the Twin
+representation add value beyond the LMS baseline.
 
 Membership and provenance are documented per set so reviewers can see exactly
 what each model was trained on. Feature lists must remain in sync with
@@ -162,10 +167,110 @@ FEATURE_SET_C_TWIN = FeatureSet(
 )
 
 
+TWIN_TREND_COLUMNS: tuple[str, ...] = (
+    "score_trend_3w",
+    "activity_trend_3w",
+    "attendance_trend_3w",
+)
+
+TWIN_MASTERY_COLUMNS: tuple[str, ...] = (
+    "current_topic_mastery",
+    "overall_mastery",
+)
+
+TWIN_INDEX_COLUMNS: tuple[str, ...] = (
+    "engagement_index",
+    "performance_index",
+    "discipline_index",
+)
+
+TWIN_TEMPORAL_COLUMNS: tuple[str, ...] = (
+    "week_number",
+)
+
+
+FEATURE_SET_B_LMS_PLUS_TRENDS = FeatureSet(
+    name="B_lms_plus_trends",
+    description=(
+        "LMS baseline plus short-horizon trend features. Tests whether recent "
+        "direction of performance, activity, and attendance adds predictive "
+        "value beyond cumulative LMS indicators."
+    ),
+    columns=FEATURE_SET_B_LMS.columns + TWIN_TREND_COLUMNS,
+    indicator_columns=FEATURE_SET_B_LMS.indicator_columns,
+)
+
+
+FEATURE_SET_B_LMS_PLUS_MASTERY = FeatureSet(
+    name="B_lms_plus_mastery",
+    description=(
+        "LMS baseline plus current and overall mastery proxies. Tests whether "
+        "topic-level Twin state adds value beyond raw performance and activity."
+    ),
+    columns=FEATURE_SET_B_LMS.columns + TWIN_MASTERY_COLUMNS,
+    indicator_columns=FEATURE_SET_B_LMS.indicator_columns,
+)
+
+
+FEATURE_SET_B_LMS_PLUS_INDICES = FeatureSet(
+    name="B_lms_plus_indices",
+    description=(
+        "LMS baseline plus composite engagement, performance, and discipline "
+        "indices. Tests whether the current index layer adds compact value or "
+        "mostly duplicates the underlying LMS signals."
+    ),
+    columns=FEATURE_SET_B_LMS.columns + TWIN_INDEX_COLUMNS,
+    indicator_columns=FEATURE_SET_B_LMS.indicator_columns,
+)
+
+
+FEATURE_SET_B_LMS_PLUS_TEMPORAL = FeatureSet(
+    name="B_lms_plus_temporal",
+    description=(
+        "LMS baseline plus the snapshot week number. Tests whether coarse "
+        "course-time context explains gains separately from richer trend or "
+        "mastery features."
+    ),
+    columns=FEATURE_SET_B_LMS.columns + TWIN_TEMPORAL_COLUMNS,
+    indicator_columns=FEATURE_SET_B_LMS.indicator_columns,
+)
+
+
+FEATURE_SET_B_LMS_PLUS_TRENDS_MASTERY = FeatureSet(
+    name="B_lms_plus_trends_mastery",
+    description=(
+        "Compact Twin candidate combining the LMS baseline with trend and "
+        "mastery blocks while excluding composite indices. Intended as a lean "
+        "candidate for the later XAI phase if it is competitive with the full "
+        "Twin set."
+    ),
+    columns=FEATURE_SET_B_LMS.columns + TWIN_TREND_COLUMNS + TWIN_MASTERY_COLUMNS,
+    indicator_columns=FEATURE_SET_B_LMS.indicator_columns,
+)
+
+
+FEATURE_SET_C_TWIN_FULL = FeatureSet(
+    name="C_twin_full",
+    description=(
+        "Alias for the full Digital Twin representation used in ablation "
+        "reports. Kept separate from `C_twin` naming so the baseline and "
+        "ablation experiment pages can be cited cleanly."
+    ),
+    columns=FEATURE_SET_C_TWIN.columns,
+    indicator_columns=FEATURE_SET_C_TWIN.indicator_columns,
+)
+
+
 _REGISTRY: dict[FeatureSetName, FeatureSet] = {
     FEATURE_SET_A_SIMPLE.name: FEATURE_SET_A_SIMPLE,
     FEATURE_SET_B_LMS.name: FEATURE_SET_B_LMS,
+    FEATURE_SET_B_LMS_PLUS_TRENDS.name: FEATURE_SET_B_LMS_PLUS_TRENDS,
+    FEATURE_SET_B_LMS_PLUS_MASTERY.name: FEATURE_SET_B_LMS_PLUS_MASTERY,
+    FEATURE_SET_B_LMS_PLUS_INDICES.name: FEATURE_SET_B_LMS_PLUS_INDICES,
+    FEATURE_SET_B_LMS_PLUS_TEMPORAL.name: FEATURE_SET_B_LMS_PLUS_TEMPORAL,
+    FEATURE_SET_B_LMS_PLUS_TRENDS_MASTERY.name: FEATURE_SET_B_LMS_PLUS_TRENDS_MASTERY,
     FEATURE_SET_C_TWIN.name: FEATURE_SET_C_TWIN,
+    FEATURE_SET_C_TWIN_FULL.name: FEATURE_SET_C_TWIN_FULL,
 }
 
 

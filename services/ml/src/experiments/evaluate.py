@@ -125,15 +125,17 @@ def _render_markdown_summary(
     if not rows:
         return f"# {run_name}\n\nNo results were produced.\n"
 
+    feature_set_names = sorted({row.feature_set for row in rows})
+    feature_set_text = ", ".join(f"`{name}`" for name in feature_set_names)
     lines: list[str] = [
-        f"# Baseline experiment summary: `{run_name}`",
+        f"# Experiment result summary: `{run_name}`",
         "",
         (
-            "This report compares baseline models across three feature sets — "
-            "`A_simple`, `B_lms`, and `C_twin` — for the dissertation's primary "
-            "experimental targets: `final_grade` (regression) and `passed` "
-            "(classification). The teacher-facing heuristic `risk_level` is "
-            "intentionally NOT used as a supervised target."
+            f"This report compares the configured feature sets ({feature_set_text}) "
+            "for the dissertation's current experimental targets: `final_grade` "
+            "(regression) and, when configured, `passed` (classification). The "
+            "teacher-facing heuristic `risk_level` is intentionally NOT used as "
+            "a supervised target."
         ),
         "",
     ]

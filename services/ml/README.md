@@ -128,9 +128,10 @@ under `data/artifacts/reports/comparisons/` by default.
 
 ## Baseline Experiments
 
-The first experimental phase compares three feature sets across simple baseline
-models to see whether the Digital Twin representation improves prediction over
-plain LMS-style features. The supervised targets are:
+The first experimental phase is preserved as `exp_001_baseline`. It compares
+three feature sets across simple baseline models to see whether the Digital Twin
+representation improves prediction over plain LMS-style features. The
+supervised targets are:
 
 - regression: `final_results.final_grade`
 - classification: `final_results.passed`
@@ -166,7 +167,7 @@ guarded against accidental leakage.
 From `services/ml`:
 
 ```powershell
-python -m src.experiments.run_baselines --config configs/experiments_baseline.yaml
+python -m src.experiments.run_baselines --config configs/experiments/exp_001_baseline.yaml
 ```
 
 The runner:
@@ -180,16 +181,39 @@ The runner:
 
 Outputs:
 
-- `data/artifacts/eda/eda_report.md` and supporting CSV/JSON
-- `data/artifacts/experiments/baselines/baseline_v1_results.csv`
-- `data/artifacts/experiments/baselines/baseline_v1_results.json`
-- `data/artifacts/experiments/baselines/baseline_v1_summary.md`
+- preserved legacy outputs under `data/artifacts/experiments/baselines/`
+- versioned copies and metadata under
+  `data/artifacts/experiments/exp_001_baseline/`
 
 To inspect the declared feature sets without running the experiments:
 
 ```powershell
 python -m src.experiments.run_baselines --list-feature-sets
 ```
+
+## Versioned Ablation Experiments
+
+The second experiment, `exp_002_twin_ablation`, uses the same current refined
+dataset and schema `v1.2`, but tests Twin feature subgroups against `B_lms`.
+It keeps `final_grade` as the primary target and reports `passed` only as
+secondary context.
+
+Run from `services/ml`:
+
+```powershell
+python -m src.experiments.run_ablation --config configs/experiments/exp_002_twin_ablation.yaml
+```
+
+The runner writes:
+
+- `experiment_metadata.json`
+- `ablation_diagnostics.json`
+- JSON / CSV / Markdown result tables
+- `lean_twin_recommendation.md`
+- `docs/experiments/exp_002_twin_ablation.md`
+- an updated row in `docs/experiments/registry.md`
+
+Experiment conventions are documented in `docs/experiments/README.md`.
 
 ## Testing
 

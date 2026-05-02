@@ -16,7 +16,17 @@ from pydantic import BaseModel, Field, model_validator
 from src.generator.config import REPO_ROOT, SERVICE_ROOT
 
 SplitStrategy = Literal["student_group", "temporal_forward"]
-FeatureSetName = Literal["A_simple", "B_lms", "C_twin"]
+FeatureSetName = Literal[
+    "A_simple",
+    "B_lms",
+    "B_lms_plus_trends",
+    "B_lms_plus_mastery",
+    "B_lms_plus_indices",
+    "B_lms_plus_temporal",
+    "B_lms_plus_trends_mastery",
+    "C_twin",
+    "C_twin_full",
+]
 ClassificationModelName = Literal["logistic_regression", "random_forest", "gradient_boosting"]
 RegressionModelName = Literal["linear_regression", "random_forest", "gradient_boosting"]
 

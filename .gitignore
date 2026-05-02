@@ -9,6 +9,7 @@ __pycache__/
 *.py[cod]
 .venv/
 .pytest_cache/
+pytest-cache-files-*/
 .mypy_cache/
 .ruff_cache/
 
@@ -20,6 +21,7 @@ __pycache__/
 # Data / artifacts
 *.parquet
 *.csv
+!data/artifacts/experiments/exp_*/*.csv
 *.pkl
 *.joblib
 *.onnx

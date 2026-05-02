@@ -1,0 +1,170 @@
+{
+  "n_rows": 798,
+  "n_students": 114,
+  "weeks_present": [
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "regression_target_summary": {
+    "mean": 62.4109649122807,
+    "std": 20.617459441529373,
+    "min": 20.87,
+    "max": 94.35
+  },
+  "classification_target_summary": {
+    "passed_rate": 0.7807017543859649
+  },
+  "redundancy_warnings": [
+    {
+      "left": "avg_assignment_score_to_date",
+      "right": "avg_quiz_score_to_date",
+      "abs_pearson": 0.9757
+    },
+    {
+      "left": "avg_assignment_score_to_date",
+      "right": "activity_score_to_date",
+      "abs_pearson": 0.9788
+    },
+    {
+      "left": "avg_assignment_score_to_date",
+      "right": "overall_mastery",
+      "abs_pearson": 0.9933
+    },
+    {
+      "left": "avg_assignment_score_to_date",
+      "right": "engagement_index",
+      "abs_pearson": 0.9592
+    },
+    {
+      "left": "avg_assignment_score_to_date",
+      "right": "performance_index",
+      "abs_pearson": 0.996
+    },
+    {
+      "left": "avg_quiz_score_to_date",
+      "right": "activity_score_to_date",
+      "abs_pearson": 0.9771
+    },
+    {
+      "left": "avg_quiz_score_to_date",
+      "right": "overall_mastery",
+      "abs_pearson": 0.9927
+    },
+    {
+      "left": "avg_quiz_score_to_date",
+      "right": "engagement_index",
+      "abs_pearson": 0.9615
+    },
+    {
+      "left": "avg_quiz_score_to_date",
+      "right": "performance_index",
+      "abs_pearson": 0.9906
+    },
+    {
+      "left": "attendance_rate_to_date",
+      "right": "engagement_index",
+      "abs_pearson": 0.9613
+    },
+    {
+      "left": "activity_score_to_date",
+      "right": "overall_mastery",
+      "abs_pearson": 0.9837
+    },
+    {
+      "left": "activity_score_to_date",
+      "right": "engagement_index",
+      "abs_pearson": 0.9783
+    },
+    {
+      "left": "activity_score_to_date",
+      "right": "performance_index",
+      "abs_pearson": 0.9837
+    },
+    {
+      "left": "on_time_submission_rate_to_date",
+      "right": "discipline_index",
+      "abs_pearson": 0.9985
+    },
+    {
+      "left": "overall_mastery",
+      "right": "engagement_index",
+      "abs_pearson": 0.9653
+    },
+    {
+      "left": "overall_mastery",
+      "right": "performance_index",
+      "abs_pearson": 0.9989
+    },
+    {
+      "left": "engagement_index",
+      "right": "performance_index",
+      "abs_pearson": 0.9653
+    }
+  ],
+  "indicator_sanity": [],
+  "twin_target_red_flags": [
+    {
+      "column": "performance_index",
+      "pearson_with_final_grade": 0.9855
+    },
+    {
+      "column": "overall_mastery",
+      "pearson_with_final_grade": 0.9843
+    },
+    {
+      "column": "activity_score_to_date",
+      "pearson_with_final_grade": 0.9827
+    },
+    {
+      "column": "avg_assignment_score_to_date",
+      "pearson_with_final_grade": 0.9817
+    },
+    {
+      "column": "avg_quiz_score_to_date",
+      "pearson_with_final_grade": 0.9776
+    },
+    {
+      "column": "engagement_index",
+      "pearson_with_final_grade": 0.9705
+    }
+  ],
+  "trajectory_breakdown": [
+    {
+      "trajectory_type": "stable_high",
+      "n_rows": 182,
+      "n_students": 26,
+      "mean_final_grade": 87.77807692307692,
+      "passed_rate": 1.0,
+      "mean_risk_score": 0.14963736263736266
+    },
+    {
+      "trajectory_type": "declining",
+      "n_rows": 231,
+      "n_students": 33,
+      "mean_final_grade": 69.36424242424242,
+      "passed_rate": 1.0,
+      "mean_risk_score": 0.2728320346320346
+    },
+    {
+      "trajectory_type": "improving",
+      "n_rows": 210,
+      "n_students": 30,
+      "mean_final_grade": 60.885000000000005,
+      "passed_rate": 1.0,
+      "mean_risk_score": 0.37776857142857145
+    },
+    {
+      "trajectory_type": "consistently_at_risk",
+      "n_rows": 175,
+      "n_students": 25,
+      "mean_final_grade": 28.68199999999999,
+      "passed_rate": 0.0,
+      "mean_risk_score": 0.6039017142857143
+    }
+  ]
+}

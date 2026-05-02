@@ -231,25 +231,47 @@ python -m pytest tests/test_dataset_pipeline.py -p no:cacheprovider
 
 ---
 
-## Run Baseline Experiments
+## Run Versioned Experiments
 
-The first dissertation-relevant experimental phase compares three feature sets
-across simple baseline models for `final_grade` (regression) and `passed`
-(classification). Run from `services/ml`:
+The repository now treats experiments as versioned research artifacts. Each
+experiment has:
+
+- a config in `services/ml/configs/experiments/`,
+- an artifact folder in `data/artifacts/experiments/<experiment_id>/`,
+- `experiment_metadata.json`,
+- a Markdown writeup in `docs/experiments/`,
+- a registry row in `docs/experiments/registry.md`.
+
+The preserved baseline experiment is:
+
+- `exp_001_baseline`: baseline feature-set comparison for `A_simple`, `B_lms`,
+  and `C_twin`.
+
+The current ablation experiment is:
+
+- `exp_002_twin_ablation`: Twin subgroup ablation testing which Twin blocks add
+  value beyond `B_lms`.
+
+Run from `services/ml`:
 
 ```powershell
-python -m src.experiments.run_baselines --config configs/experiments_baseline.yaml
+python -m src.experiments.run_baselines --config configs/experiments/exp_001_baseline.yaml
+python -m src.experiments.run_ablation --config configs/experiments/exp_002_twin_ablation.yaml
 ```
 
-This writes:
+The teacher-facing heuristic `risk_level` is intentionally NOT used as a
+supervised target. Current experiments use:
 
-- modeling-readiness EDA into `data/artifacts/eda/`,
-- per-model result tables and a markdown summary into
-  `data/artifacts/experiments/baselines/`.
+- primary target: `final_grade`
+- secondary context target: `passed`
 
-`risk_level` is intentionally NOT used as a supervised target. See
+Legacy baseline outputs remain preserved under
+`data/artifacts/experiments/baselines/`, and versioned copies now live under
+`data/artifacts/experiments/exp_001_baseline/`.
+
+See [docs/experiments/README.md](docs/experiments/README.md) and
 [services/ml/README.md](services/ml/README.md) for full documentation of the
-feature sets, splits, and outputs.
+feature sets, splits, outputs, and experiment lifecycle.
 
 ---
 
@@ -398,11 +420,12 @@ At this stage, the repository is intended to provide:
 - schema-aware dataset validation,
 - generated raw LMS-like outputs and processed twin snapshots,
 - backend/frontend/ML skeletons,
+- versioned baseline and Twin ablation experiment records,
+- structured experiment metadata and documentation,
 - local development setup,
 - future-ready structure.
 
 The repository still intentionally leaves major later-phase pieces unimplemented, especially:
-- baseline training workflows beyond data generation,
 - explainability outputs beyond scaffolding,
 - backend API endpoints,
 - teacher-facing UI flows.

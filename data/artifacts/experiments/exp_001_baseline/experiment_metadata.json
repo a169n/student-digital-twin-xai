@@ -1,0 +1,70 @@
+{
+  "artifacts": {
+    "documentation": "docs/experiments/exp_001_baseline.md",
+    "eda_report": "data/artifacts/experiments/exp_001_baseline/eda/eda_report.md",
+    "eda_summary": "data/artifacts/experiments/exp_001_baseline/eda/eda_summary.json",
+    "legacy_results_csv": "data/artifacts/experiments/baselines/baseline_v1_results.csv",
+    "legacy_results_json": "data/artifacts/experiments/baselines/baseline_v1_results.json",
+    "legacy_summary_markdown": "data/artifacts/experiments/baselines/baseline_v1_summary.md",
+    "results_csv": "data/artifacts/experiments/exp_001_baseline/baseline_v1_results.csv",
+    "results_json": "data/artifacts/experiments/exp_001_baseline/baseline_v1_results.json",
+    "summary_markdown": "data/artifacts/experiments/exp_001_baseline/baseline_v1_summary.md"
+  },
+  "config_path": "services/ml/configs/experiments/exp_001_baseline.yaml",
+  "created_at": "2026-05-02T22:15:00+05:00",
+  "dataset": {
+    "courses_path": "data/raw/courses.csv",
+    "dataset_config_name": "generator_v1_3_refined.yaml",
+    "dataset_version": "v1_3_refined",
+    "final_results_path": "data/raw/final_results.csv",
+    "snapshots_path": "data/processed/student_twin_snapshots.csv",
+    "students_path": "data/raw/students.csv"
+  },
+  "experiment_id": "exp_001_baseline",
+  "feature_sets": [
+    "A_simple",
+    "B_lms",
+    "C_twin"
+  ],
+  "models": {
+    "classification": [
+      "logistic_regression",
+      "random_forest",
+      "gradient_boosting"
+    ],
+    "regression": [
+      "linear_regression",
+      "random_forest",
+      "gradient_boosting"
+    ]
+  },
+  "output_directory": "data/artifacts/experiments/exp_001_baseline",
+  "parent_experiment": null,
+  "preservation_note": "Copied from existing baseline artifacts without moving or deleting the original loose outputs.",
+  "schema_version": "1.2",
+  "seed": 42,
+  "short_conclusion": "`C_twin` did not reliably outperform `B_lms`; Twin subgroup ablation is needed before XAI.",
+  "split_strategies": {
+    "primary": "student_group",
+    "secondary": "temporal_forward",
+    "student_group": {
+      "seed": 42,
+      "test_size": 0.25,
+      "validation_size": 0.0
+    },
+    "temporal_forward": {
+      "student_seed": 42,
+      "student_test_size": 0.25,
+      "train_weeks": 6
+    }
+  },
+  "status": "completed",
+  "targets": {
+    "excluded": [
+      "risk_level"
+    ],
+    "primary": "final_grade",
+    "secondary": "passed"
+  },
+  "title": "Baseline feature-set comparison"
+}
