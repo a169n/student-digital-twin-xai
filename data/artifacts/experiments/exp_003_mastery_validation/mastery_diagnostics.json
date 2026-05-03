@@ -1,0 +1,847 @@
+{
+  "best_regression_model": "gradient_boosting",
+  "drop_column_tests": {
+    "drop_results": [
+      {
+        "delta_rmse_vs_full": 0.036329084797381395,
+        "dropped_column": "current_topic_mastery",
+        "mae": 1.530002554135867,
+        "r2": 0.9913450425926381,
+        "rmse": 1.9305777191668663
+      },
+      {
+        "delta_rmse_vs_full": 0.22824013298497525,
+        "dropped_column": "overall_mastery",
+        "mae": 1.6857402962688877,
+        "r2": 0.9895388083929111,
+        "rmse": 2.12248876735446
+      }
+    ],
+    "feature_set": "B_lms_plus_mastery",
+    "full_mae": 1.5104047091770574,
+    "full_r2": 0.9916677110671815,
+    "full_rmse": 1.8942486343694849,
+    "model": "gradient_boosting",
+    "n_test_rows": 196,
+    "n_train_rows": 602,
+    "split_strategy": "student_group"
+  },
+  "experiment_id": "exp_003_mastery_validation",
+  "headline_regression": [
+    {
+      "delta_vs_baseline_rmse": -0.20625676745243804,
+      "feature_set": "B_lms_plus_mastery",
+      "mae": 1.5104047091770574,
+      "model": "gradient_boosting",
+      "n_test_rows": 196,
+      "n_train_rows": 602,
+      "r2": 0.9916677110671815,
+      "rmse": 1.8942486343694849,
+      "split_strategy": "student_group"
+    },
+    {
+      "delta_vs_baseline_rmse": -0.12719204439645138,
+      "feature_set": "B_lms_plus_trends_mastery",
+      "mae": 1.57293550816071,
+      "model": "gradient_boosting",
+      "n_test_rows": 196,
+      "n_train_rows": 602,
+      "r2": 0.9909576259778604,
+      "rmse": 1.9733133574254715,
+      "split_strategy": "student_group"
+    },
+    {
+      "delta_vs_baseline_rmse": 0.0,
+      "feature_set": "B_lms",
+      "mae": 1.6807847485928418,
+      "model": "gradient_boosting",
+      "n_test_rows": 196,
+      "n_train_rows": 602,
+      "r2": 0.9897543866809037,
+      "rmse": 2.100505401821923,
+      "split_strategy": "student_group"
+    },
+    {
+      "delta_vs_baseline_rmse": 0.04859588344557464,
+      "feature_set": "C_twin_full",
+      "mae": 1.7316394051530344,
+      "model": "random_forest",
+      "n_test_rows": 196,
+      "n_train_rows": 602,
+      "r2": 0.9892748315145331,
+      "rmse": 2.1491012852674976,
+      "split_strategy": "student_group"
+    },
+    {
+      "delta_vs_baseline_rmse": 0.0,
+      "feature_set": "B_lms",
+      "mae": 1.7778865295966664,
+      "model": "linear_regression",
+      "n_test_rows": 112,
+      "n_train_rows": 258,
+      "r2": 0.988031110851561,
+      "rmse": 2.2702921346664526,
+      "split_strategy": "temporal_forward"
+    },
+    {
+      "delta_vs_baseline_rmse": 0.006055729981063518,
+      "feature_set": "B_lms_plus_mastery",
+      "mae": 1.7757139995752074,
+      "model": "linear_regression",
+      "n_test_rows": 112,
+      "n_train_rows": 258,
+      "r2": 0.9879671745624369,
+      "rmse": 2.276347864647516,
+      "split_strategy": "temporal_forward"
+    },
+    {
+      "delta_vs_baseline_rmse": 0.28441962283625877,
+      "feature_set": "B_lms_plus_trends_mastery",
+      "mae": 2.0239015199873753,
+      "model": "linear_regression",
+      "n_test_rows": 112,
+      "n_train_rows": 258,
+      "r2": 0.9848443638944167,
+      "rmse": 2.5547117575027114,
+      "split_strategy": "temporal_forward"
+    },
+    {
+      "delta_vs_baseline_rmse": 0.6670178867325149,
+      "feature_set": "C_twin_full",
+      "mae": 2.3959261464757065,
+      "model": "linear_regression",
+      "n_test_rows": 112,
+      "n_train_rows": 258,
+      "r2": 0.9799649731123659,
+      "rmse": 2.9373100213989676,
+      "split_strategy": "temporal_forward"
+    }
+  ],
+  "lineage": {
+    "current_topic_mastery": {
+      "notes": "Computed from cumulative submission scores filtered to `week_number <= snapshot week`. Falls back to other snapshot-time averages when the current topic has no submissions yet.",
+      "source_fields": [
+        "submissions.normalized_score (filtered to current topic and week<=snapshot week)",
+        "fallback: avg_quiz_score_to_date / avg_assignment_score_to_date"
+      ],
+      "uses_final_outcome_fields": false,
+      "uses_future_information": false
+    },
+    "overall_mastery": {
+      "notes": "Mean of per-topic mean scores using only submissions up to the snapshot week. Does not read `final_results.final_grade` or any post-course field.",
+      "source_fields": [
+        "submissions.normalized_score (filtered to week<=snapshot week, grouped per topic)",
+        "fallback: current_topic_mastery"
+      ],
+      "uses_final_outcome_fields": false,
+      "uses_future_information": false
+    },
+    "verification": "Lineage is documented from the generator code, not enforced by an automated lineage check. See `services/ml/src/generator/snapshots.py` for the construction."
+  },
+  "lms_target_correlations": {
+    "activity_score_to_date": 0.9826591239305904,
+    "attendance_rate_to_date": 0.9146560674221138,
+    "avg_assignment_score_to_date": 0.9817189184040294,
+    "avg_attempt_count_to_date": 0.6740668052108573,
+    "avg_quiz_score_to_date": 0.9775532793699219,
+    "late_submissions_to_date": -0.6517358042515413,
+    "missed_assignments_to_date": -0.6097286609130863,
+    "on_time_submission_rate_to_date": 0.884028796526657,
+    "time_spent_to_date": 0.7962733195735714
+  },
+  "overall_delta_rmse_vs_baseline": -0.20625676745243804,
+  "permutation_importance": {
+    "feature_set": "B_lms_plus_mastery",
+    "importances": [
+      {
+        "feature": "missed_assignments_to_date",
+        "mean_rmse_increase": -0.01805161443586243,
+        "std_rmse_increase": 0.016577391223611713
+      },
+      {
+        "feature": "avg_attempt_count_to_date",
+        "mean_rmse_increase": -0.035046484116965405,
+        "std_rmse_increase": 0.016551439759573797
+      },
+      {
+        "feature": "late_submissions_to_date",
+        "mean_rmse_increase": -0.0428098574775098,
+        "std_rmse_increase": 0.013912606067983608
+      },
+      {
+        "feature": "current_topic_mastery",
+        "mean_rmse_increase": -0.07799495861295111,
+        "std_rmse_increase": 0.03024764737797807
+      },
+      {
+        "feature": "avg_quiz_score_to_date",
+        "mean_rmse_increase": -0.407555497299019,
+        "std_rmse_increase": 0.06749069329396416
+      },
+      {
+        "feature": "attendance_rate_to_date",
+        "mean_rmse_increase": -0.42698181940626456,
+        "std_rmse_increase": 0.07231776429254332
+      },
+      {
+        "feature": "time_spent_to_date",
+        "mean_rmse_increase": -0.5360545218800337,
+        "std_rmse_increase": 0.07883612761848818
+      },
+      {
+        "feature": "on_time_submission_rate_to_date",
+        "mean_rmse_increase": -0.5480624193651952,
+        "std_rmse_increase": 0.07518260600671699
+      },
+      {
+        "feature": "avg_assignment_score_to_date",
+        "mean_rmse_increase": -2.2614829913897827,
+        "std_rmse_increase": 0.14264260826445105
+      },
+      {
+        "feature": "overall_mastery",
+        "mean_rmse_increase": -4.406320343231311,
+        "std_rmse_increase": 0.18623703393543833
+      },
+      {
+        "feature": "activity_score_to_date",
+        "mean_rmse_increase": -16.15382408190845,
+        "std_rmse_increase": 0.479637026646811
+      },
+      {
+        "feature": "avg_assignment_score_to_date_was_missing",
+        "mean_rmse_increase": -0.0,
+        "std_rmse_increase": 0.0
+      },
+      {
+        "feature": "avg_quiz_score_to_date_was_missing",
+        "mean_rmse_increase": -0.0,
+        "std_rmse_increase": 0.0
+      }
+    ],
+    "model": "gradient_boosting"
+  },
+  "primary_split": "student_group",
+  "primary_target": "final_grade",
+  "recommendation": {
+    "baseline_feature_set": "B_lms",
+    "candidate_feature_set": "B_lms_plus_mastery",
+    "decision_text": "Carry `B_lms_plus_mastery` into XAI as the lean Twin candidate. It improves on `B_lms` overall and in at least one early-week cutoff, supporting the early-warning story.",
+    "dominant_drop_column": {
+      "column": "overall_mastery",
+      "rmse_increase": 0.22824013298497525
+    },
+    "early_weeks_improved": [
+      4,
+      5,
+      6
+    ],
+    "flags": [
+      "`overall_mastery` is highly redundant with LMS feature `avg_assignment_score_to_date` (|r|=0.993)",
+      "dropping `overall_mastery` increases RMSE by +0.228, indicating the candidate model leans heavily on a single mastery feature"
+    ],
+    "late_weeks_improved": [
+      7,
+      8
+    ],
+    "max_lms_target_correlation": 0.9826591239305904,
+    "max_lms_target_correlation_column": "activity_score_to_date",
+    "max_target_correlation": 0.984305966958853,
+    "outcome": "carry_forward",
+    "overall_delta_rmse_vs_baseline": -0.20625676745243804,
+    "redundant_mastery_columns": [
+      "overall_mastery"
+    ],
+    "thresholds": {
+      "improvement_rmse_tolerance": 0.05,
+      "redundancy_correlation_warn": 0.95,
+      "target_proxy_correlation_warn": 0.95,
+      "target_proxy_excess_margin": 0.02
+    }
+  },
+  "redundancy_summary": {
+    "current_topic_mastery": {
+      "lms_column": "avg_quiz_score_to_date",
+      "max_abs_pearson": 0.9335325876414342,
+      "signed_pearson": 0.9335325876414342
+    },
+    "overall_mastery": {
+      "lms_column": "avg_assignment_score_to_date",
+      "max_abs_pearson": 0.9933475293131834,
+      "signed_pearson": 0.9933475293131834
+    }
+  },
+  "redundancy_with_lms": {
+    "current_topic_mastery": {
+      "activity_score_to_date": 0.930893660598534,
+      "attendance_rate_to_date": 0.8617728011142475,
+      "avg_assignment_score_to_date": 0.9302345370640657,
+      "avg_attempt_count_to_date": 0.6243370588102881,
+      "avg_quiz_score_to_date": 0.9335325876414342,
+      "late_submissions_to_date": -0.6332812270853311,
+      "missed_assignments_to_date": -0.5797413293069305,
+      "on_time_submission_rate_to_date": 0.8205613333476169,
+      "time_spent_to_date": 0.7048006155288449
+    },
+    "overall_mastery": {
+      "activity_score_to_date": 0.9836682006789125,
+      "attendance_rate_to_date": 0.9064394944169415,
+      "avg_assignment_score_to_date": 0.9933475293131834,
+      "avg_attempt_count_to_date": 0.649953366737182,
+      "avg_quiz_score_to_date": 0.9927366331041968,
+      "late_submissions_to_date": -0.6719702204822245,
+      "missed_assignments_to_date": -0.5955464411327752,
+      "on_time_submission_rate_to_date": 0.8786235465339598,
+      "time_spent_to_date": 0.7724827142997144
+    }
+  },
+  "secondary_target": null,
+  "target_correlations": {
+    "global_pearson": {
+      "current_topic_mastery": 0.9351808748276511,
+      "overall_mastery": 0.984305966958853
+    },
+    "mastery_columns": [
+      "current_topic_mastery",
+      "overall_mastery"
+    ],
+    "target_column": "final_grade",
+    "weekly_pearson": {
+      "current_topic_mastery": {
+        "10": 0.8911022157913182,
+        "4": 0.94566590500484,
+        "5": 0.9561374439677905,
+        "6": 0.9631503200094175,
+        "7": 0.9590773875530049,
+        "8": 0.9431496334549038,
+        "9": 0.912750596345533
+      },
+      "overall_mastery": {
+        "10": 0.9971845016190166,
+        "4": 0.9654308248901774,
+        "5": 0.9767012287932201,
+        "6": 0.9820453750492887,
+        "7": 0.9870225039211445,
+        "8": 0.9920744380526987,
+        "9": 0.9953639751266316
+      }
+    }
+  },
+  "thresholds": {
+    "early_week_max": 6,
+    "improvement_rmse_tolerance": 0.05,
+    "redundancy_correlation_warn": 0.95,
+    "target_proxy_correlation_warn": 0.95
+  },
+  "weekly_validation": {
+    "rows": [
+      {
+        "feature_set": "B_lms",
+        "mae": 3.5585678733755697,
+        "model": "linear_regression",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9570817266868524,
+        "rmse": 4.299084117366159,
+        "week": 4
+      },
+      {
+        "feature_set": "B_lms",
+        "mae": 1.8596866608044718,
+        "model": "random_forest",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9876248465718925,
+        "rmse": 2.3085012721959095,
+        "week": 4
+      },
+      {
+        "feature_set": "B_lms",
+        "mae": 1.7382239863141487,
+        "model": "gradient_boosting",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9881318331964708,
+        "rmse": 2.260719305390259,
+        "week": 4
+      },
+      {
+        "feature_set": "B_lms_plus_mastery",
+        "mae": 3.4095702794066116,
+        "model": "linear_regression",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9588091361444885,
+        "rmse": 4.2116790865654465,
+        "week": 4
+      },
+      {
+        "feature_set": "B_lms_plus_mastery",
+        "mae": 1.855217839201959,
+        "model": "random_forest",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.98876191103152,
+        "rmse": 2.1998904539350423,
+        "week": 4
+      },
+      {
+        "feature_set": "B_lms_plus_mastery",
+        "mae": 1.6473367239932704,
+        "model": "gradient_boosting",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9903118637276525,
+        "rmse": 2.042560559235092,
+        "week": 4
+      },
+      {
+        "feature_set": "B_lms",
+        "mae": 3.170998968281619,
+        "model": "linear_regression",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9599546963995688,
+        "rmse": 4.152700570017808,
+        "week": 5
+      },
+      {
+        "feature_set": "B_lms",
+        "mae": 2.2319339952780304,
+        "model": "random_forest",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9715996861864101,
+        "rmse": 3.4971671609844335,
+        "week": 5
+      },
+      {
+        "feature_set": "B_lms",
+        "mae": 2.549201725318526,
+        "model": "gradient_boosting",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9618735443858786,
+        "rmse": 4.051986958604525,
+        "week": 5
+      },
+      {
+        "feature_set": "B_lms_plus_mastery",
+        "mae": 2.9890949287282425,
+        "model": "linear_regression",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.966162211502931,
+        "rmse": 3.817295742767895,
+        "week": 5
+      },
+      {
+        "feature_set": "B_lms_plus_mastery",
+        "mae": 2.2055496161873687,
+        "model": "random_forest",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9803934927387812,
+        "rmse": 2.9057278737865375,
+        "week": 5
+      },
+      {
+        "feature_set": "B_lms_plus_mastery",
+        "mae": 2.386405547584922,
+        "model": "gradient_boosting",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9755701798298552,
+        "rmse": 3.243507879086925,
+        "week": 5
+      },
+      {
+        "feature_set": "B_lms",
+        "mae": 2.7218135282494305,
+        "model": "linear_regression",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9730639836215713,
+        "rmse": 3.405818544959046,
+        "week": 6
+      },
+      {
+        "feature_set": "B_lms",
+        "mae": 1.8267989345946625,
+        "model": "random_forest",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9876021331345894,
+        "rmse": 2.3106188201456317,
+        "week": 6
+      },
+      {
+        "feature_set": "B_lms",
+        "mae": 2.0299537591635324,
+        "model": "gradient_boosting",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9854587565506863,
+        "rmse": 2.5023934517605952,
+        "week": 6
+      },
+      {
+        "feature_set": "B_lms_plus_mastery",
+        "mae": 2.6325031429063572,
+        "model": "linear_regression",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9753346738597996,
+        "rmse": 3.259104255750493,
+        "week": 6
+      },
+      {
+        "feature_set": "B_lms_plus_mastery",
+        "mae": 1.8177238211837625,
+        "model": "random_forest",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9897547664154875,
+        "rmse": 2.100466475800089,
+        "week": 6
+      },
+      {
+        "feature_set": "B_lms_plus_mastery",
+        "mae": 1.990202098248915,
+        "model": "gradient_boosting",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9870007663362272,
+        "rmse": 2.365994318265745,
+        "week": 6
+      },
+      {
+        "feature_set": "B_lms",
+        "mae": 2.2365495445423735,
+        "model": "linear_regression",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9811274063399923,
+        "rmse": 2.8508253822248095,
+        "week": 7
+      },
+      {
+        "feature_set": "B_lms",
+        "mae": 1.8076184835600895,
+        "model": "random_forest",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9874315424070148,
+        "rmse": 2.3264612019366955,
+        "week": 7
+      },
+      {
+        "feature_set": "B_lms",
+        "mae": 1.6373056840057842,
+        "model": "gradient_boosting",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9890707524443139,
+        "rmse": 2.1694515411749062,
+        "week": 7
+      },
+      {
+        "feature_set": "B_lms_plus_mastery",
+        "mae": 2.0042003357851597,
+        "model": "linear_regression",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9839760492299373,
+        "rmse": 2.626876305618074,
+        "week": 7
+      },
+      {
+        "feature_set": "B_lms_plus_mastery",
+        "mae": 1.6782752104591723,
+        "model": "random_forest",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9899463136132134,
+        "rmse": 2.080738433268455,
+        "week": 7
+      },
+      {
+        "feature_set": "B_lms_plus_mastery",
+        "mae": 1.642239820970347,
+        "model": "gradient_boosting",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9893100878879633,
+        "rmse": 2.1455660546293607,
+        "week": 7
+      },
+      {
+        "feature_set": "B_lms",
+        "mae": 1.4038449276992555,
+        "model": "linear_regression",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9918445032960379,
+        "rmse": 1.8740450664892383,
+        "week": 8
+      },
+      {
+        "feature_set": "B_lms",
+        "mae": 2.0189374358701793,
+        "model": "random_forest",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.985074344094065,
+        "rmse": 2.5352543398372314,
+        "week": 8
+      },
+      {
+        "feature_set": "B_lms",
+        "mae": 1.6628983426231068,
+        "model": "gradient_boosting",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9906394468499686,
+        "rmse": 2.007731251016096,
+        "week": 8
+      },
+      {
+        "feature_set": "B_lms_plus_mastery",
+        "mae": 1.2210296245942882,
+        "model": "linear_regression",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9948519661044891,
+        "rmse": 1.488934253184522,
+        "week": 8
+      },
+      {
+        "feature_set": "B_lms_plus_mastery",
+        "mae": 1.8487545939625905,
+        "model": "random_forest",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9878270925360828,
+        "rmse": 2.289559754354299,
+        "week": 8
+      },
+      {
+        "feature_set": "B_lms_plus_mastery",
+        "mae": 1.839998415775247,
+        "model": "gradient_boosting",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9895650684421593,
+        "rmse": 2.1198231206646247,
+        "week": 8
+      },
+      {
+        "feature_set": "B_lms",
+        "mae": 0.8990392240065089,
+        "model": "linear_regression",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9967695266728376,
+        "rmse": 1.1794727238997107,
+        "week": 9
+      },
+      {
+        "feature_set": "B_lms",
+        "mae": 1.3902612712585134,
+        "model": "random_forest",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9935718351980042,
+        "rmse": 1.6637892863779085,
+        "week": 9
+      },
+      {
+        "feature_set": "B_lms",
+        "mae": 1.2178236156818876,
+        "model": "gradient_boosting",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9946440055303188,
+        "rmse": 1.5187101033968242,
+        "week": 9
+      },
+      {
+        "feature_set": "B_lms_plus_mastery",
+        "mae": 0.8950610781770563,
+        "model": "linear_regression",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9968708051387438,
+        "rmse": 1.1608366905458702,
+        "week": 9
+      },
+      {
+        "feature_set": "B_lms_plus_mastery",
+        "mae": 1.4630925488945614,
+        "model": "random_forest",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9930733855695045,
+        "rmse": 1.7270914287947492,
+        "week": 9
+      },
+      {
+        "feature_set": "B_lms_plus_mastery",
+        "mae": 1.4464335695913462,
+        "model": "gradient_boosting",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9935929912462003,
+        "rmse": 1.6610491407352044,
+        "week": 9
+      },
+      {
+        "feature_set": "B_lms",
+        "mae": 0.3154095929826807,
+        "model": "linear_regression",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9996207359919878,
+        "rmse": 0.4041342307311375,
+        "week": 10
+      },
+      {
+        "feature_set": "B_lms",
+        "mae": 1.1114155782312831,
+        "model": "random_forest",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9956945706625552,
+        "rmse": 1.3616423645896816,
+        "week": 10
+      },
+      {
+        "feature_set": "B_lms",
+        "mae": 0.8780821504824854,
+        "model": "gradient_boosting",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9976674040868698,
+        "rmse": 1.002246567114593,
+        "week": 10
+      },
+      {
+        "feature_set": "B_lms_plus_mastery",
+        "mae": 0.3142051401009801,
+        "model": "linear_regression",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9996665595585357,
+        "rmse": 0.3789343351113585,
+        "week": 10
+      },
+      {
+        "feature_set": "B_lms_plus_mastery",
+        "mae": 1.0392668516156491,
+        "model": "random_forest",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9955267641398694,
+        "rmse": 1.3879241132695495,
+        "week": 10
+      },
+      {
+        "feature_set": "B_lms_plus_mastery",
+        "mae": 1.0458380124739857,
+        "model": "gradient_boosting",
+        "n_test_rows": 28,
+        "n_train_rows": 86,
+        "r2": 0.9963439660186618,
+        "rmse": 1.2547578865202502,
+        "week": 10
+      }
+    ],
+    "summary": {
+      "early_week_max": 6,
+      "early_weeks_improved": [
+        4,
+        5,
+        6
+      ],
+      "improvement_rmse_tolerance": 0.05,
+      "late_weeks_improved": [
+        7,
+        8
+      ],
+      "rows": [
+        {
+          "baseline_feature_set": "B_lms",
+          "baseline_rmse": 2.260719305390259,
+          "candidate_feature_set": "B_lms_plus_mastery",
+          "candidate_improves_baseline": true,
+          "candidate_rmse": 2.042560559235092,
+          "delta_rmse_vs_baseline": -0.21815874615516684,
+          "week": 4
+        },
+        {
+          "baseline_feature_set": "B_lms",
+          "baseline_rmse": 3.4971671609844335,
+          "candidate_feature_set": "B_lms_plus_mastery",
+          "candidate_improves_baseline": true,
+          "candidate_rmse": 2.9057278737865375,
+          "delta_rmse_vs_baseline": -0.591439287197896,
+          "week": 5
+        },
+        {
+          "baseline_feature_set": "B_lms",
+          "baseline_rmse": 2.3106188201456317,
+          "candidate_feature_set": "B_lms_plus_mastery",
+          "candidate_improves_baseline": true,
+          "candidate_rmse": 2.100466475800089,
+          "delta_rmse_vs_baseline": -0.21015234434554264,
+          "week": 6
+        },
+        {
+          "baseline_feature_set": "B_lms",
+          "baseline_rmse": 2.1694515411749062,
+          "candidate_feature_set": "B_lms_plus_mastery",
+          "candidate_improves_baseline": true,
+          "candidate_rmse": 2.080738433268455,
+          "delta_rmse_vs_baseline": -0.08871310790645115,
+          "week": 7
+        },
+        {
+          "baseline_feature_set": "B_lms",
+          "baseline_rmse": 1.8740450664892383,
+          "candidate_feature_set": "B_lms_plus_mastery",
+          "candidate_improves_baseline": true,
+          "candidate_rmse": 1.488934253184522,
+          "delta_rmse_vs_baseline": -0.3851108133047163,
+          "week": 8
+        },
+        {
+          "baseline_feature_set": "B_lms",
+          "baseline_rmse": 1.1794727238997107,
+          "candidate_feature_set": "B_lms_plus_mastery",
+          "candidate_improves_baseline": false,
+          "candidate_rmse": 1.1608366905458702,
+          "delta_rmse_vs_baseline": -0.018636033353840453,
+          "week": 9
+        },
+        {
+          "baseline_feature_set": "B_lms",
+          "baseline_rmse": 0.4041342307311375,
+          "candidate_feature_set": "B_lms_plus_mastery",
+          "candidate_improves_baseline": false,
+          "candidate_rmse": 0.3789343351113585,
+          "delta_rmse_vs_baseline": -0.025199895619779034,
+          "week": 10
+        }
+      ],
+      "weeks_examined": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    }
+  }
+}

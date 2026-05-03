@@ -1,0 +1,144 @@
+{
+  "artifacts": {
+    "documentation": "docs/experiments/exp_004_xai_on_lean_twin.md",
+    "global_importance_csv": "data/artifacts/experiments/exp_004_xai_on_lean_twin/global_feature_importance.csv",
+    "global_importance_markdown": "data/artifacts/experiments/exp_004_xai_on_lean_twin/global_feature_importance.md",
+    "local_cases_json": "data/artifacts/experiments/exp_004_xai_on_lean_twin/local_case_explanations.json",
+    "local_cases_markdown": "data/artifacts/experiments/exp_004_xai_on_lean_twin/local_case_explanations.md",
+    "recommendation": "data/artifacts/experiments/exp_004_xai_on_lean_twin/xai_carry_forward_recommendation.md",
+    "results_json": "data/artifacts/experiments/exp_004_xai_on_lean_twin/exp_004_xai_on_lean_twin_results.json",
+    "summary_markdown": "data/artifacts/experiments/exp_004_xai_on_lean_twin/exp_004_xai_on_lean_twin_summary.md"
+  },
+  "config_path": "services/ml/configs/experiments/exp_004_xai_on_lean_twin.yaml",
+  "created_at": "2026-05-03T12:12:42Z",
+  "dataset": {
+    "courses_path": "C:\\Users\\a1byn\\Desktop\\dev\\aitu\\student-digital-twin-xai\\data\\raw\\courses.csv",
+    "dataset_config_name": "generator_v1_3_refined.yaml",
+    "dataset_version": "v1_3_refined",
+    "final_results_path": "C:\\Users\\a1byn\\Desktop\\dev\\aitu\\student-digital-twin-xai\\data\\raw\\final_results.csv",
+    "snapshots_path": "C:\\Users\\a1byn\\Desktop\\dev\\aitu\\student-digital-twin-xai\\data\\processed\\student_twin_snapshots.csv",
+    "students_path": "C:\\Users\\a1byn\\Desktop\\dev\\aitu\\student-digital-twin-xai\\data\\raw\\students.csv"
+  },
+  "dominance_audit": {
+    "average_local_mastery_share": 0.19434504008425157,
+    "delta_rmse_without_overall_mastery": 0.22824013298497525,
+    "flags": [
+      "top global feature accounts for 0.648 of importance share"
+    ],
+    "importance_share": 0.17846737635990975,
+    "interpretation": "`overall_mastery` is influential and redundant enough to require explicit caveats, but the explanation does not collapse entirely into one mastery feature.",
+    "lean_rmse": 1.8942486343694849,
+    "mean_rmse_increase": 4.488777346402193,
+    "outcome": "acceptable_with_caveat",
+    "overall_mastery_column": "overall_mastery",
+    "rank": 2,
+    "rmse_without_overall_mastery": 2.12248876735446,
+    "thresholds": {
+      "drop_rmse_warn": 0.25,
+      "importance_share_warn": 0.45,
+      "local_mastery_share_warn": 0.6,
+      "top1_share_warn": 0.55
+    },
+    "top1_share": 0.6475701429384623,
+    "top_feature": "activity_score_to_date"
+  },
+  "experiment_id": "exp_004_xai_on_lean_twin",
+  "feature_sets": {
+    "baseline": "B_lms",
+    "lean_twin": "B_lms_plus_mastery"
+  },
+  "metrics": {
+    "baseline": {
+      "mae": 1.6807847485928418,
+      "r2": 0.9897543866809037,
+      "rmse": 2.100505401821923
+    },
+    "lean_delta_rmse_vs_baseline": -0.20625676745243804,
+    "lean_twin": {
+      "mae": 1.5104047091770574,
+      "r2": 0.9916677110671815,
+      "rmse": 1.8942486343694849
+    },
+    "lean_twin_without_overall_mastery": {
+      "mae": 1.6857402962688877,
+      "r2": 0.9895388083929111,
+      "rmse": 2.12248876735446
+    },
+    "without_overall_delta_rmse_vs_lean": 0.22824013298497525
+  },
+  "model": "gradient_boosting",
+  "output_directory": "data/artifacts/experiments/exp_004_xai_on_lean_twin",
+  "parent_experiment": "exp_003_mastery_validation",
+  "recommendation": {
+    "baseline_feature_set": "B_lms",
+    "decision_text": "Carry `B_lms_plus_mastery` forward for dissertation XAI with an `overall_mastery` redundancy caveat; explanations remain teacher-meaningful and do not collapse into one feature.",
+    "dominance_outcome": "acceptable_with_caveat",
+    "flags": [
+      "top global feature accounts for 0.648 of importance share",
+      "mastery redundancy remains high for: overall_mastery"
+    ],
+    "lean_delta_rmse_vs_baseline": -0.20625676745243804,
+    "lean_twin_feature_set": "B_lms_plus_mastery",
+    "model": "gradient_boosting",
+    "outcome": "carry_forward_with_caveat",
+    "redundant_mastery_columns": [
+      "overall_mastery"
+    ]
+  },
+  "schema_version": "1.2",
+  "seed": 42,
+  "split_strategies": {
+    "primary": "student_group",
+    "secondary": null,
+    "student_group": {
+      "seed": 42,
+      "test_size": 0.25,
+      "validation_size": 0.0
+    }
+  },
+  "status": "completed",
+  "targets": {
+    "excluded_from_supervised_training": [
+      "risk_level",
+      "passed"
+    ],
+    "primary": "final_grade",
+    "secondary_context": "passed"
+  },
+  "title": "XAI on lean Twin",
+  "xai_config": {
+    "dominance": {
+      "drop_rmse_warn": 0.25,
+      "explanation_top1_share_warn": 0.55,
+      "local_mastery_share_warn": 0.6,
+      "overall_mastery_share_warn": 0.45
+    },
+    "lean_twin_feature_set": "B_lms_plus_mastery",
+    "local_cases": {
+      "borderline_grade": 50.0,
+      "case_types": [
+        "strong_performer",
+        "at_risk",
+        "improving_trajectory",
+        "declining_trajectory",
+        "borderline_medium"
+      ],
+      "max_cases": 5,
+      "trend_feature": "score_trend_3w"
+    },
+    "mastery_columns": [
+      "current_topic_mastery",
+      "overall_mastery"
+    ],
+    "model": "gradient_boosting",
+    "permutation_repeats": 15,
+    "primary_split": "student_group",
+    "primary_target": "final_grade",
+    "reference_baseline_feature_set": "B_lms",
+    "secondary_context_target": "passed",
+    "shap_enabled": false,
+    "shap_fallback_reason": "SHAP is not part of the current project dependency contract; use documented sklearn permutation and local perturbation fallbacks.\n",
+    "top_k_global": 12,
+    "top_k_local": 6
+  }
+}

@@ -1,0 +1,1305 @@
+{
+  "dominance_audit": {
+    "average_local_mastery_share": 0.19434504008425157,
+    "delta_rmse_without_overall_mastery": 0.22824013298497525,
+    "flags": [
+      "top global feature accounts for 0.648 of importance share"
+    ],
+    "importance_share": 0.17846737635990975,
+    "interpretation": "`overall_mastery` is influential and redundant enough to require explicit caveats, but the explanation does not collapse entirely into one mastery feature.",
+    "lean_rmse": 1.8942486343694849,
+    "mean_rmse_increase": 4.488777346402193,
+    "outcome": "acceptable_with_caveat",
+    "overall_mastery_column": "overall_mastery",
+    "rank": 2,
+    "rmse_without_overall_mastery": 2.12248876735446,
+    "thresholds": {
+      "drop_rmse_warn": 0.25,
+      "importance_share_warn": 0.45,
+      "local_mastery_share_warn": 0.6,
+      "top1_share_warn": 0.55
+    },
+    "top1_share": 0.6475701429384623,
+    "top_feature": "activity_score_to_date"
+  },
+  "experiment_id": "exp_004_xai_on_lean_twin",
+  "feature_sets": {
+    "baseline": "B_lms",
+    "lean_twin": "B_lms_plus_mastery",
+    "lean_twin_without_overall_mastery": {
+      "dropped_columns": [
+        "overall_mastery"
+      ],
+      "feature_set": "B_lms_plus_mastery"
+    }
+  },
+  "global_explanations": {
+    "baseline": {
+      "concentration": {
+        "features_with_positive_importance": 9,
+        "herfindahl_index": 0.5204594608777441,
+        "top1_share": 0.700548520013834,
+        "top3_share": 0.9308309084012983,
+        "top_feature": "activity_score_to_date"
+      },
+      "feature_set": "B_lms",
+      "method": {
+        "fallback": "model-native importance and local median perturbation",
+        "importance_unit": "held-out RMSE increase when feature is permuted",
+        "n_repeats": 15,
+        "primary": "sklearn permutation_importance",
+        "scoring": "neg_root_mean_squared_error"
+      },
+      "metrics": {
+        "mae": 1.6807847485928418,
+        "r2": 0.9897543866809037,
+        "rmse": 2.100505401821923
+      },
+      "model": "gradient_boosting",
+      "n_test_rows": 196,
+      "n_train_rows": 602,
+      "rows": [
+        {
+          "direction_note": "higher values generally align with higher predicted final_grade",
+          "direction_pearson_with_prediction": 0.9874257685612617,
+          "direction_pearson_with_target": 0.9858390679155145,
+          "feature": "activity_score_to_date",
+          "feature_set": "B_lms",
+          "importance_share": 0.700548520013834,
+          "importance_share_basis": "positive_permutation_rmse_increase",
+          "importance_share_basis_value": 17.843267102567843,
+          "mean_rmse_increase": 17.843267102567843,
+          "model": "gradient_boosting",
+          "model_native_importance": 0.8276880023724312,
+          "rank": 1,
+          "std_rmse_increase": 0.636343220265642,
+          "test_mean": 45.76857142857143,
+          "train_median": 54.0
+        },
+        {
+          "direction_note": "higher values generally align with higher predicted final_grade",
+          "direction_pearson_with_prediction": 0.9802049251900907,
+          "direction_pearson_with_target": 0.9848119350685077,
+          "feature": "avg_assignment_score_to_date",
+          "feature_set": "B_lms",
+          "importance_share": 0.1447663156227337,
+          "importance_share_basis": "positive_permutation_rmse_increase",
+          "importance_share_basis_value": 3.687259287993454,
+          "mean_rmse_increase": 3.687259287993454,
+          "model": "gradient_boosting",
+          "model_native_importance": 0.06318536516455264,
+          "rank": 2,
+          "std_rmse_increase": 0.1729864057002862,
+          "test_mean": 60.25173469387755,
+          "train_median": 71.11
+        },
+        {
+          "direction_note": "higher values generally align with higher predicted final_grade",
+          "direction_pearson_with_prediction": 0.9645541034681513,
+          "direction_pearson_with_target": 0.959060197574037,
+          "feature": "avg_quiz_score_to_date",
+          "feature_set": "B_lms",
+          "importance_share": 0.08551607276473056,
+          "importance_share_basis": "positive_permutation_rmse_increase",
+          "importance_share_basis_value": 2.1781305424406323,
+          "mean_rmse_increase": 2.1781305424406323,
+          "model": "gradient_boosting",
+          "model_native_importance": 0.09336489992786443,
+          "rank": 3,
+          "std_rmse_increase": 0.08628577371822274,
+          "test_mean": 60.55545918367346,
+          "train_median": 69.0
+        },
+        {
+          "direction_note": "higher values generally align with higher predicted final_grade",
+          "direction_pearson_with_prediction": 0.8952555398895107,
+          "direction_pearson_with_target": 0.8974333208224569,
+          "feature": "on_time_submission_rate_to_date",
+          "feature_set": "B_lms",
+          "importance_share": 0.0232232577999939,
+          "importance_share_basis": "positive_permutation_rmse_increase",
+          "importance_share_basis_value": 0.5915061984698795,
+          "mean_rmse_increase": 0.5915061984698795,
+          "model": "gradient_boosting",
+          "model_native_importance": 0.007503832963971746,
+          "rank": 4,
+          "std_rmse_increase": 0.07107218069995194,
+          "test_mean": 0.4609,
+          "train_median": 0.6
+        },
+        {
+          "direction_note": "higher values generally align with higher predicted final_grade",
+          "direction_pearson_with_prediction": 0.9295513009811189,
+          "direction_pearson_with_target": 0.9360214915626173,
+          "feature": "attendance_rate_to_date",
+          "feature_set": "B_lms",
+          "importance_share": 0.022660057843099456,
+          "importance_share_basis": "positive_permutation_rmse_increase",
+          "importance_share_basis_value": 0.5771612573616978,
+          "mean_rmse_increase": 0.5771612573616978,
+          "model": "gradient_boosting",
+          "model_native_importance": 0.0047223936444775036,
+          "rank": 5,
+          "std_rmse_increase": 0.07899916948164633,
+          "test_mean": 0.5930020408163265,
+          "train_median": 0.6714
+        },
+        {
+          "direction_note": "higher values generally align with higher predicted final_grade",
+          "direction_pearson_with_prediction": 0.8145174972399852,
+          "direction_pearson_with_target": 0.8147157736170688,
+          "feature": "time_spent_to_date",
+          "feature_set": "B_lms",
+          "importance_share": 0.018874189411898244,
+          "importance_share_basis": "positive_permutation_rmse_increase",
+          "importance_share_basis_value": 0.48073358718152426,
+          "mean_rmse_increase": 0.48073358718152426,
+          "model": "gradient_boosting",
+          "model_native_importance": 0.0023225309422112935,
+          "rank": 6,
+          "std_rmse_increase": 0.08650110133313549,
+          "test_mean": 935.0720408163265,
+          "train_median": 1047.27
+        },
+        {
+          "direction_note": "higher values generally align with higher predicted final_grade",
+          "direction_pearson_with_prediction": 0.6979667531693929,
+          "direction_pearson_with_target": 0.7051262828019083,
+          "feature": "avg_attempt_count_to_date",
+          "feature_set": "B_lms",
+          "importance_share": 0.0033006707168234724,
+          "importance_share_basis": "positive_permutation_rmse_increase",
+          "importance_share_basis_value": 0.08406947918003205,
+          "mean_rmse_increase": 0.08406947918003205,
+          "model": "gradient_boosting",
+          "model_native_importance": 0.000674465641267256,
+          "rank": 7,
+          "std_rmse_increase": 0.023889489088719375,
+          "test_mean": 0.9441540816326529,
+          "train_median": 1.025
+        },
+        {
+          "direction_note": "higher values generally align with lower predicted final_grade",
+          "direction_pearson_with_prediction": -0.5957315827444134,
+          "direction_pearson_with_target": -0.5907284731167369,
+          "feature": "late_submissions_to_date",
+          "feature_set": "B_lms",
+          "importance_share": 0.0010041781298738806,
+          "importance_share_basis": "positive_permutation_rmse_increase",
+          "importance_share_basis_value": 0.025576841686201668,
+          "mean_rmse_increase": 0.025576841686201668,
+          "model": "gradient_boosting",
+          "model_native_importance": 0.0002474319320321597,
+          "rank": 8,
+          "std_rmse_increase": 0.015561964818599658,
+          "test_mean": 4.096938775510204,
+          "train_median": 3.0
+        },
+        {
+          "direction_note": "higher values generally align with lower predicted final_grade",
+          "direction_pearson_with_prediction": -0.6363808026417053,
+          "direction_pearson_with_target": -0.6386970303124471,
+          "feature": "missed_assignments_to_date",
+          "feature_set": "B_lms",
+          "importance_share": 0.00010673769701275565,
+          "importance_share_basis": "positive_permutation_rmse_increase",
+          "importance_share_basis_value": 0.0027186542877486158,
+          "mean_rmse_increase": 0.0027186542877486158,
+          "model": "gradient_boosting",
+          "model_native_importance": 0.0002816631228375408,
+          "rank": 9,
+          "std_rmse_increase": 0.015095460767681047,
+          "test_mean": 3.36734693877551,
+          "train_median": 2.0
+        },
+        {
+          "direction_note": "direction unclear",
+          "direction_pearson_with_prediction": null,
+          "direction_pearson_with_target": null,
+          "feature": "avg_assignment_score_to_date_was_missing",
+          "feature_set": "B_lms",
+          "importance_share": 0.0,
+          "importance_share_basis": "positive_permutation_rmse_increase",
+          "importance_share_basis_value": 0.0,
+          "mean_rmse_increase": 0.0,
+          "model": "gradient_boosting",
+          "model_native_importance": 9.407685873031894e-06,
+          "rank": 10,
+          "std_rmse_increase": 0.0,
+          "test_mean": 0.0,
+          "train_median": 0.0
+        },
+        {
+          "direction_note": "higher values generally align with lower predicted final_grade",
+          "direction_pearson_with_prediction": -0.15010594776162617,
+          "direction_pearson_with_target": -0.17484145669555498,
+          "feature": "avg_quiz_score_to_date_was_missing",
+          "feature_set": "B_lms",
+          "importance_share": 0.0,
+          "importance_share_basis": "positive_permutation_rmse_increase",
+          "importance_share_basis_value": 0.0,
+          "mean_rmse_increase": 0.0,
+          "model": "gradient_boosting",
+          "model_native_importance": 6.602481188377072e-09,
+          "rank": 11,
+          "std_rmse_increase": 0.0,
+          "test_mean": 0.01020408163265306,
+          "train_median": 0.0
+        }
+      ],
+      "shap": {
+        "reason": "SHAP is not a declared project dependency for schema v1.2 experiments, so this run uses documented sklearn-based fallback explainers instead of pretending SHAP support exists.",
+        "used": false
+      },
+      "split_metadata": {
+        "row_counts": {
+          "test": 196,
+          "train": 602,
+          "validation": 0
+        },
+        "seed": 42,
+        "student_counts": {
+          "test": 28,
+          "train": 86,
+          "validation": 0
+        }
+      },
+      "split_strategy": "student_group"
+    },
+    "comparison": {
+      "baseline_concentration": {
+        "features_with_positive_importance": 9,
+        "herfindahl_index": 0.5204594608777441,
+        "top1_share": 0.700548520013834,
+        "top3_share": 0.9308309084012983,
+        "top_feature": "activity_score_to_date"
+      },
+      "baseline_top_features": [
+        "activity_score_to_date",
+        "avg_assignment_score_to_date",
+        "avg_quiz_score_to_date",
+        "on_time_submission_rate_to_date",
+        "attendance_rate_to_date"
+      ],
+      "features_added_to_top_ranking_by_mastery_model": [
+        "overall_mastery",
+        "time_spent_to_date"
+      ],
+      "lean_concentration": {
+        "features_with_positive_importance": 11,
+        "herfindahl_index": 0.46086770369680474,
+        "top1_share": 0.6475701429384623,
+        "top3_share": 0.9163559345233854,
+        "top_feature": "activity_score_to_date"
+      },
+      "lean_top_features": [
+        "activity_score_to_date",
+        "overall_mastery",
+        "avg_assignment_score_to_date",
+        "time_spent_to_date",
+        "on_time_submission_rate_to_date"
+      ],
+      "mastery_feature_details": {
+        "current_topic_mastery": {
+          "direction_note": "higher values generally align with higher predicted final_grade",
+          "importance_share": 0.0030172783162294224,
+          "mean_rmse_increase": 0.07589000763012076,
+          "rank": 8
+        },
+        "overall_mastery": {
+          "direction_note": "higher values generally align with higher predicted final_grade",
+          "importance_share": 0.17846737635990975,
+          "mean_rmse_increase": 4.488777346402193,
+          "rank": 2
+        }
+      },
+      "mastery_features_in_lean_top": [
+        "overall_mastery"
+      ],
+      "top_feature_overlap": [
+        "activity_score_to_date",
+        "avg_assignment_score_to_date",
+        "on_time_submission_rate_to_date"
+      ]
+    },
+    "lean_twin": {
+      "concentration": {
+        "features_with_positive_importance": 11,
+        "herfindahl_index": 0.46086770369680474,
+        "top1_share": 0.6475701429384623,
+        "top3_share": 0.9163559345233854,
+        "top_feature": "activity_score_to_date"
+      },
+      "feature_set": "B_lms_plus_mastery",
+      "method": {
+        "fallback": "model-native importance and local median perturbation",
+        "importance_unit": "held-out RMSE increase when feature is permuted",
+        "n_repeats": 15,
+        "primary": "sklearn permutation_importance",
+        "scoring": "neg_root_mean_squared_error"
+      },
+      "metrics": {
+        "mae": 1.5104047091770574,
+        "r2": 0.9916677110671815,
+        "rmse": 1.8942486343694849
+      },
+      "model": "gradient_boosting",
+      "n_test_rows": 196,
+      "n_train_rows": 602,
+      "rows": [
+        {
+          "direction_note": "higher values generally align with higher predicted final_grade",
+          "direction_pearson_with_prediction": 0.9877071132794796,
+          "direction_pearson_with_target": 0.9858390679155145,
+          "feature": "activity_score_to_date",
+          "feature_set": "B_lms_plus_mastery",
+          "importance_share": 0.6475701429384623,
+          "importance_share_basis": "positive_permutation_rmse_increase",
+          "importance_share_basis_value": 16.28756048929944,
+          "mean_rmse_increase": 16.28756048929944,
+          "model": "gradient_boosting",
+          "model_native_importance": 0.7253553130512751,
+          "rank": 1,
+          "std_rmse_increase": 0.5545465859828905,
+          "test_mean": 45.76857142857143,
+          "train_median": 54.0
+        },
+        {
+          "direction_note": "higher values generally align with higher predicted final_grade",
+          "direction_pearson_with_prediction": 0.988272114883326,
+          "direction_pearson_with_target": 0.9890450626591255,
+          "feature": "overall_mastery",
+          "feature_set": "B_lms_plus_mastery",
+          "importance_share": 0.17846737635990975,
+          "importance_share_basis": "positive_permutation_rmse_increase",
+          "importance_share_basis_value": 4.488777346402193,
+          "mean_rmse_increase": 4.488777346402193,
+          "model": "gradient_boosting",
+          "model_native_importance": 0.19211615999290316,
+          "rank": 2,
+          "std_rmse_increase": 0.22547839724323945,
+          "test_mean": 59.83295918367347,
+          "train_median": 69.65
+        },
+        {
+          "direction_note": "higher values generally align with higher predicted final_grade",
+          "direction_pearson_with_prediction": 0.9821708810811673,
+          "direction_pearson_with_target": 0.9848119350685077,
+          "feature": "avg_assignment_score_to_date",
+          "feature_set": "B_lms_plus_mastery",
+          "importance_share": 0.09031841522501331,
+          "importance_share_basis": "positive_permutation_rmse_increase",
+          "importance_share_basis_value": 2.2716715205550506,
+          "mean_rmse_increase": 2.2716715205550506,
+          "model": "gradient_boosting",
+          "model_native_importance": 0.03603149295870678,
+          "rank": 3,
+          "std_rmse_increase": 0.13934407624018624,
+          "test_mean": 60.25173469387755,
+          "train_median": 71.11
+        },
+        {
+          "direction_note": "higher values generally align with higher predicted final_grade",
+          "direction_pearson_with_prediction": 0.8160901670375729,
+          "direction_pearson_with_target": 0.8147157736170688,
+          "feature": "time_spent_to_date",
+          "feature_set": "B_lms_plus_mastery",
+          "importance_share": 0.021882928727634844,
+          "importance_share_basis": "positive_permutation_rmse_increase",
+          "importance_share_basis_value": 0.5503952416908311,
+          "mean_rmse_increase": 0.5503952416908311,
+          "model": "gradient_boosting",
+          "model_native_importance": 0.0023905343827608215,
+          "rank": 4,
+          "std_rmse_increase": 0.07746515811667173,
+          "test_mean": 935.0720408163265,
+          "train_median": 1047.27
+        },
+        {
+          "direction_note": "higher values generally align with higher predicted final_grade",
+          "direction_pearson_with_prediction": 0.8982443825658284,
+          "direction_pearson_with_target": 0.8974333208224569,
+          "feature": "on_time_submission_rate_to_date",
+          "feature_set": "B_lms_plus_mastery",
+          "importance_share": 0.021782884693411362,
+          "importance_share_basis": "positive_permutation_rmse_increase",
+          "importance_share_basis_value": 0.5478789532597208,
+          "mean_rmse_increase": 0.5478789532597208,
+          "model": "gradient_boosting",
+          "model_native_importance": 0.006424165604269347,
+          "rank": 5,
+          "std_rmse_increase": 0.06488323651868168,
+          "test_mean": 0.4609,
+          "train_median": 0.6
+        },
+        {
+          "direction_note": "higher values generally align with higher predicted final_grade",
+          "direction_pearson_with_prediction": 0.933421956534851,
+          "direction_pearson_with_target": 0.9360214915626173,
+          "feature": "attendance_rate_to_date",
+          "feature_set": "B_lms_plus_mastery",
+          "importance_share": 0.016982649417151937,
+          "importance_share_basis": "positive_permutation_rmse_increase",
+          "importance_share_basis_value": 0.42714435288087943,
+          "mean_rmse_increase": 0.42714435288087943,
+          "model": "gradient_boosting",
+          "model_native_importance": 0.0036839156088270073,
+          "rank": 6,
+          "std_rmse_increase": 0.06601734270082835,
+          "test_mean": 0.5930020408163265,
+          "train_median": 0.6714
+        },
+        {
+          "direction_note": "higher values generally align with higher predicted final_grade",
+          "direction_pearson_with_prediction": 0.9612369284461133,
+          "direction_pearson_with_target": 0.959060197574037,
+          "feature": "avg_quiz_score_to_date",
+          "feature_set": "B_lms_plus_mastery",
+          "importance_share": 0.016009265137435114,
+          "importance_share_basis": "positive_permutation_rmse_increase",
+          "importance_share_basis_value": 0.4026619774840145,
+          "mean_rmse_increase": 0.4026619774840145,
+          "model": "gradient_boosting",
+          "model_native_importance": 0.03210900036643219,
+          "rank": 7,
+          "std_rmse_increase": 0.05729619487821691,
+          "test_mean": 60.55545918367346,
+          "train_median": 69.0
+        },
+        {
+          "direction_note": "higher values generally align with higher predicted final_grade",
+          "direction_pearson_with_prediction": 0.9487498747162154,
+          "direction_pearson_with_target": 0.9416819503547506,
+          "feature": "current_topic_mastery",
+          "feature_set": "B_lms_plus_mastery",
+          "importance_share": 0.0030172783162294224,
+          "importance_share_basis": "positive_permutation_rmse_increase",
+          "importance_share_basis_value": 0.07589000763012076,
+          "mean_rmse_increase": 0.07589000763012076,
+          "model": "gradient_boosting",
+          "model_native_importance": 0.0008869110567959704,
+          "rank": 8,
+          "std_rmse_increase": 0.027011565545907307,
+          "test_mean": 58.5709693877551,
+          "train_median": 65.795
+        },
+        {
+          "direction_note": "higher values generally align with lower predicted final_grade",
+          "direction_pearson_with_prediction": -0.589666727103949,
+          "direction_pearson_with_target": -0.5907284731167369,
+          "feature": "late_submissions_to_date",
+          "feature_set": "B_lms_plus_mastery",
+          "importance_share": 0.0016593784089512995,
+          "importance_share_basis": "positive_permutation_rmse_increase",
+          "importance_share_basis_value": 0.04173636864694072,
+          "mean_rmse_increase": 0.04173636864694072,
+          "model": "gradient_boosting",
+          "model_native_importance": 0.00015625759705022648,
+          "rank": 9,
+          "std_rmse_increase": 0.019842692757245674,
+          "test_mean": 4.096938775510204,
+          "train_median": 3.0
+        },
+        {
+          "direction_note": "higher values generally align with higher predicted final_grade",
+          "direction_pearson_with_prediction": 0.7053369588422773,
+          "direction_pearson_with_target": 0.7051262828019083,
+          "feature": "avg_attempt_count_to_date",
+          "feature_set": "B_lms_plus_mastery",
+          "importance_share": 0.0012033862434603338,
+          "importance_share_basis": "positive_permutation_rmse_increase",
+          "importance_share_basis_value": 0.030267340837259068,
+          "mean_rmse_increase": 0.030267340837259068,
+          "model": "gradient_boosting",
+          "model_native_importance": 0.0005390223688162286,
+          "rank": 10,
+          "std_rmse_increase": 0.018466695004947065,
+          "test_mean": 0.9441540816326529,
+          "train_median": 1.025
+        },
+        {
+          "direction_note": "higher values generally align with lower predicted final_grade",
+          "direction_pearson_with_prediction": -0.6417025210744943,
+          "direction_pearson_with_target": -0.6386970303124471,
+          "feature": "missed_assignments_to_date",
+          "feature_set": "B_lms_plus_mastery",
+          "importance_share": 0.001106294532340417,
+          "importance_share_basis": "positive_permutation_rmse_increase",
+          "importance_share_basis_value": 0.02782530867268241,
+          "mean_rmse_increase": 0.02782530867268241,
+          "model": "gradient_boosting",
+          "model_native_importance": 0.00029231686246171883,
+          "rank": 11,
+          "std_rmse_increase": 0.02167908406202729,
+          "test_mean": 3.36734693877551,
+          "train_median": 2.0
+        },
+        {
+          "direction_note": "direction unclear",
+          "direction_pearson_with_prediction": null,
+          "direction_pearson_with_target": null,
+          "feature": "avg_assignment_score_to_date_was_missing",
+          "feature_set": "B_lms_plus_mastery",
+          "importance_share": 0.0,
+          "importance_share_basis": "positive_permutation_rmse_increase",
+          "importance_share_basis_value": 0.0,
+          "mean_rmse_increase": 0.0,
+          "model": "gradient_boosting",
+          "model_native_importance": 1.4910149701515818e-05,
+          "rank": 12,
+          "std_rmse_increase": 0.0,
+          "test_mean": 0.0,
+          "train_median": 0.0
+        },
+        {
+          "direction_note": "higher values generally align with lower predicted final_grade",
+          "direction_pearson_with_prediction": -0.167378410625754,
+          "direction_pearson_with_target": -0.17484145669555498,
+          "feature": "avg_quiz_score_to_date_was_missing",
+          "feature_set": "B_lms_plus_mastery",
+          "importance_share": 0.0,
+          "importance_share_basis": "positive_permutation_rmse_increase",
+          "importance_share_basis_value": 0.0,
+          "mean_rmse_increase": 0.0,
+          "model": "gradient_boosting",
+          "model_native_importance": 0.0,
+          "rank": 13,
+          "std_rmse_increase": 0.0,
+          "test_mean": 0.01020408163265306,
+          "train_median": 0.0
+        }
+      ],
+      "shap": {
+        "reason": "SHAP is not a declared project dependency for schema v1.2 experiments, so this run uses documented sklearn-based fallback explainers instead of pretending SHAP support exists.",
+        "used": false
+      },
+      "split_metadata": {
+        "row_counts": {
+          "test": 196,
+          "train": 602,
+          "validation": 0
+        },
+        "seed": 42,
+        "student_counts": {
+          "test": 28,
+          "train": 86,
+          "validation": 0
+        }
+      },
+      "split_strategy": "student_group"
+    }
+  },
+  "local_explanations": [
+    {
+      "actual_final_grade": 93.14,
+      "baseline_predicted_final_grade": 90.64179530873014,
+      "baseline_prediction_error": -2.498204691269862,
+      "baseline_top_contributions": [
+        {
+          "abs_contribution": 9.76981356457381,
+          "contribution": 9.76981356457381,
+          "direction": "raises_prediction",
+          "feature": "activity_score_to_date",
+          "reference_train_median": 54.0,
+          "value": 77.82
+        },
+        {
+          "abs_contribution": 8.265502947144867,
+          "contribution": 8.265502947144867,
+          "direction": "raises_prediction",
+          "feature": "avg_assignment_score_to_date",
+          "reference_train_median": 71.11,
+          "value": 92.98
+        },
+        {
+          "abs_contribution": 7.149985069366522,
+          "contribution": 7.149985069366522,
+          "direction": "raises_prediction",
+          "feature": "avg_quiz_score_to_date",
+          "reference_train_median": 69.0,
+          "value": 92.03
+        },
+        {
+          "abs_contribution": 1.7401004818952117,
+          "contribution": 1.7401004818952117,
+          "direction": "raises_prediction",
+          "feature": "on_time_submission_rate_to_date",
+          "reference_train_median": 0.6,
+          "value": 0.9
+        },
+        {
+          "abs_contribution": 0.9707443011529051,
+          "contribution": 0.9707443011529051,
+          "direction": "raises_prediction",
+          "feature": "time_spent_to_date",
+          "reference_train_median": 1047.27,
+          "value": 2214.31
+        },
+        {
+          "abs_contribution": 0.2728560178270101,
+          "contribution": -0.2728560178270101,
+          "direction": "lowers_prediction",
+          "feature": "attendance_rate_to_date",
+          "reference_train_median": 0.6714,
+          "value": 1.0
+        }
+      ],
+      "case_type": "strong_performer",
+      "lean_top_contributions": [
+        {
+          "abs_contribution": 8.567487122278024,
+          "contribution": 8.567487122278024,
+          "direction": "raises_prediction",
+          "feature": "overall_mastery",
+          "reference_train_median": 69.65,
+          "value": 92.49
+        },
+        {
+          "abs_contribution": 7.295352718294225,
+          "contribution": 7.295352718294225,
+          "direction": "raises_prediction",
+          "feature": "activity_score_to_date",
+          "reference_train_median": 54.0,
+          "value": 77.82
+        },
+        {
+          "abs_contribution": 3.5855946958301814,
+          "contribution": 3.5855946958301814,
+          "direction": "raises_prediction",
+          "feature": "avg_quiz_score_to_date",
+          "reference_train_median": 69.0,
+          "value": 92.03
+        },
+        {
+          "abs_contribution": 3.3831967296750918,
+          "contribution": 3.3831967296750918,
+          "direction": "raises_prediction",
+          "feature": "avg_assignment_score_to_date",
+          "reference_train_median": 71.11,
+          "value": 92.98
+        },
+        {
+          "abs_contribution": 2.092948026372639,
+          "contribution": 2.092948026372639,
+          "direction": "raises_prediction",
+          "feature": "on_time_submission_rate_to_date",
+          "reference_train_median": 0.6,
+          "value": 0.9
+        },
+        {
+          "abs_contribution": 0.7898515726153477,
+          "contribution": 0.7898515726153477,
+          "direction": "raises_prediction",
+          "feature": "time_spent_to_date",
+          "reference_train_median": 1047.27,
+          "value": 2214.31
+        }
+      ],
+      "mastery_abs_contribution_share": 0.3432342843209972,
+      "mastery_features_are_central": true,
+      "mastery_features_in_lean_top": [
+        "overall_mastery"
+      ],
+      "passed": true,
+      "predicted_final_grade": 90.29997395638289,
+      "prediction_error": -2.840026043617115,
+      "risk_level_context": "low",
+      "selection_rule": "latest held-out snapshot with the highest actual final_grade",
+      "source_row_index": 363,
+      "student_id": "student_054",
+      "teacher_meaningfulness_assessment": "teacher-meaningful with mastery as part of the student-state story",
+      "week_number": 10
+    },
+    {
+      "actual_final_grade": 22.45,
+      "baseline_predicted_final_grade": 23.35406373942444,
+      "baseline_prediction_error": 0.9040637394244406,
+      "baseline_top_contributions": [
+        {
+          "abs_contribution": 28.757893472793803,
+          "contribution": -28.757893472793803,
+          "direction": "lowers_prediction",
+          "feature": "activity_score_to_date",
+          "reference_train_median": 54.0,
+          "value": 14.2
+        },
+        {
+          "abs_contribution": 4.25326145629688,
+          "contribution": -4.25326145629688,
+          "direction": "lowers_prediction",
+          "feature": "avg_quiz_score_to_date",
+          "reference_train_median": 69.0,
+          "value": 22.23
+        },
+        {
+          "abs_contribution": 3.9822257142115127,
+          "contribution": -3.9822257142115127,
+          "direction": "lowers_prediction",
+          "feature": "attendance_rate_to_date",
+          "reference_train_median": 0.6714,
+          "value": 0.0895
+        },
+        {
+          "abs_contribution": 2.037167933240344,
+          "contribution": -2.037167933240344,
+          "direction": "lowers_prediction",
+          "feature": "avg_assignment_score_to_date",
+          "reference_train_median": 71.11,
+          "value": 27.28
+        },
+        {
+          "abs_contribution": 1.444424274435331,
+          "contribution": -1.444424274435331,
+          "direction": "lowers_prediction",
+          "feature": "on_time_submission_rate_to_date",
+          "reference_train_median": 0.6,
+          "value": 0.1
+        },
+        {
+          "abs_contribution": 0.6669017492758123,
+          "contribution": -0.6669017492758123,
+          "direction": "lowers_prediction",
+          "feature": "late_submissions_to_date",
+          "reference_train_median": 3.0,
+          "value": 4.0
+        }
+      ],
+      "case_type": "at_risk",
+      "lean_top_contributions": [
+        {
+          "abs_contribution": 30.71969402409927,
+          "contribution": -30.71969402409927,
+          "direction": "lowers_prediction",
+          "feature": "activity_score_to_date",
+          "reference_train_median": 54.0,
+          "value": 14.2
+        },
+        {
+          "abs_contribution": 8.346871475260631,
+          "contribution": -8.346871475260631,
+          "direction": "lowers_prediction",
+          "feature": "overall_mastery",
+          "reference_train_median": 69.65,
+          "value": 24.35
+        },
+        {
+          "abs_contribution": 3.545880182552917,
+          "contribution": -3.545880182552917,
+          "direction": "lowers_prediction",
+          "feature": "attendance_rate_to_date",
+          "reference_train_median": 0.6714,
+          "value": 0.0895
+        },
+        {
+          "abs_contribution": 1.8100938855860562,
+          "contribution": -1.8100938855860562,
+          "direction": "lowers_prediction",
+          "feature": "current_topic_mastery",
+          "reference_train_median": 65.795,
+          "value": 22.23
+        },
+        {
+          "abs_contribution": 1.6514189687769765,
+          "contribution": -1.6514189687769765,
+          "direction": "lowers_prediction",
+          "feature": "on_time_submission_rate_to_date",
+          "reference_train_median": 0.6,
+          "value": 0.1
+        },
+        {
+          "abs_contribution": 0.8217264616267705,
+          "contribution": -0.8217264616267705,
+          "direction": "lowers_prediction",
+          "feature": "avg_assignment_score_to_date",
+          "reference_train_median": 71.11,
+          "value": 27.28
+        }
+      ],
+      "mastery_abs_contribution_share": 0.2125473912396289,
+      "mastery_features_are_central": true,
+      "mastery_features_in_lean_top": [
+        "overall_mastery",
+        "current_topic_mastery"
+      ],
+      "passed": false,
+      "predicted_final_grade": 23.265173266496774,
+      "prediction_error": 0.8151732664967746,
+      "risk_level_context": "medium",
+      "selection_rule": "latest held-out snapshot with the lowest actual final_grade",
+      "source_row_index": 762,
+      "student_id": "student_115",
+      "teacher_meaningfulness_assessment": "teacher-meaningful with mastery as part of the student-state story",
+      "week_number": 10
+    },
+    {
+      "actual_final_grade": 61.87,
+      "baseline_predicted_final_grade": 59.55967171770779,
+      "baseline_prediction_error": -2.310328282292204,
+      "baseline_top_contributions": [
+        {
+          "abs_contribution": 5.700127682399135,
+          "contribution": -5.700127682399135,
+          "direction": "lowers_prediction",
+          "feature": "avg_assignment_score_to_date",
+          "reference_train_median": 71.11,
+          "value": 58.67
+        },
+        {
+          "abs_contribution": 0.7316241906501588,
+          "contribution": -0.7316241906501588,
+          "direction": "lowers_prediction",
+          "feature": "attendance_rate_to_date",
+          "reference_train_median": 0.6714,
+          "value": 0.5556
+        },
+        {
+          "abs_contribution": 0.6194786827382757,
+          "contribution": -0.6194786827382757,
+          "direction": "lowers_prediction",
+          "feature": "avg_attempt_count_to_date",
+          "reference_train_median": 1.025,
+          "value": 1.2
+        },
+        {
+          "abs_contribution": 0.5718898336330795,
+          "contribution": -0.5718898336330795,
+          "direction": "lowers_prediction",
+          "feature": "activity_score_to_date",
+          "reference_train_median": 54.0,
+          "value": 42.34
+        },
+        {
+          "abs_contribution": 0.48485820635434607,
+          "contribution": -0.48485820635434607,
+          "direction": "lowers_prediction",
+          "feature": "late_submissions_to_date",
+          "reference_train_median": 3.0,
+          "value": 5.0
+        },
+        {
+          "abs_contribution": 0.3378339255821672,
+          "contribution": 0.3378339255821672,
+          "direction": "raises_prediction",
+          "feature": "missed_assignments_to_date",
+          "reference_train_median": 2.0,
+          "value": 1.0
+        }
+      ],
+      "case_type": "improving_trajectory",
+      "lean_top_contributions": [
+        {
+          "abs_contribution": 4.852922216895912,
+          "contribution": -4.852922216895912,
+          "direction": "lowers_prediction",
+          "feature": "avg_assignment_score_to_date",
+          "reference_train_median": 71.11,
+          "value": 58.67
+        },
+        {
+          "abs_contribution": 0.6151468315303745,
+          "contribution": -0.6151468315303745,
+          "direction": "lowers_prediction",
+          "feature": "activity_score_to_date",
+          "reference_train_median": 54.0,
+          "value": 42.34
+        },
+        {
+          "abs_contribution": 0.6100448409432246,
+          "contribution": -0.6100448409432246,
+          "direction": "lowers_prediction",
+          "feature": "attendance_rate_to_date",
+          "reference_train_median": 0.6714,
+          "value": 0.5556
+        },
+        {
+          "abs_contribution": 0.5620756662458462,
+          "contribution": -0.5620756662458462,
+          "direction": "lowers_prediction",
+          "feature": "avg_attempt_count_to_date",
+          "reference_train_median": 1.025,
+          "value": 1.2
+        },
+        {
+          "abs_contribution": 0.42335496624631475,
+          "contribution": -0.42335496624631475,
+          "direction": "lowers_prediction",
+          "feature": "late_submissions_to_date",
+          "reference_train_median": 3.0,
+          "value": 5.0
+        },
+        {
+          "abs_contribution": 0.3694420955570834,
+          "contribution": 0.3694420955570834,
+          "direction": "raises_prediction",
+          "feature": "time_spent_to_date",
+          "reference_train_median": 1047.27,
+          "value": 635.68
+        }
+      ],
+      "mastery_abs_contribution_share": 0.018621724892450807,
+      "mastery_features_are_central": false,
+      "mastery_features_in_lean_top": [],
+      "passed": true,
+      "predicted_final_grade": 59.733705360975954,
+      "prediction_error": -2.136294639024044,
+      "risk_level_context": "low",
+      "selection_rule": "held-out snapshot with the strongest positive score_trend_3w",
+      "source_row_index": 736,
+      "student_id": "student_112",
+      "teacher_meaningfulness_assessment": "teacher-meaningful and mostly LMS-behavior/performance driven",
+      "week_number": 5
+    },
+    {
+      "actual_final_grade": 29.95,
+      "baseline_predicted_final_grade": 33.344985820905784,
+      "baseline_prediction_error": 3.3949858209057844,
+      "baseline_top_contributions": [
+        {
+          "abs_contribution": 22.34400951308998,
+          "contribution": -22.34400951308998,
+          "direction": "lowers_prediction",
+          "feature": "activity_score_to_date",
+          "reference_train_median": 54.0,
+          "value": 20.78
+        },
+        {
+          "abs_contribution": 3.54372798121625,
+          "contribution": -3.54372798121625,
+          "direction": "lowers_prediction",
+          "feature": "avg_assignment_score_to_date",
+          "reference_train_median": 71.11,
+          "value": 35.52
+        },
+        {
+          "abs_contribution": 2.0762182163969456,
+          "contribution": -2.0762182163969456,
+          "direction": "lowers_prediction",
+          "feature": "avg_quiz_score_to_date",
+          "reference_train_median": 69.0,
+          "value": 42.31
+        },
+        {
+          "abs_contribution": 1.8348663223724913,
+          "contribution": -1.8348663223724913,
+          "direction": "lowers_prediction",
+          "feature": "on_time_submission_rate_to_date",
+          "reference_train_median": 0.6,
+          "value": 0.2
+        },
+        {
+          "abs_contribution": 1.020394357804605,
+          "contribution": -1.020394357804605,
+          "direction": "lowers_prediction",
+          "feature": "attendance_rate_to_date",
+          "reference_train_median": 0.6714,
+          "value": 0.185
+        },
+        {
+          "abs_contribution": 0.38211073728238176,
+          "contribution": 0.38211073728238176,
+          "direction": "raises_prediction",
+          "feature": "time_spent_to_date",
+          "reference_train_median": 1047.27,
+          "value": 241.89
+        }
+      ],
+      "case_type": "declining_trajectory",
+      "lean_top_contributions": [
+        {
+          "abs_contribution": 23.471877533119127,
+          "contribution": -23.471877533119127,
+          "direction": "lowers_prediction",
+          "feature": "activity_score_to_date",
+          "reference_train_median": 54.0,
+          "value": 20.78
+        },
+        {
+          "abs_contribution": 6.069974338210194,
+          "contribution": -6.069974338210194,
+          "direction": "lowers_prediction",
+          "feature": "overall_mastery",
+          "reference_train_median": 69.65,
+          "value": 36.6
+        },
+        {
+          "abs_contribution": 2.4242656542410543,
+          "contribution": -2.4242656542410543,
+          "direction": "lowers_prediction",
+          "feature": "avg_assignment_score_to_date",
+          "reference_train_median": 71.11,
+          "value": 35.52
+        },
+        {
+          "abs_contribution": 1.3054079348877394,
+          "contribution": -1.3054079348877394,
+          "direction": "lowers_prediction",
+          "feature": "current_topic_mastery",
+          "reference_train_median": 65.795,
+          "value": 42.31
+        },
+        {
+          "abs_contribution": 1.1662328129099038,
+          "contribution": -1.1662328129099038,
+          "direction": "lowers_prediction",
+          "feature": "attendance_rate_to_date",
+          "reference_train_median": 0.6714,
+          "value": 0.185
+        },
+        {
+          "abs_contribution": 0.9423239335474705,
+          "contribution": -0.9423239335474705,
+          "direction": "lowers_prediction",
+          "feature": "on_time_submission_rate_to_date",
+          "reference_train_median": 0.6,
+          "value": 0.2
+        }
+      ],
+      "mastery_abs_contribution_share": 0.20322846096333072,
+      "mastery_features_are_central": true,
+      "mastery_features_in_lean_top": [
+        "overall_mastery",
+        "current_topic_mastery"
+      ],
+      "passed": false,
+      "predicted_final_grade": 33.234602524023394,
+      "prediction_error": 3.284602524023395,
+      "risk_level_context": "medium",
+      "selection_rule": "held-out snapshot with the strongest negative score_trend_3w",
+      "source_row_index": 176,
+      "student_id": "student_027",
+      "teacher_meaningfulness_assessment": "teacher-meaningful with mastery as part of the student-state story",
+      "week_number": 5
+    },
+    {
+      "actual_final_grade": 53.94,
+      "baseline_predicted_final_grade": 55.63934779900693,
+      "baseline_prediction_error": 1.6993477990069294,
+      "baseline_top_contributions": [
+        {
+          "abs_contribution": 7.039972256841686,
+          "contribution": -7.039972256841686,
+          "direction": "lowers_prediction",
+          "feature": "avg_assignment_score_to_date",
+          "reference_train_median": 71.11,
+          "value": 56.91
+        },
+        {
+          "abs_contribution": 3.3379137478946745,
+          "contribution": -3.3379137478946745,
+          "direction": "lowers_prediction",
+          "feature": "avg_quiz_score_to_date",
+          "reference_train_median": 69.0,
+          "value": 53.11
+        },
+        {
+          "abs_contribution": 2.1992010292305864,
+          "contribution": -2.1992010292305864,
+          "direction": "lowers_prediction",
+          "feature": "on_time_submission_rate_to_date",
+          "reference_train_median": 0.6,
+          "value": 0.3158
+        },
+        {
+          "abs_contribution": 1.7001738112933822,
+          "contribution": -1.7001738112933822,
+          "direction": "lowers_prediction",
+          "feature": "activity_score_to_date",
+          "reference_train_median": 54.0,
+          "value": 48.22
+        },
+        {
+          "abs_contribution": 1.0748779003650526,
+          "contribution": -1.0748779003650526,
+          "direction": "lowers_prediction",
+          "feature": "late_submissions_to_date",
+          "reference_train_median": 3.0,
+          "value": 10.0
+        },
+        {
+          "abs_contribution": 0.5497932495568421,
+          "contribution": -0.5497932495568421,
+          "direction": "lowers_prediction",
+          "feature": "attendance_rate_to_date",
+          "reference_train_median": 0.6714,
+          "value": 0.62
+        }
+      ],
+      "case_type": "borderline_medium",
+      "lean_top_contributions": [
+        {
+          "abs_contribution": 5.493584960270475,
+          "contribution": -5.493584960270475,
+          "direction": "lowers_prediction",
+          "feature": "avg_assignment_score_to_date",
+          "reference_train_median": 71.11,
+          "value": 56.91
+        },
+        {
+          "abs_contribution": 3.0098795674605583,
+          "contribution": -3.0098795674605583,
+          "direction": "lowers_prediction",
+          "feature": "activity_score_to_date",
+          "reference_train_median": 54.0,
+          "value": 48.22
+        },
+        {
+          "abs_contribution": 2.881768766656016,
+          "contribution": -2.881768766656016,
+          "direction": "lowers_prediction",
+          "feature": "overall_mastery",
+          "reference_train_median": 69.65,
+          "value": 56.33
+        },
+        {
+          "abs_contribution": 1.2438117272150961,
+          "contribution": -1.2438117272150961,
+          "direction": "lowers_prediction",
+          "feature": "on_time_submission_rate_to_date",
+          "reference_train_median": 0.6,
+          "value": 0.3158
+        },
+        {
+          "abs_contribution": 0.8414949415047062,
+          "contribution": -0.8414949415047062,
+          "direction": "lowers_prediction",
+          "feature": "avg_quiz_score_to_date",
+          "reference_train_median": 69.0,
+          "value": 53.11
+        },
+        {
+          "abs_contribution": 0.6137780093137124,
+          "contribution": -0.6137780093137124,
+          "direction": "lowers_prediction",
+          "feature": "missed_assignments_to_date",
+          "reference_train_median": 2.0,
+          "value": 3.0
+        }
+      ],
+      "mastery_abs_contribution_share": 0.1940933390048503,
+      "mastery_features_are_central": true,
+      "mastery_features_in_lean_top": [
+        "overall_mastery"
+      ],
+      "passed": true,
+      "predicted_final_grade": 56.4793442683914,
+      "prediction_error": 2.539344268391403,
+      "risk_level_context": "medium",
+      "selection_rule": "latest held-out snapshot closest to the configured borderline grade, preferring medium risk_level when available",
+      "source_row_index": 132,
+      "student_id": "student_020",
+      "teacher_meaningfulness_assessment": "teacher-meaningful with mastery as part of the student-state story",
+      "week_number": 10
+    }
+  ],
+  "method_notes": {
+    "local_explanation_method": "one-feature-at-a-time replacement with the training median; contributions are directional perturbation effects, not additive causal attributions",
+    "shap_fallback_reason": "SHAP is not part of the current project dependency contract; use documented sklearn permutation and local perturbation fallbacks.\n",
+    "shap_used": false
+  },
+  "metrics": {
+    "baseline": {
+      "mae": 1.6807847485928418,
+      "r2": 0.9897543866809037,
+      "rmse": 2.100505401821923
+    },
+    "lean_delta_rmse_vs_baseline": -0.20625676745243804,
+    "lean_twin": {
+      "mae": 1.5104047091770574,
+      "r2": 0.9916677110671815,
+      "rmse": 1.8942486343694849
+    },
+    "lean_twin_without_overall_mastery": {
+      "mae": 1.6857402962688877,
+      "r2": 0.9895388083929111,
+      "rmse": 2.12248876735446
+    },
+    "without_overall_delta_rmse_vs_lean": 0.22824013298497525
+  },
+  "model": "gradient_boosting",
+  "primary_target": "final_grade",
+  "recommendation": {
+    "baseline_feature_set": "B_lms",
+    "decision_text": "Carry `B_lms_plus_mastery` forward for dissertation XAI with an `overall_mastery` redundancy caveat; explanations remain teacher-meaningful and do not collapse into one feature.",
+    "dominance_outcome": "acceptable_with_caveat",
+    "flags": [
+      "top global feature accounts for 0.648 of importance share",
+      "mastery redundancy remains high for: overall_mastery"
+    ],
+    "lean_delta_rmse_vs_baseline": -0.20625676745243804,
+    "lean_twin_feature_set": "B_lms_plus_mastery",
+    "model": "gradient_boosting",
+    "outcome": "carry_forward_with_caveat",
+    "redundant_mastery_columns": [
+      "overall_mastery"
+    ]
+  },
+  "redundancy_summary": {
+    "current_topic_mastery": {
+      "lms_column": "avg_quiz_score_to_date",
+      "max_abs_pearson": 0.9335325876414342,
+      "signed_pearson": 0.9335325876414342
+    },
+    "overall_mastery": {
+      "lms_column": "avg_assignment_score_to_date",
+      "max_abs_pearson": 0.9933475293131834,
+      "signed_pearson": 0.9933475293131834
+    }
+  },
+  "redundancy_with_lms": {
+    "current_topic_mastery": {
+      "activity_score_to_date": 0.930893660598534,
+      "attendance_rate_to_date": 0.8617728011142475,
+      "avg_assignment_score_to_date": 0.9302345370640657,
+      "avg_attempt_count_to_date": 0.6243370588102881,
+      "avg_quiz_score_to_date": 0.9335325876414342,
+      "late_submissions_to_date": -0.6332812270853311,
+      "missed_assignments_to_date": -0.5797413293069305,
+      "on_time_submission_rate_to_date": 0.8205613333476169,
+      "time_spent_to_date": 0.7048006155288449
+    },
+    "overall_mastery": {
+      "activity_score_to_date": 0.9836682006789125,
+      "attendance_rate_to_date": 0.9064394944169415,
+      "avg_assignment_score_to_date": 0.9933475293131834,
+      "avg_attempt_count_to_date": 0.649953366737182,
+      "avg_quiz_score_to_date": 0.9927366331041968,
+      "late_submissions_to_date": -0.6719702204822245,
+      "missed_assignments_to_date": -0.5955464411327752,
+      "on_time_submission_rate_to_date": 0.8786235465339598,
+      "time_spent_to_date": 0.7724827142997144
+    }
+  },
+  "secondary_context_target": "passed",
+  "split_strategy": "student_group",
+  "target_correlations": {
+    "global_pearson": {
+      "current_topic_mastery": 0.9351808748276511,
+      "overall_mastery": 0.984305966958853
+    },
+    "mastery_columns": [
+      "current_topic_mastery",
+      "overall_mastery"
+    ],
+    "target_column": "final_grade",
+    "weekly_pearson": {
+      "current_topic_mastery": {
+        "10": 0.8911022157913182,
+        "4": 0.94566590500484,
+        "5": 0.9561374439677905,
+        "6": 0.9631503200094175,
+        "7": 0.9590773875530049,
+        "8": 0.9431496334549038,
+        "9": 0.912750596345533
+      },
+      "overall_mastery": {
+        "10": 0.9971845016190166,
+        "4": 0.9654308248901774,
+        "5": 0.9767012287932201,
+        "6": 0.9820453750492887,
+        "7": 0.9870225039211445,
+        "8": 0.9920744380526987,
+        "9": 0.9953639751266316
+      }
+    }
+  }
+}

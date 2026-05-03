@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c ' *)",
+      "Bash(python -c \"from src.experiments.run_mastery_validation import run_mastery_validation; print\\('imports OK'\\)\")",
+      "Bash(python -m src.experiments.run_mastery_validation --config configs/experiments/exp_003_mastery_validation.yaml)"
+    ]
+  }
+}

@@ -1,0 +1,235 @@
+{
+  "artifacts": {
+    "carry_forward_recommendation": "data/artifacts/experiments/exp_003_mastery_validation/mastery_carry_forward_recommendation.md",
+    "diagnostics_json": "data/artifacts/experiments/exp_003_mastery_validation/mastery_diagnostics.json",
+    "documentation": "docs/experiments/exp_003_mastery_validation.md",
+    "results_csv": "data/artifacts/experiments/exp_003_mastery_validation/exp_003_mastery_validation_results.csv",
+    "results_json": "data/artifacts/experiments/exp_003_mastery_validation/exp_003_mastery_validation_results.json",
+    "results_markdown": "data/artifacts/experiments/exp_003_mastery_validation/exp_003_mastery_validation_summary.md",
+    "weekly_validation_csv": "data/artifacts/experiments/exp_003_mastery_validation/mastery_weekly_validation.csv"
+  },
+  "config_path": "services/ml/configs/experiments/exp_003_mastery_validation.yaml",
+  "created_at": "2026-05-03T11:31:13Z",
+  "dataset": {
+    "courses_path": "C:\\Users\\a1byn\\Desktop\\dev\\aitu\\student-digital-twin-xai\\data\\raw\\courses.csv",
+    "dataset_config_name": "generator_v1_3_refined.yaml",
+    "dataset_version": "v1_3_refined",
+    "final_results_path": "C:\\Users\\a1byn\\Desktop\\dev\\aitu\\student-digital-twin-xai\\data\\raw\\final_results.csv",
+    "snapshots_path": "C:\\Users\\a1byn\\Desktop\\dev\\aitu\\student-digital-twin-xai\\data\\processed\\student_twin_snapshots.csv",
+    "students_path": "C:\\Users\\a1byn\\Desktop\\dev\\aitu\\student-digital-twin-xai\\data\\raw\\students.csv"
+  },
+  "experiment_id": "exp_003_mastery_validation",
+  "feature_sets": [
+    {
+      "columns": [
+        "avg_assignment_score_to_date",
+        "avg_quiz_score_to_date",
+        "attendance_rate_to_date",
+        "activity_score_to_date",
+        "time_spent_to_date",
+        "on_time_submission_rate_to_date",
+        "missed_assignments_to_date",
+        "late_submissions_to_date",
+        "avg_attempt_count_to_date"
+      ],
+      "description": "Stronger non-twin LMS baseline. Adds broader behavioral and submission-discipline signals that a typical LMS analytics view could plausibly expose without any digital-twin engineering.",
+      "indicator_columns": [
+        "has_assignment_score_to_date",
+        "has_quiz_score_to_date"
+      ],
+      "name": "B_lms"
+    },
+    {
+      "columns": [
+        "avg_assignment_score_to_date",
+        "avg_quiz_score_to_date",
+        "attendance_rate_to_date",
+        "activity_score_to_date",
+        "time_spent_to_date",
+        "on_time_submission_rate_to_date",
+        "missed_assignments_to_date",
+        "late_submissions_to_date",
+        "avg_attempt_count_to_date",
+        "current_topic_mastery",
+        "overall_mastery"
+      ],
+      "description": "LMS baseline plus current and overall mastery proxies. Tests whether topic-level Twin state adds value beyond raw performance and activity.",
+      "indicator_columns": [
+        "has_assignment_score_to_date",
+        "has_quiz_score_to_date"
+      ],
+      "name": "B_lms_plus_mastery"
+    },
+    {
+      "columns": [
+        "avg_assignment_score_to_date",
+        "avg_quiz_score_to_date",
+        "attendance_rate_to_date",
+        "activity_score_to_date",
+        "time_spent_to_date",
+        "on_time_submission_rate_to_date",
+        "missed_assignments_to_date",
+        "late_submissions_to_date",
+        "avg_attempt_count_to_date",
+        "score_trend_3w",
+        "activity_trend_3w",
+        "attendance_trend_3w",
+        "current_topic_mastery",
+        "overall_mastery"
+      ],
+      "description": "Compact Twin candidate combining the LMS baseline with trend and mastery blocks while excluding composite indices. Intended as a lean candidate for the later XAI phase if it is competitive with the full Twin set.",
+      "indicator_columns": [
+        "has_assignment_score_to_date",
+        "has_quiz_score_to_date"
+      ],
+      "name": "B_lms_plus_trends_mastery"
+    },
+    {
+      "columns": [
+        "avg_assignment_score_to_date",
+        "avg_quiz_score_to_date",
+        "attendance_rate_to_date",
+        "activity_score_to_date",
+        "time_spent_to_date",
+        "on_time_submission_rate_to_date",
+        "missed_assignments_to_date",
+        "late_submissions_to_date",
+        "avg_attempt_count_to_date",
+        "score_trend_3w",
+        "activity_trend_3w",
+        "attendance_trend_3w",
+        "current_topic_mastery",
+        "overall_mastery",
+        "engagement_index",
+        "performance_index",
+        "discipline_index",
+        "week_number"
+      ],
+      "description": "Alias for the full Digital Twin representation used in ablation reports. Kept separate from `C_twin` naming so the baseline and ablation experiment pages can be cited cleanly.",
+      "indicator_columns": [
+        "has_assignment_score_to_date",
+        "has_quiz_score_to_date"
+      ],
+      "name": "C_twin_full"
+    }
+  ],
+  "lineage_summary": {
+    "current_topic_mastery": {
+      "notes": "Computed from cumulative submission scores filtered to `week_number <= snapshot week`. Falls back to other snapshot-time averages when the current topic has no submissions yet.",
+      "source_fields": [
+        "submissions.normalized_score (filtered to current topic and week<=snapshot week)",
+        "fallback: avg_quiz_score_to_date / avg_assignment_score_to_date"
+      ],
+      "uses_final_outcome_fields": false,
+      "uses_future_information": false
+    },
+    "overall_mastery": {
+      "notes": "Mean of per-topic mean scores using only submissions up to the snapshot week. Does not read `final_results.final_grade` or any post-course field.",
+      "source_fields": [
+        "submissions.normalized_score (filtered to week<=snapshot week, grouped per topic)",
+        "fallback: current_topic_mastery"
+      ],
+      "uses_final_outcome_fields": false,
+      "uses_future_information": false
+    },
+    "verification": "Lineage is documented from the generator code, not enforced by an automated lineage check. See `services/ml/src/generator/snapshots.py` for the construction."
+  },
+  "mastery_validation": {
+    "baseline_feature_set": "B_lms",
+    "candidate_feature_set": "B_lms_plus_mastery",
+    "early_week_max": 6,
+    "improvement_rmse_tolerance": 0.05,
+    "mastery_columns": [
+      "current_topic_mastery",
+      "overall_mastery"
+    ],
+    "optional_feature_sets": [
+      "B_lms_plus_trends_mastery",
+      "C_twin_full"
+    ],
+    "primary_split": "student_group",
+    "redundancy_correlation_warn": 0.95,
+    "target_proxy_correlation_warn": 0.95,
+    "weekly_cutoffs": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ]
+  },
+  "models": {
+    "classification": [],
+    "regression": [
+      "linear_regression",
+      "random_forest",
+      "gradient_boosting"
+    ]
+  },
+  "output_directory": "data/artifacts/experiments/exp_003_mastery_validation",
+  "parent_experiment": "exp_002_twin_ablation",
+  "recommendation": {
+    "baseline_feature_set": "B_lms",
+    "candidate_feature_set": "B_lms_plus_mastery",
+    "decision_text": "Carry `B_lms_plus_mastery` into XAI as the lean Twin candidate. It improves on `B_lms` overall and in at least one early-week cutoff, supporting the early-warning story.",
+    "dominant_drop_column": {
+      "column": "overall_mastery",
+      "rmse_increase": 0.22824013298497525
+    },
+    "early_weeks_improved": [
+      4,
+      5,
+      6
+    ],
+    "flags": [
+      "`overall_mastery` is highly redundant with LMS feature `avg_assignment_score_to_date` (|r|=0.993)",
+      "dropping `overall_mastery` increases RMSE by +0.228, indicating the candidate model leans heavily on a single mastery feature"
+    ],
+    "late_weeks_improved": [
+      7,
+      8
+    ],
+    "max_lms_target_correlation": 0.9826591239305904,
+    "max_lms_target_correlation_column": "activity_score_to_date",
+    "max_target_correlation": 0.984305966958853,
+    "outcome": "carry_forward",
+    "overall_delta_rmse_vs_baseline": -0.20625676745243804,
+    "redundant_mastery_columns": [
+      "overall_mastery"
+    ],
+    "thresholds": {
+      "improvement_rmse_tolerance": 0.05,
+      "redundancy_correlation_warn": 0.95,
+      "target_proxy_correlation_warn": 0.95,
+      "target_proxy_excess_margin": 0.02
+    }
+  },
+  "schema_version": "1.2",
+  "seed": 42,
+  "split_strategies": {
+    "primary": "student_group",
+    "secondary": "temporal_forward",
+    "student_group": {
+      "seed": 42,
+      "test_size": 0.25,
+      "validation_size": 0.0
+    },
+    "temporal_forward": {
+      "student_seed": 42,
+      "student_test_size": 0.25,
+      "train_weeks": 6
+    }
+  },
+  "status": "completed",
+  "targets": {
+    "excluded": [
+      "risk_level",
+      "passed"
+    ],
+    "primary": "final_grade",
+    "secondary": null
+  },
+  "title": "Mastery validation"
+}

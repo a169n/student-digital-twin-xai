@@ -10,6 +10,8 @@ __pycache__/
 .venv/
 .pytest_cache/
 pytest-cache-files-*/
+services/ml/.tmp_pytest/
+services/ml/.tmp_test_runs/
 .mypy_cache/
 .ruff_cache/
 

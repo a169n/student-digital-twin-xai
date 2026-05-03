@@ -1,0 +1,602 @@
+[
+  {
+    "actual_final_grade": 93.14,
+    "baseline_predicted_final_grade": 90.64179530873014,
+    "baseline_prediction_error": -2.498204691269862,
+    "baseline_top_contributions": [
+      {
+        "abs_contribution": 9.76981356457381,
+        "contribution": 9.76981356457381,
+        "direction": "raises_prediction",
+        "feature": "activity_score_to_date",
+        "reference_train_median": 54.0,
+        "value": 77.82
+      },
+      {
+        "abs_contribution": 8.265502947144867,
+        "contribution": 8.265502947144867,
+        "direction": "raises_prediction",
+        "feature": "avg_assignment_score_to_date",
+        "reference_train_median": 71.11,
+        "value": 92.98
+      },
+      {
+        "abs_contribution": 7.149985069366522,
+        "contribution": 7.149985069366522,
+        "direction": "raises_prediction",
+        "feature": "avg_quiz_score_to_date",
+        "reference_train_median": 69.0,
+        "value": 92.03
+      },
+      {
+        "abs_contribution": 1.7401004818952117,
+        "contribution": 1.7401004818952117,
+        "direction": "raises_prediction",
+        "feature": "on_time_submission_rate_to_date",
+        "reference_train_median": 0.6,
+        "value": 0.9
+      },
+      {
+        "abs_contribution": 0.9707443011529051,
+        "contribution": 0.9707443011529051,
+        "direction": "raises_prediction",
+        "feature": "time_spent_to_date",
+        "reference_train_median": 1047.27,
+        "value": 2214.31
+      },
+      {
+        "abs_contribution": 0.2728560178270101,
+        "contribution": -0.2728560178270101,
+        "direction": "lowers_prediction",
+        "feature": "attendance_rate_to_date",
+        "reference_train_median": 0.6714,
+        "value": 1.0
+      }
+    ],
+    "case_type": "strong_performer",
+    "lean_top_contributions": [
+      {
+        "abs_contribution": 8.567487122278024,
+        "contribution": 8.567487122278024,
+        "direction": "raises_prediction",
+        "feature": "overall_mastery",
+        "reference_train_median": 69.65,
+        "value": 92.49
+      },
+      {
+        "abs_contribution": 7.295352718294225,
+        "contribution": 7.295352718294225,
+        "direction": "raises_prediction",
+        "feature": "activity_score_to_date",
+        "reference_train_median": 54.0,
+        "value": 77.82
+      },
+      {
+        "abs_contribution": 3.5855946958301814,
+        "contribution": 3.5855946958301814,
+        "direction": "raises_prediction",
+        "feature": "avg_quiz_score_to_date",
+        "reference_train_median": 69.0,
+        "value": 92.03
+      },
+      {
+        "abs_contribution": 3.3831967296750918,
+        "contribution": 3.3831967296750918,
+        "direction": "raises_prediction",
+        "feature": "avg_assignment_score_to_date",
+        "reference_train_median": 71.11,
+        "value": 92.98
+      },
+      {
+        "abs_contribution": 2.092948026372639,
+        "contribution": 2.092948026372639,
+        "direction": "raises_prediction",
+        "feature": "on_time_submission_rate_to_date",
+        "reference_train_median": 0.6,
+        "value": 0.9
+      },
+      {
+        "abs_contribution": 0.7898515726153477,
+        "contribution": 0.7898515726153477,
+        "direction": "raises_prediction",
+        "feature": "time_spent_to_date",
+        "reference_train_median": 1047.27,
+        "value": 2214.31
+      }
+    ],
+    "mastery_abs_contribution_share": 0.3432342843209972,
+    "mastery_features_are_central": true,
+    "mastery_features_in_lean_top": [
+      "overall_mastery"
+    ],
+    "passed": true,
+    "predicted_final_grade": 90.29997395638289,
+    "prediction_error": -2.840026043617115,
+    "risk_level_context": "low",
+    "selection_rule": "latest held-out snapshot with the highest actual final_grade",
+    "source_row_index": 363,
+    "student_id": "student_054",
+    "teacher_meaningfulness_assessment": "teacher-meaningful with mastery as part of the student-state story",
+    "week_number": 10
+  },
+  {
+    "actual_final_grade": 22.45,
+    "baseline_predicted_final_grade": 23.35406373942444,
+    "baseline_prediction_error": 0.9040637394244406,
+    "baseline_top_contributions": [
+      {
+        "abs_contribution": 28.757893472793803,
+        "contribution": -28.757893472793803,
+        "direction": "lowers_prediction",
+        "feature": "activity_score_to_date",
+        "reference_train_median": 54.0,
+        "value": 14.2
+      },
+      {
+        "abs_contribution": 4.25326145629688,
+        "contribution": -4.25326145629688,
+        "direction": "lowers_prediction",
+        "feature": "avg_quiz_score_to_date",
+        "reference_train_median": 69.0,
+        "value": 22.23
+      },
+      {
+        "abs_contribution": 3.9822257142115127,
+        "contribution": -3.9822257142115127,
+        "direction": "lowers_prediction",
+        "feature": "attendance_rate_to_date",
+        "reference_train_median": 0.6714,
+        "value": 0.0895
+      },
+      {
+        "abs_contribution": 2.037167933240344,
+        "contribution": -2.037167933240344,
+        "direction": "lowers_prediction",
+        "feature": "avg_assignment_score_to_date",
+        "reference_train_median": 71.11,
+        "value": 27.28
+      },
+      {
+        "abs_contribution": 1.444424274435331,
+        "contribution": -1.444424274435331,
+        "direction": "lowers_prediction",
+        "feature": "on_time_submission_rate_to_date",
+        "reference_train_median": 0.6,
+        "value": 0.1
+      },
+      {
+        "abs_contribution": 0.6669017492758123,
+        "contribution": -0.6669017492758123,
+        "direction": "lowers_prediction",
+        "feature": "late_submissions_to_date",
+        "reference_train_median": 3.0,
+        "value": 4.0
+      }
+    ],
+    "case_type": "at_risk",
+    "lean_top_contributions": [
+      {
+        "abs_contribution": 30.71969402409927,
+        "contribution": -30.71969402409927,
+        "direction": "lowers_prediction",
+        "feature": "activity_score_to_date",
+        "reference_train_median": 54.0,
+        "value": 14.2
+      },
+      {
+        "abs_contribution": 8.346871475260631,
+        "contribution": -8.346871475260631,
+        "direction": "lowers_prediction",
+        "feature": "overall_mastery",
+        "reference_train_median": 69.65,
+        "value": 24.35
+      },
+      {
+        "abs_contribution": 3.545880182552917,
+        "contribution": -3.545880182552917,
+        "direction": "lowers_prediction",
+        "feature": "attendance_rate_to_date",
+        "reference_train_median": 0.6714,
+        "value": 0.0895
+      },
+      {
+        "abs_contribution": 1.8100938855860562,
+        "contribution": -1.8100938855860562,
+        "direction": "lowers_prediction",
+        "feature": "current_topic_mastery",
+        "reference_train_median": 65.795,
+        "value": 22.23
+      },
+      {
+        "abs_contribution": 1.6514189687769765,
+        "contribution": -1.6514189687769765,
+        "direction": "lowers_prediction",
+        "feature": "on_time_submission_rate_to_date",
+        "reference_train_median": 0.6,
+        "value": 0.1
+      },
+      {
+        "abs_contribution": 0.8217264616267705,
+        "contribution": -0.8217264616267705,
+        "direction": "lowers_prediction",
+        "feature": "avg_assignment_score_to_date",
+        "reference_train_median": 71.11,
+        "value": 27.28
+      }
+    ],
+    "mastery_abs_contribution_share": 0.2125473912396289,
+    "mastery_features_are_central": true,
+    "mastery_features_in_lean_top": [
+      "overall_mastery",
+      "current_topic_mastery"
+    ],
+    "passed": false,
+    "predicted_final_grade": 23.265173266496774,
+    "prediction_error": 0.8151732664967746,
+    "risk_level_context": "medium",
+    "selection_rule": "latest held-out snapshot with the lowest actual final_grade",
+    "source_row_index": 762,
+    "student_id": "student_115",
+    "teacher_meaningfulness_assessment": "teacher-meaningful with mastery as part of the student-state story",
+    "week_number": 10
+  },
+  {
+    "actual_final_grade": 61.87,
+    "baseline_predicted_final_grade": 59.55967171770779,
+    "baseline_prediction_error": -2.310328282292204,
+    "baseline_top_contributions": [
+      {
+        "abs_contribution": 5.700127682399135,
+        "contribution": -5.700127682399135,
+        "direction": "lowers_prediction",
+        "feature": "avg_assignment_score_to_date",
+        "reference_train_median": 71.11,
+        "value": 58.67
+      },
+      {
+        "abs_contribution": 0.7316241906501588,
+        "contribution": -0.7316241906501588,
+        "direction": "lowers_prediction",
+        "feature": "attendance_rate_to_date",
+        "reference_train_median": 0.6714,
+        "value": 0.5556
+      },
+      {
+        "abs_contribution": 0.6194786827382757,
+        "contribution": -0.6194786827382757,
+        "direction": "lowers_prediction",
+        "feature": "avg_attempt_count_to_date",
+        "reference_train_median": 1.025,
+        "value": 1.2
+      },
+      {
+        "abs_contribution": 0.5718898336330795,
+        "contribution": -0.5718898336330795,
+        "direction": "lowers_prediction",
+        "feature": "activity_score_to_date",
+        "reference_train_median": 54.0,
+        "value": 42.34
+      },
+      {
+        "abs_contribution": 0.48485820635434607,
+        "contribution": -0.48485820635434607,
+        "direction": "lowers_prediction",
+        "feature": "late_submissions_to_date",
+        "reference_train_median": 3.0,
+        "value": 5.0
+      },
+      {
+        "abs_contribution": 0.3378339255821672,
+        "contribution": 0.3378339255821672,
+        "direction": "raises_prediction",
+        "feature": "missed_assignments_to_date",
+        "reference_train_median": 2.0,
+        "value": 1.0
+      }
+    ],
+    "case_type": "improving_trajectory",
+    "lean_top_contributions": [
+      {
+        "abs_contribution": 4.852922216895912,
+        "contribution": -4.852922216895912,
+        "direction": "lowers_prediction",
+        "feature": "avg_assignment_score_to_date",
+        "reference_train_median": 71.11,
+        "value": 58.67
+      },
+      {
+        "abs_contribution": 0.6151468315303745,
+        "contribution": -0.6151468315303745,
+        "direction": "lowers_prediction",
+        "feature": "activity_score_to_date",
+        "reference_train_median": 54.0,
+        "value": 42.34
+      },
+      {
+        "abs_contribution": 0.6100448409432246,
+        "contribution": -0.6100448409432246,
+        "direction": "lowers_prediction",
+        "feature": "attendance_rate_to_date",
+        "reference_train_median": 0.6714,
+        "value": 0.5556
+      },
+      {
+        "abs_contribution": 0.5620756662458462,
+        "contribution": -0.5620756662458462,
+        "direction": "lowers_prediction",
+        "feature": "avg_attempt_count_to_date",
+        "reference_train_median": 1.025,
+        "value": 1.2
+      },
+      {
+        "abs_contribution": 0.42335496624631475,
+        "contribution": -0.42335496624631475,
+        "direction": "lowers_prediction",
+        "feature": "late_submissions_to_date",
+        "reference_train_median": 3.0,
+        "value": 5.0
+      },
+      {
+        "abs_contribution": 0.3694420955570834,
+        "contribution": 0.3694420955570834,
+        "direction": "raises_prediction",
+        "feature": "time_spent_to_date",
+        "reference_train_median": 1047.27,
+        "value": 635.68
+      }
+    ],
+    "mastery_abs_contribution_share": 0.018621724892450807,
+    "mastery_features_are_central": false,
+    "mastery_features_in_lean_top": [],
+    "passed": true,
+    "predicted_final_grade": 59.733705360975954,
+    "prediction_error": -2.136294639024044,
+    "risk_level_context": "low",
+    "selection_rule": "held-out snapshot with the strongest positive score_trend_3w",
+    "source_row_index": 736,
+    "student_id": "student_112",
+    "teacher_meaningfulness_assessment": "teacher-meaningful and mostly LMS-behavior/performance driven",
+    "week_number": 5
+  },
+  {
+    "actual_final_grade": 29.95,
+    "baseline_predicted_final_grade": 33.344985820905784,
+    "baseline_prediction_error": 3.3949858209057844,
+    "baseline_top_contributions": [
+      {
+        "abs_contribution": 22.34400951308998,
+        "contribution": -22.34400951308998,
+        "direction": "lowers_prediction",
+        "feature": "activity_score_to_date",
+        "reference_train_median": 54.0,
+        "value": 20.78
+      },
+      {
+        "abs_contribution": 3.54372798121625,
+        "contribution": -3.54372798121625,
+        "direction": "lowers_prediction",
+        "feature": "avg_assignment_score_to_date",
+        "reference_train_median": 71.11,
+        "value": 35.52
+      },
+      {
+        "abs_contribution": 2.0762182163969456,
+        "contribution": -2.0762182163969456,
+        "direction": "lowers_prediction",
+        "feature": "avg_quiz_score_to_date",
+        "reference_train_median": 69.0,
+        "value": 42.31
+      },
+      {
+        "abs_contribution": 1.8348663223724913,
+        "contribution": -1.8348663223724913,
+        "direction": "lowers_prediction",
+        "feature": "on_time_submission_rate_to_date",
+        "reference_train_median": 0.6,
+        "value": 0.2
+      },
+      {
+        "abs_contribution": 1.020394357804605,
+        "contribution": -1.020394357804605,
+        "direction": "lowers_prediction",
+        "feature": "attendance_rate_to_date",
+        "reference_train_median": 0.6714,
+        "value": 0.185
+      },
+      {
+        "abs_contribution": 0.38211073728238176,
+        "contribution": 0.38211073728238176,
+        "direction": "raises_prediction",
+        "feature": "time_spent_to_date",
+        "reference_train_median": 1047.27,
+        "value": 241.89
+      }
+    ],
+    "case_type": "declining_trajectory",
+    "lean_top_contributions": [
+      {
+        "abs_contribution": 23.471877533119127,
+        "contribution": -23.471877533119127,
+        "direction": "lowers_prediction",
+        "feature": "activity_score_to_date",
+        "reference_train_median": 54.0,
+        "value": 20.78
+      },
+      {
+        "abs_contribution": 6.069974338210194,
+        "contribution": -6.069974338210194,
+        "direction": "lowers_prediction",
+        "feature": "overall_mastery",
+        "reference_train_median": 69.65,
+        "value": 36.6
+      },
+      {
+        "abs_contribution": 2.4242656542410543,
+        "contribution": -2.4242656542410543,
+        "direction": "lowers_prediction",
+        "feature": "avg_assignment_score_to_date",
+        "reference_train_median": 71.11,
+        "value": 35.52
+      },
+      {
+        "abs_contribution": 1.3054079348877394,
+        "contribution": -1.3054079348877394,
+        "direction": "lowers_prediction",
+        "feature": "current_topic_mastery",
+        "reference_train_median": 65.795,
+        "value": 42.31
+      },
+      {
+        "abs_contribution": 1.1662328129099038,
+        "contribution": -1.1662328129099038,
+        "direction": "lowers_prediction",
+        "feature": "attendance_rate_to_date",
+        "reference_train_median": 0.6714,
+        "value": 0.185
+      },
+      {
+        "abs_contribution": 0.9423239335474705,
+        "contribution": -0.9423239335474705,
+        "direction": "lowers_prediction",
+        "feature": "on_time_submission_rate_to_date",
+        "reference_train_median": 0.6,
+        "value": 0.2
+      }
+    ],
+    "mastery_abs_contribution_share": 0.20322846096333072,
+    "mastery_features_are_central": true,
+    "mastery_features_in_lean_top": [
+      "overall_mastery",
+      "current_topic_mastery"
+    ],
+    "passed": false,
+    "predicted_final_grade": 33.234602524023394,
+    "prediction_error": 3.284602524023395,
+    "risk_level_context": "medium",
+    "selection_rule": "held-out snapshot with the strongest negative score_trend_3w",
+    "source_row_index": 176,
+    "student_id": "student_027",
+    "teacher_meaningfulness_assessment": "teacher-meaningful with mastery as part of the student-state story",
+    "week_number": 5
+  },
+  {
+    "actual_final_grade": 53.94,
+    "baseline_predicted_final_grade": 55.63934779900693,
+    "baseline_prediction_error": 1.6993477990069294,
+    "baseline_top_contributions": [
+      {
+        "abs_contribution": 7.039972256841686,
+        "contribution": -7.039972256841686,
+        "direction": "lowers_prediction",
+        "feature": "avg_assignment_score_to_date",
+        "reference_train_median": 71.11,
+        "value": 56.91
+      },
+      {
+        "abs_contribution": 3.3379137478946745,
+        "contribution": -3.3379137478946745,
+        "direction": "lowers_prediction",
+        "feature": "avg_quiz_score_to_date",
+        "reference_train_median": 69.0,
+        "value": 53.11
+      },
+      {
+        "abs_contribution": 2.1992010292305864,
+        "contribution": -2.1992010292305864,
+        "direction": "lowers_prediction",
+        "feature": "on_time_submission_rate_to_date",
+        "reference_train_median": 0.6,
+        "value": 0.3158
+      },
+      {
+        "abs_contribution": 1.7001738112933822,
+        "contribution": -1.7001738112933822,
+        "direction": "lowers_prediction",
+        "feature": "activity_score_to_date",
+        "reference_train_median": 54.0,
+        "value": 48.22
+      },
+      {
+        "abs_contribution": 1.0748779003650526,
+        "contribution": -1.0748779003650526,
+        "direction": "lowers_prediction",
+        "feature": "late_submissions_to_date",
+        "reference_train_median": 3.0,
+        "value": 10.0
+      },
+      {
+        "abs_contribution": 0.5497932495568421,
+        "contribution": -0.5497932495568421,
+        "direction": "lowers_prediction",
+        "feature": "attendance_rate_to_date",
+        "reference_train_median": 0.6714,
+        "value": 0.62
+      }
+    ],
+    "case_type": "borderline_medium",
+    "lean_top_contributions": [
+      {
+        "abs_contribution": 5.493584960270475,
+        "contribution": -5.493584960270475,
+        "direction": "lowers_prediction",
+        "feature": "avg_assignment_score_to_date",
+        "reference_train_median": 71.11,
+        "value": 56.91
+      },
+      {
+        "abs_contribution": 3.0098795674605583,
+        "contribution": -3.0098795674605583,
+        "direction": "lowers_prediction",
+        "feature": "activity_score_to_date",
+        "reference_train_median": 54.0,
+        "value": 48.22
+      },
+      {
+        "abs_contribution": 2.881768766656016,
+        "contribution": -2.881768766656016,
+        "direction": "lowers_prediction",
+        "feature": "overall_mastery",
+        "reference_train_median": 69.65,
+        "value": 56.33
+      },
+      {
+        "abs_contribution": 1.2438117272150961,
+        "contribution": -1.2438117272150961,
+        "direction": "lowers_prediction",
+        "feature": "on_time_submission_rate_to_date",
+        "reference_train_median": 0.6,
+        "value": 0.3158
+      },
+      {
+        "abs_contribution": 0.8414949415047062,
+        "contribution": -0.8414949415047062,
+        "direction": "lowers_prediction",
+        "feature": "avg_quiz_score_to_date",
+        "reference_train_median": 69.0,
+        "value": 53.11
+      },
+      {
+        "abs_contribution": 0.6137780093137124,
+        "contribution": -0.6137780093137124,
+        "direction": "lowers_prediction",
+        "feature": "missed_assignments_to_date",
+        "reference_train_median": 2.0,
+        "value": 3.0
+      }
+    ],
+    "mastery_abs_contribution_share": 0.1940933390048503,
+    "mastery_features_are_central": true,
+    "mastery_features_in_lean_top": [
+      "overall_mastery"
+    ],
+    "passed": true,
+    "predicted_final_grade": 56.4793442683914,
+    "prediction_error": 2.539344268391403,
+    "risk_level_context": "medium",
+    "selection_rule": "latest held-out snapshot closest to the configured borderline grade, preferring medium risk_level when available",
+    "source_row_index": 132,
+    "student_id": "student_020",
+    "teacher_meaningfulness_assessment": "teacher-meaningful with mastery as part of the student-state story",
+    "week_number": 10
+  }
+]

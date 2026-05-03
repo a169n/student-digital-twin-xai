@@ -20,6 +20,8 @@ maintained as a concise research history, not as a full MLOps system.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | exp_001_baseline | Baseline feature-set comparison | completed | v1.2 | generator_v1_3_refined.yaml | final_grade | [exp_001_baseline](../../data/artifacts/experiments/exp_001_baseline) | [exp_001_baseline.md](exp_001_baseline.md) | `C_twin` did not reliably outperform `B_lms`; Twin redundancy requires ablation. |
 | exp_002_twin_ablation | Twin subgroup ablation | completed | v1.2 | generator_v1_3_refined.yaml | final_grade | [exp_002_twin_ablation](../../data/artifacts/experiments/exp_002_twin_ablation) | [exp_002_twin_ablation.md](exp_002_twin_ablation.md) | Carry forward `B_lms_plus_mastery`; full Twin justified: False. |
+| exp_003_mastery_validation | Mastery validation | completed | v1.2 | generator_v1_3_refined.yaml | final_grade | [exp_003_mastery_validation](../../data/artifacts/experiments/exp_003_mastery_validation) | [exp_003_mastery_validation.md](exp_003_mastery_validation.md) | Carry `B_lms_plus_mastery` into XAI as the lean Twin candidate. It improves on `B_lms` overall and in at least one early-week cutoff, supporting the early-warning story. |
+| exp_004_xai_on_lean_twin | XAI on lean Twin | completed | v1.2 | generator_v1_3_refined.yaml | final_grade | [exp_004_xai_on_lean_twin](../../data/artifacts/experiments/exp_004_xai_on_lean_twin) | [exp_004_xai_on_lean_twin.md](exp_004_xai_on_lean_twin.md) | Carry `B_lms_plus_mastery` forward for dissertation XAI with an `overall_mastery` redundancy caveat; explanations remain teacher-meaningful and do not collapse into one feature. |
 <!-- experiment-registry:end -->
 
 ## Comparison Notes
