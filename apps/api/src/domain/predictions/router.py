@@ -1,8 +1,15 @@
-from fastapi import APIRouter
+from typing import Annotated
+
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from src.db.session import get_db_session
+from src.domain.platform.repository import PlatformRepository
 
 router = APIRouter()
+DbSession = Annotated[Session, Depends(get_db_session)]
 
 
-@router.get("/")
-def list_placeholder() -> dict[str, str]:
-    return {"status": "placeholder"}
+@router.get("/latest")
+def latest_predictions(session: DbSession) -> dict:
+    return PlatformRepository(session).latest_predictions()

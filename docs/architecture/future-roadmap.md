@@ -1,6 +1,6 @@
 # Future Roadmap
 
-## Phase 0 (Current): Architecture Bootstrap
+## Phase 0: Architecture Bootstrap
 - Monorepo scaffolding
 - Contracts v0.1 placeholder
 - API/Web/ML starter modules
@@ -21,12 +21,21 @@
 - Teacher-facing explanation rendering patterns
 - Intervention recommendation policy prototypes
 
-## Phase 4: Persistence + Evaluation Workflow
-- PostgreSQL migrations
-- Reproducible experiment tracking and artifact registry
-- End-to-end evaluation loops
+## Phase 4 (Current Foundation): Minimal Research Platform Backbone
+- Deterministic artifact payload imported into a local SQLite app store
+- FastAPI read APIs for dashboard, students, Twin snapshots, predictions,
+  explanations, and research evidence
+- Next.js pages consuming API-backed platform DTOs
+- Explicitly deferred auth, live LMS integration, retraining, and intervention
+  management
 
-## Phase 5: Research Reporting Hardening
+## Phase 5: Persistence + Evaluation Workflow
+- PostgreSQL migrations after application projection semantics stabilize
+- Import workflow for new prepared datasets
+- Prediction refresh and explanation refresh jobs
+- Reproducible experiment tracking and artifact registry
+
+## Phase 6: Research Reporting Hardening
 - Ablation experiments
 - Fairness and robustness checks
 - Dissertation-ready reproducibility package

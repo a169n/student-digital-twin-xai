@@ -1,12 +1,62 @@
-import { PageShell } from "@/components/common/page-shell";
+import Link from "next/link";
 
-export default function PredictionsPage() {
+import { PlatformUnavailableNotice } from "@/components/common/platform-unavailable";
+import { RiskBadge } from "@/components/common/risk-badge";
+import { formatNumber } from "@/lib/platform/format";
+import { tryLoadLatestPredictions } from "@/lib/platform/loaders";
+
+export const dynamic = "force-dynamic";
+
+export default async function PredictionsPage() {
+  const predictions = await tryLoadLatestPredictions();
+
+  if (!predictions) {
+    return (
+      <main className="page">
+        <PlatformUnavailableNotice />
+      </main>
+    );
+  }
+
   return (
-    <PageShell title="Predictions">
-      <p>
-        Placeholder view for predictions workflow. TODO: implement domain-specific UI in future
-        phase.
+    <main className="page">
+      <p className="eyebrow">Predictions</p>
+      <h1>Latest imported prediction snapshots</h1>
+      <p className="muted">
+        These are served from the platform store and seeded from the frozen lean Twin payload.
+        Prediction refresh remains a later phase.
       </p>
-    </PageShell>
+      <section className="section">
+        <table className="weekly-table">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Week</th>
+              <th>Predicted</th>
+              <th>Actual</th>
+              <th>Risk</th>
+              <th />
+            </tr>
+          </thead>
+          <tbody>
+            {predictions.slice(0, 20).map((prediction) => (
+              <tr key={prediction.studentId}>
+                <td>{prediction.studentLabel}</td>
+                <td>{prediction.weekNumber}</td>
+                <td>{formatNumber(prediction.predictedFinalGrade, 1)}</td>
+                <td>{formatNumber(prediction.actualFinalGrade, 1)}</td>
+                <td>
+                  <RiskBadge value={prediction.riskLevel} />
+                </td>
+                <td>
+                  <Link href={`/students/${prediction.studentId}`}>Open twin</Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p className="muted">Showing 20 of {predictions.length} prediction snapshots.</p>
+      </section>
+    </main>
   );
 }

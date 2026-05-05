@@ -1,225 +1,275 @@
-import {
-  formatNumber,
-  formatSigned,
-  loadResearchDemoData
-} from "@/lib/research-demo/artifacts";
+import Link from "next/link";
 
-export const dynamic = "force-static";
+import { PlatformUnavailableNotice } from "@/components/common/platform-unavailable";
+import { ResearchBanner } from "@/components/common/research-banner";
+import { formatNumber, formatSigned } from "@/lib/platform/format";
+import { tryLoadExplanationCases, tryLoadResearchEvidence } from "@/lib/platform/loaders";
 
-function featureLabel(name: string) {
-  return name.replaceAll("_", " ");
-}
+export const dynamic = "force-dynamic";
 
-export default function ResearchDemoPage() {
-  const data = loadResearchDemoData();
-  const caseItem = data.highlightedCase;
-  const maxContribution = Math.max(
-    ...caseItem.lean_top_contributions.map((item) => item.abs_contribution)
-  );
+export default async function ResearchDemoPage() {
+  const [research, cases] = await Promise.all([
+    tryLoadResearchEvidence(),
+    tryLoadExplanationCases()
+  ]);
+  if (!research || !cases || !research.leanTwin || !research.oulad || !research.xai.dominance) {
+    return (
+      <main className="page">
+        <PlatformUnavailableNotice />
+      </main>
+    );
+  }
+
+  const highlightedCase = cases.find((item) => item.caseType === "at_risk") ?? cases[0] ?? null;
+  const maxAbs = highlightedCase
+    ? Math.max(
+        ...[...highlightedCase.topPositive, ...highlightedCase.topNegative].map(
+          (item) => item.absContribution
+        ),
+        1
+      )
+    : 1;
 
   return (
-    <main className="research-demo">
+    <main className="page page--research">
+      <ResearchBanner />
+
       <section className="research-hero">
         <div>
-          <p className="eyebrow">Defense demo</p>
-          <h1>Student Digital Twin XAI Research Package</h1>
-          <p className="hero-copy">
-            A read-only view of the fixed evidence base: full Twin rejected,
-            lean mastery-centered Twin carried forward with caveats, XAI retained
-            as model-behavior explanation, and OULAD recorded as mixed external
-            benchmark evidence.
+          <p className="eyebrow">Defense overview</p>
+          <h1>From full Twin ambition to a defensible lean Twin</h1>
+          <p className="page-header__lede">
+            A read-only view of the frozen evidence base: the full Twin was not justified, the lean
+            mastery-centered Twin (<code>B_lms_plus_mastery</code>) was carried forward with
+            caveats, XAI is retained as a model-behavior signal, and the OULAD benchmark is recorded
+            as mixed external evidence.
           </p>
         </div>
-        <div className="hero-metrics" aria-label="Core result metrics">
+        <div className="hero-metrics">
           <div>
             <span>Lean RMSE</span>
-            <strong>{formatNumber(data.leanTwin.leanRmse)}</strong>
+            <strong>{formatNumber(research.leanTwin.leanRmse, 3)}</strong>
           </div>
           <div>
-            <span>Delta vs B_lms</span>
-            <strong>{formatSigned(data.leanTwin.deltaRmse)}</strong>
+            <span>Δ vs B_lms</span>
+            <strong>{formatSigned(research.leanTwin.leanDelta, 3)}</strong>
           </div>
           <div>
-            <span>OULAD primary delta</span>
-            <strong>{formatSigned(data.oulad.grouped.delta)}</strong>
+            <span>OULAD primary Δ</span>
+            <strong>{formatSigned(research.oulad.grouped.delta, 3)}</strong>
           </div>
         </div>
       </section>
 
-      <section className="research-section">
-        <div className="section-heading">
-          <p className="eyebrow">Experiment sequence</p>
-          <h2>Fixed Evidence Chain</h2>
+      <section className="section">
+        <div className="section__heading">
+          <h2>Experiment sequence</h2>
+          <p className="muted">Frozen evidence chain, exp_001 → exp_005.</p>
         </div>
-        <div className="timeline-grid">
-          {data.timeline.map((item) => (
-            <article className="panel timeline-panel" key={item.id}>
-              <span className="tag">{item.id}</span>
-              <h3>{item.title}</h3>
-              <p>{item.result}</p>
-              <strong>{item.decision}</strong>
-            </article>
+        <ol className="timeline-list">
+          {research.timeline.map((item) => (
+            <li key={item.id} className="timeline-list__item">
+              <span className="timeline-list__tag">{item.id}</span>
+              <div>
+                <h3>{item.title}</h3>
+                <p>{item.result}</p>
+                <strong>{item.decision}</strong>
+              </div>
+            </li>
           ))}
-        </div>
+        </ol>
       </section>
 
-      <section className="research-section two-column">
+      <section className="section section--two-column">
         <article className="panel">
-          <p className="eyebrow">Lean Twin conclusion</p>
-          <h2>B_lms_plus_mastery</h2>
+          <h2>Lean Twin carry-forward</h2>
+          <p className="muted">
+            Why <code>B_lms_plus_mastery</code> was preferred over the full Twin and why mastery is
+            kept despite redundancy with cumulative LMS scores.
+          </p>
           <dl className="metric-list">
             <div>
-              <dt>B_lms RMSE</dt>
-              <dd>{formatNumber(data.leanTwin.baselineRmse)}</dd>
+              <dt>Baseline RMSE</dt>
+              <dd>{formatNumber(research.leanTwin.baselineRmse, 3)}</dd>
             </div>
             <div>
-              <dt>Lean Twin RMSE</dt>
-              <dd>{formatNumber(data.leanTwin.leanRmse)}</dd>
+              <dt>Lean RMSE</dt>
+              <dd>{formatNumber(research.leanTwin.leanRmse, 3)}</dd>
+            </div>
+            <div>
+              <dt>Δ vs baseline</dt>
+              <dd>{formatSigned(research.leanTwin.leanDelta, 3)}</dd>
             </div>
             <div>
               <dt>Drop overall_mastery cost</dt>
-              <dd>{formatSigned(data.leanTwin.withoutOverallDelta)}</dd>
+              <dd>{formatSigned(research.leanTwin.withoutOverallDelta, 3)}</dd>
             </div>
           </dl>
-          <p className="body-note">
-            The candidate improved weeks {data.leanTwin.earlyWeeks.join(", ")}
-            {data.leanTwin.laterWeeks.length > 0
-              ? ` and later weeks ${data.leanTwin.laterWeeks.join(", ")}`
-              : ""}{" "}
-            in the mastery validation protocol.
+          <p>
+            Validation improved on weeks {research.leanTwin.earlyWeeksImproved.join(", ") || "—"}
+            {research.leanTwin.lateWeeksImproved.length > 0
+              ? ` and later weeks ${research.leanTwin.lateWeeksImproved.join(", ")}`
+              : ""}
+            . Flags carried forward:{" "}
+            {research.leanTwin.flags.length > 0 ? research.leanTwin.flags.join("; ") : "none"}.
           </p>
         </article>
 
         <article className="panel">
-          <p className="eyebrow">XAI result</p>
-          <h2>Global Importance</h2>
+          <h2>XAI method and dominance audit</h2>
+          <p className="muted">
+            Method: <strong>{research.xai.method}</strong>. SHAP used:{" "}
+            {research.xai.shapUsed ? "yes" : "no"}.
+          </p>
           <div className="bar-list">
-            {data.xai.topFeatures.map((feature) => (
+            {research.xai.topGlobalFeatures.slice(0, 6).map((feature) => (
               <div className="bar-row" key={feature.feature}>
-                <span>{featureLabel(feature.feature)}</span>
+                <span>{feature.featureLabel}</span>
                 <div className="bar-track">
                   <div
                     className="bar-fill"
-                    style={{ width: `${Math.max(feature.importance_share * 100, 2)}%` }}
+                    style={{
+                      width: `${Math.max(feature.importanceShare * 100, 2)}%`
+                    }}
                   />
                 </div>
-                <strong>{formatNumber(feature.importance_share)}</strong>
+                <strong>{formatNumber(feature.importanceShare, 3)}</strong>
               </div>
             ))}
           </div>
-          <p className="body-note">
-            Dominance audit outcome: {data.xai.dominance.outcome}. SHAP used:{" "}
-            {data.xai.shapUsed ? "yes" : "no"}.
+          <p className="caveat">
+            Dominance outcome: <strong>{research.xai.dominance.outcome}</strong>. Top feature{" "}
+            <code>{research.xai.dominance.topFeature}</code> holds{" "}
+            {formatNumber(research.xai.dominance.top1Share, 3)} of importance share; average local
+            mastery share is {formatNumber(research.xai.dominance.averageLocalMasteryShare, 3)}.
           </p>
         </article>
       </section>
 
-      <section className="research-section two-column">
-        <article className="panel">
-          <p className="eyebrow">Student-state examples</p>
-          <h2>Representative Cases</h2>
-          <div className="case-list">
-            {data.cases.map((item) => (
-              <div className="case-row" key={`${item.student_id}-${item.case_type}`}>
-                <span>{item.case_type.replaceAll("_", " ")}</span>
-                <strong>
-                  {item.student_id}, week {item.week_number}
-                </strong>
-                <em>{item.risk_level_context} risk context</em>
-              </div>
-            ))}
-          </div>
-        </article>
+      {highlightedCase ? (
+        <section className="section section--two-column">
+          <article className="panel">
+            <h2>Representative cases</h2>
+            <ul className="case-list">
+              {cases.map((item) => (
+                <li key={`${item.caseType}-${item.weekNumber}`}>
+                  <span className="case-list__type">{item.caseTypeLabel}</span>
+                  <strong>
+                    Week {item.weekNumber} · pred {formatNumber(item.predictedFinalGrade, 1)} ·
+                    actual {formatNumber(item.actualFinalGrade, 1)}
+                  </strong>
+                  <span className="muted">{item.riskLevelContext} risk context</span>
+                </li>
+              ))}
+            </ul>
+          </article>
 
-        <article className="panel">
-          <p className="eyebrow">Prediction and explanation</p>
-          <h2>{caseItem.case_type.replaceAll("_", " ")}</h2>
-          <dl className="metric-list compact">
-            <div>
-              <dt>Student</dt>
-              <dd>{caseItem.student_id}</dd>
+          <article className="panel">
+            <h2>{highlightedCase.caseTypeLabel} · prediction & explanation</h2>
+            <p className="muted">
+              Predicted {formatNumber(highlightedCase.predictedFinalGrade, 2)} · actual{" "}
+              {formatNumber(highlightedCase.actualFinalGrade, 2)} · error{" "}
+              {formatSigned(highlightedCase.predictionError, 2)}
+            </p>
+            <div className="contribution-list">
+              {[...highlightedCase.topNegative, ...highlightedCase.topPositive]
+                .slice(0, 5)
+                .map((item) => (
+                  <div className="contribution-row" key={item.feature}>
+                    <div className="contribution-row__label">
+                      <strong>{item.featureLabel}</strong>
+                      <span>
+                        value {formatNumber(item.value, 2)} / median{" "}
+                        {formatNumber(item.referenceMedian, 2)}
+                      </span>
+                    </div>
+                    <div className="contribution-row__bar">
+                      <div
+                        className={
+                          "contribution-row__fill " +
+                          (item.direction === "raises_prediction"
+                            ? "contribution-row__fill--up"
+                            : "contribution-row__fill--down")
+                        }
+                        style={{
+                          width: `${Math.max((item.absContribution / maxAbs) * 100, 4)}%`
+                        }}
+                      />
+                    </div>
+                    <strong className="contribution-row__delta">
+                      {formatSigned(item.contribution, 2)}
+                    </strong>
+                  </div>
+                ))}
             </div>
-            <div>
-              <dt>Actual final grade</dt>
-              <dd>{formatNumber(caseItem.actual_final_grade, 2)}</dd>
-            </div>
-            <div>
-              <dt>Predicted final grade</dt>
-              <dd>{formatNumber(caseItem.predicted_final_grade, 2)}</dd>
-            </div>
-          </dl>
-          <div className="contribution-list">
-            {caseItem.lean_top_contributions.slice(0, 5).map((item) => (
-              <div className="contribution-row" key={item.feature}>
-                <span>{featureLabel(item.feature)}</span>
-                <div className="bar-track">
-                  <div
-                    className={item.contribution >= 0 ? "bar-fill positive" : "bar-fill negative"}
-                    style={{
-                      width: `${Math.max((item.abs_contribution / maxContribution) * 100, 2)}%`
-                    }}
-                  />
-                </div>
-                <strong>{formatSigned(item.contribution, 2)}</strong>
-              </div>
-            ))}
-          </div>
-          <p className="body-note">{caseItem.teacher_meaningfulness_assessment}.</p>
-        </article>
-      </section>
+            <p className="caveat">{highlightedCase.teacherAssessment}.</p>
+          </article>
+        </section>
+      ) : null}
 
-      <section className="research-section two-column">
+      <section className="section section--two-column">
         <article className="panel">
-          <p className="eyebrow">OULAD benchmark</p>
-          <h2>Mixed External Evidence</h2>
+          <h2>OULAD benchmark</h2>
+          <p className="muted">{research.oulad.shortConclusion}</p>
           <table className="result-table">
             <thead>
               <tr>
                 <th>Split</th>
                 <th>B_lms</th>
                 <th>Lean</th>
-                <th>Delta</th>
+                <th>Δ</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>Grouped</td>
-                <td>{formatNumber(data.oulad.grouped.baseline.rmse)}</td>
-                <td>{formatNumber(data.oulad.grouped.lean.rmse)}</td>
-                <td>{formatSigned(data.oulad.grouped.delta)}</td>
+                <td>{formatNumber(research.oulad.grouped.baselineRmse, 3)}</td>
+                <td>{formatNumber(research.oulad.grouped.leanRmse, 3)}</td>
+                <td>{formatSigned(research.oulad.grouped.delta, 3)}</td>
               </tr>
               <tr>
                 <td>Temporal</td>
-                <td>{formatNumber(data.oulad.temporal.baseline.rmse)}</td>
-                <td>{formatNumber(data.oulad.temporal.lean.rmse)}</td>
-                <td>{formatSigned(data.oulad.temporal.delta)}</td>
+                <td>{formatNumber(research.oulad.temporal.baselineRmse, 3)}</td>
+                <td>{formatNumber(research.oulad.temporal.leanRmse, 3)}</td>
+                <td>{formatSigned(research.oulad.temporal.delta, 3)}</td>
               </tr>
             </tbody>
           </table>
-          <p className="body-note">
-            {data.oulad.rowCounts.snapshots.toLocaleString()} snapshots,
-            {data.oulad.rowCounts.students.toLocaleString()} students, weeks{" "}
-            {data.oulad.weekMin}-{data.oulad.weekMax}.
+          <p className="caveat">
+            {research.oulad.rowCounts.snapshots.toLocaleString()} snapshots ·{" "}
+            {research.oulad.rowCounts.students.toLocaleString()} students · weeks{" "}
+            {research.oulad.weekMin}–{research.oulad.weekMax}.
           </p>
         </article>
 
-        <article className="panel caveat-panel">
-          <p className="eyebrow">Defense caveats</p>
-          <h2>Claim Discipline</h2>
+        <article className="panel panel--caveat">
+          <h2>Limitations</h2>
           <ul>
-            {data.limitations.map((item) => (
+            {research.limitations.map((item) => (
               <li key={item}>{item}</li>
             ))}
           </ul>
         </article>
       </section>
 
-      <section className="research-section artifact-strip">
-        <p className="eyebrow">Frozen artifact backing</p>
-        <div>
-          {data.sourceArtifacts.map((artifact) => (
+      <section className="section artifact-strip">
+        <h2 className="muted">Frozen artifact backing</h2>
+        <div className="artifact-strip__list">
+          {Object.values(research.sourceArtifacts).map((artifact) => (
             <code key={artifact}>{artifact}</code>
           ))}
+        </div>
+        <p className="muted">
+          Open the cohort view to see how this evidence appears at the cohort and individual student
+          level.
+        </p>
+        <div className="research-cta">
+          <Link className="button" href="/dashboard">
+            Open teacher dashboard
+          </Link>
+          <Link className="button button--ghost" href="/students">
+            Browse student roster
+          </Link>
         </div>
       </section>
     </main>

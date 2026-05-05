@@ -114,6 +114,29 @@ In `schema_v1.2`, `risk_level` remains important for the digital twin and teache
 
 ---
 
+## Current Platform Backbone
+
+The current MVP is a minimal research platform, not only a static demo. The
+runtime path is:
+
+```text
+frozen experiment artifacts -> deterministic research payload -> SQLite app store -> FastAPI -> Next.js
+```
+
+The SQLite store under `data/application/` is generated local persistence. It
+can be refreshed from the frozen payload without rerunning experiments:
+
+```bash
+cd apps/api
+python -m src.import_research_payload
+```
+
+The frontend consumes FastAPI endpoints at runtime. This foundation is intended
+to support later imports, prediction refresh, and explanation refresh while
+keeping auth, live LMS integration, and production deployment out of scope.
+
+---
+
 ## Role of Explainable AI
 
 Explainable AI is included **not as a decorative feature**, but as a practical requirement.

@@ -24,4 +24,17 @@
 - **Decision**: Prediction endpoints will carry explanation placeholders from day one.
 - **Rationale**: Interpretability is central to teacher trust and research validity.
 
+## ADR-007: SQLite application projection before PostgreSQL
+- **Decision**: Use a generated local SQLite store for the first real platform
+  backbone.
+- **Rationale**: The project needs real persistence and API boundaries now, but
+  the research data contract is still evolving. SQLite keeps the MVP reproducible
+  and easy to reset while preserving a repository boundary for later PostgreSQL.
+
+## ADR-008: Frozen artifact payload as seed source, not frontend runtime model
+- **Decision**: Keep the deterministic artifact export script, then import its
+  output into the API application store. The Next.js app reads FastAPI endpoints.
+- **Rationale**: This preserves reproducibility and protects prior experiment
+  evidence while moving the platform beyond a static demo.
+
 > TODO: Add formal ADR template and status transitions in future phases.

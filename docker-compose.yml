@@ -19,11 +19,11 @@ services:
       - "8000:8000"
     environment:
       APP_ENV: development
-      DATABASE_URL: postgresql+psycopg://postgres:postgres@postgres:5432/sdtxai
+      DATABASE_URL: sqlite:////workspace/data/application/research_platform.sqlite
+      RESEARCH_DEMO_PAYLOAD_PATH: /workspace/data/artifacts/research_demo/research_demo_payload.json
     volumes:
       - ./apps/api:/app
-    depends_on:
-      - postgres
+      - ./data:/workspace/data
 
   ml:
     build:

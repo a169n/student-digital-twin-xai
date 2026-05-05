@@ -10,10 +10,14 @@ __pycache__/
 .venv/
 .pytest_cache/
 pytest-cache-files-*/
+.tmp_pytest/
+.tmp_pytest_run/
+.tmp_api_tests/
 services/ml/.tmp_pytest/
 services/ml/.tmp_test_runs/
 .mypy_cache/
 .ruff_cache/
+.claude/
 
 # Env
 .env
@@ -27,6 +31,9 @@ services/ml/.tmp_test_runs/
 *.pkl
 *.joblib
 *.onnx
+data/application/
+*.sqlite
+*.sqlite3
 
 # OS / IDE
 .DS_Store

@@ -1,5 +1,29 @@
 # Data Model Change Log
 
+## Minimal research platform projection (post-v1.2)
+
+- Date: 2026-05-05
+- Status: application layer, no schema change
+
+### Summary
+
+The web/API runtime now uses a local SQLite application projection seeded from
+the deterministic research demo payload. This does not alter the canonical
+research data model or frozen experiment evidence.
+
+- Added an API importer from
+  `data/artifacts/research_demo/research_demo_payload.json`.
+- Added generated local persistence under `data/application/`.
+- Exposed teacher-facing read APIs for dashboard, students, weekly Twin
+  snapshots, predictions, explanations, and research evidence.
+- Updated the Next.js runtime path to consume FastAPI endpoints instead of
+  reading the demo payload directly.
+
+### Compatibility Note
+
+No schema fields were added, removed, renamed, or reinterpreted. The active
+contract remains `schema_v1.2`.
+
 ## Versioned experiment logbook and Twin ablation (post-v1.2)
 
 - Date: 2026-05-02
