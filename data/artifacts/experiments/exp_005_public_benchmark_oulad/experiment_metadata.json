@@ -1,0 +1,287 @@
+{
+  "artifacts": {
+    "documentation": "docs/experiments/exp_005_public_benchmark_oulad.md",
+    "mapping_summary": "data/artifacts/experiments/exp_005_public_benchmark_oulad/public_benchmark_mapping_summary.md",
+    "processed_snapshots_csv": "data/artifacts/experiments/exp_005_public_benchmark_oulad/oulad_weekly_snapshots.csv",
+    "public_vs_synthetic_interpretation": "data/artifacts/experiments/exp_005_public_benchmark_oulad/public_vs_synthetic_interpretation.md",
+    "results_csv": "data/artifacts/experiments/exp_005_public_benchmark_oulad/exp_005_public_benchmark_oulad_results.csv",
+    "results_json": "data/artifacts/experiments/exp_005_public_benchmark_oulad/exp_005_public_benchmark_oulad_results.json",
+    "results_markdown": "data/artifacts/experiments/exp_005_public_benchmark_oulad/exp_005_public_benchmark_oulad_summary.md"
+  },
+  "config_path": "services/ml/configs/experiments/exp_005_public_benchmark_oulad.yaml",
+  "created_at": "2026-05-05T16:00:12Z",
+  "dataset": {
+    "course_filter": {
+      "code_module": "DDD",
+      "code_presentation": "2013J"
+    },
+    "course_filter_rationale": "Use one OULAD module-presentation to align the public benchmark with the repository's current one-course synthetic scope. `DDD` `2013J` has a sufficiently large cohort, dated TMA assessments, and observed exam score rows, making weekly assessment-state construction more defensible than presentations whose exam timing or exam score coverage is missing.\n",
+    "dataset_config_name": "local OULAD CSV files; DDD 2013J benchmark subset",
+    "dataset_version": "OULAD",
+    "processed_snapshots_path": "data/artifacts/experiments/exp_005_public_benchmark_oulad/oulad_weekly_snapshots.csv",
+    "raw_files": {
+      "assessments": "datasets/oulad/assessments.csv",
+      "courses": "datasets/oulad/courses.csv",
+      "student_assessment": "datasets/oulad/studentAssessment.csv",
+      "student_info": "datasets/oulad/studentInfo.csv",
+      "student_registration": "datasets/oulad/studentRegistration.csv",
+      "student_vle": "datasets/oulad/studentVle.csv",
+      "vle": "datasets/oulad/vle.csv"
+    },
+    "raw_row_counts": {
+      "assessments": 206,
+      "courses": 22,
+      "student_assessment": 173912,
+      "student_info": 32593,
+      "student_registration": 32593,
+      "student_vle": 10655280,
+      "vle": 6364
+    },
+    "source": "Open University Learning Analytics Dataset (OULAD)"
+  },
+  "diagnostics": {
+    "classification_best_by_feature_set": [
+      {
+        "accuracy": 0.8757378984651711,
+        "f1": 0.8629646507388842,
+        "feature_set": "B_lms_oulad",
+        "model": "gradient_boosting",
+        "roc_auc": 0.9531604622981268,
+        "split_strategy": "student_group"
+      },
+      {
+        "accuracy": 0.8742030696576151,
+        "f1": 0.8609643113459907,
+        "feature_set": "B_lms_plus_mastery_oulad",
+        "model": "gradient_boosting",
+        "roc_auc": 0.9528756384629322,
+        "split_strategy": "student_group"
+      },
+      {
+        "accuracy": 0.8997933884297521,
+        "f1": 0.8870487773321257,
+        "feature_set": "B_lms_oulad",
+        "model": "logistic_regression",
+        "roc_auc": 0.9697029449445745,
+        "split_strategy": "temporal_forward"
+      },
+      {
+        "accuracy": 0.8983011937557392,
+        "f1": 0.8839706652697747,
+        "feature_set": "B_lms_plus_mastery_oulad",
+        "model": "logistic_regression",
+        "roc_auc": 0.9694026206307121,
+        "split_strategy": "temporal_forward"
+      }
+    ],
+    "experiment_id": "exp_005_public_benchmark_oulad",
+    "interpretation": {
+      "improvement_rmse_tolerance": 0.05,
+      "interpretation": "The OULAD benchmark complicates the synthetic carry-forward claim: the mastery analogue is slightly worse than the LMS baseline on the primary student-grouped split, but improves the secondary temporal-forward split. This mixed result suggests transfer sensitivity rather than clear public-benchmark confirmation or rejection.",
+      "outcome": "complicates",
+      "primary_delta_rmse": 0.06606916797463391,
+      "short_conclusion": "`B_lms_plus_mastery_oulad` did not improve the primary OULAD grouped split, but improved a secondary temporal-forward split."
+    },
+    "primary_split": "student_group",
+    "primary_target": "final_weighted_score",
+    "regression_best_by_feature_set": [
+      {
+        "delta_vs_baseline_rmse": 0.0,
+        "feature_set": "B_lms_oulad",
+        "mae": 7.889711691378467,
+        "model": "gradient_boosting",
+        "n_test_rows": 16940,
+        "n_train_rows": 50890,
+        "r2": 0.8554656967282084,
+        "rmse": 12.658194751487525,
+        "split_strategy": "student_group"
+      },
+      {
+        "delta_vs_baseline_rmse": 0.06606916797463391,
+        "feature_set": "B_lms_plus_mastery_oulad",
+        "mae": 7.896353785671763,
+        "model": "gradient_boosting",
+        "n_test_rows": 16940,
+        "n_train_rows": 50890,
+        "r2": 0.8539529719790948,
+        "rmse": 12.724263919462159,
+        "split_strategy": "student_group"
+      },
+      {
+        "delta_vs_baseline_rmse": -0.4058629752151237,
+        "feature_set": "B_lms_plus_mastery_oulad",
+        "mae": 6.068620650733107,
+        "model": "gradient_boosting",
+        "n_test_rows": 8712,
+        "n_train_rows": 24718,
+        "r2": 0.9243040293780294,
+        "rmse": 9.160574006053594,
+        "split_strategy": "temporal_forward"
+      },
+      {
+        "delta_vs_baseline_rmse": 0.0,
+        "feature_set": "B_lms_oulad",
+        "mae": 6.378145608712057,
+        "model": "gradient_boosting",
+        "n_test_rows": 8712,
+        "n_train_rows": 24718,
+        "r2": 0.917447958686259,
+        "rmse": 9.566436981268717,
+        "split_strategy": "temporal_forward"
+      }
+    ],
+    "row_counts": {
+      "assessments": 7,
+      "courses": 1,
+      "snapshots": 67830,
+      "student_assessment": 7936,
+      "student_info": 1938,
+      "student_registration": 1938,
+      "student_vle": 680806,
+      "students": 1938,
+      "vle": 462
+    },
+    "secondary_target": "passed_observed",
+    "target_summary": {
+      "final_result_counts": {
+        "Distinction": 98,
+        "Fail": 428,
+        "Pass": 731,
+        "Withdrawn": 681
+      },
+      "final_weighted_score": {
+        "count": 1938,
+        "max": 98.075,
+        "mean": 36.17997291021672,
+        "median": 33.0125,
+        "min": 0.0,
+        "std": 32.589972122319644
+      },
+      "n_snapshot_rows": 67830,
+      "n_student_course_presentations": 1938,
+      "n_students": 1938,
+      "passed_observed_counts": {
+        "0.0": 1109,
+        "1.0": 829
+      },
+      "target_weight_coverage": {
+        "mean": 0.5371452528379774,
+        "median": 0.5,
+        "min": 0.0
+      },
+      "week_max": 38,
+      "week_min": 4
+    }
+  },
+  "experiment_id": "exp_005_public_benchmark_oulad",
+  "feature_sets": [
+    {
+      "columns": [
+        "week_number",
+        "course_week_progress",
+        "is_registered_by_week",
+        "is_unregistered_by_week",
+        "days_since_registration_start",
+        "cumulative_assessment_score_mean_to_date",
+        "cumulative_assessment_score_count_to_date",
+        "cumulative_assessment_weighted_score_to_date",
+        "cumulative_submitted_weight_to_date",
+        "assessment_submission_rate_due_to_date",
+        "late_submission_rate_to_date",
+        "banked_assessment_rate_to_date",
+        "current_week_clicks",
+        "cumulative_clicks_to_date",
+        "current_week_activity_types",
+        "cumulative_assessment_clicks_to_date",
+        "cumulative_content_clicks_to_date",
+        "cumulative_social_clicks_to_date",
+        "cumulative_other_clicks_to_date"
+      ],
+      "description": "Strong OULAD LMS-style baseline analogue using cumulative assessment performance, submission discipline, VLE activity intensity and category signals, course-week progression, and registration state.\n",
+      "indicator_columns": [
+        "has_assessment_score_to_date",
+        "has_weighted_score_to_date",
+        "has_vle_activity_to_date"
+      ],
+      "name": "B_lms_oulad"
+    },
+    {
+      "columns": [
+        "week_number",
+        "course_week_progress",
+        "is_registered_by_week",
+        "is_unregistered_by_week",
+        "days_since_registration_start",
+        "cumulative_assessment_score_mean_to_date",
+        "cumulative_assessment_score_count_to_date",
+        "cumulative_assessment_weighted_score_to_date",
+        "cumulative_submitted_weight_to_date",
+        "assessment_submission_rate_due_to_date",
+        "late_submission_rate_to_date",
+        "banked_assessment_rate_to_date",
+        "current_week_clicks",
+        "cumulative_clicks_to_date",
+        "current_week_activity_types",
+        "cumulative_assessment_clicks_to_date",
+        "cumulative_content_clicks_to_date",
+        "cumulative_social_clicks_to_date",
+        "cumulative_other_clicks_to_date",
+        "overall_mastery_proxy",
+        "current_assessment_cluster_mastery",
+        "tma_mastery_to_date",
+        "cma_mastery_to_date",
+        "exam_mastery_to_date",
+        "mastery_assessment_coverage_to_date"
+      ],
+      "description": "OULAD LMS baseline analogue plus a lean mastery-like block derived from dated assessment structure: due-to-date weighted mastery, current assessment-cluster mastery, assessment-type mastery aggregates, and assessment-coverage context.\n",
+      "indicator_columns": [
+        "has_assessment_score_to_date",
+        "has_weighted_score_to_date",
+        "has_vle_activity_to_date",
+        "has_current_assessment_cluster",
+        "has_due_assessment_to_date"
+      ],
+      "name": "B_lms_plus_mastery_oulad"
+    }
+  ],
+  "models": {
+    "classification": [
+      "logistic_regression",
+      "random_forest",
+      "gradient_boosting"
+    ],
+    "regression": [
+      "linear_regression",
+      "random_forest",
+      "gradient_boosting"
+    ]
+  },
+  "output_directory": "data/artifacts/experiments/exp_005_public_benchmark_oulad",
+  "parent_experiment": "exp_004_xai_on_lean_twin",
+  "schema_version": "external_oulad_adapter_v1",
+  "seed": 42,
+  "split_strategies": {
+    "primary": "student_group",
+    "secondary": "temporal_forward",
+    "student_group": {
+      "seed": 42,
+      "test_size": 0.25,
+      "validation_size": 0.0
+    },
+    "temporal_forward": {
+      "student_seed": 42,
+      "student_test_size": 0.25,
+      "train_weeks": 20
+    }
+  },
+  "status": "completed",
+  "targets": {
+    "excluded": [
+      "risk_level"
+    ],
+    "primary": "final_weighted_score",
+    "secondary": "passed_observed",
+    "target_construction": "`final_weighted_score` is derived from OULAD `assessments.weight` and `studentAssessment.score` as sum(score_or_zero * assessment_weight) / sum(assessment_weight) over positive-weight assessments in the selected module-presentation that have score records in `studentAssessment`. Missing student submissions for those assessments contribute zero to the numerator. `passed_observed` is derived from `studentInfo.final_result`, with Pass and Distinction mapped to 1 and Fail and Withdrawn mapped to 0.\n"
+  },
+  "title": "Public OULAD benchmark for lean Twin transfer"
+}

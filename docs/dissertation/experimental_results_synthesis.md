@@ -1,21 +1,25 @@
 # Experimental Results Synthesis
 
-This document integrates the results of the four completed experiments into a
+This document integrates the results of the completed experiments into a
 chronological narrative. Each experiment is described in terms of the question
 it was designed to answer, the setup it employed, the headline result it
 produced, and the consequence that result had for the next experiment in the
 sequence. The combined narrative explains how the project moved from an open
 question about full Digital Twin superiority to a validated lean Twin
-representation with an interpretable explanation layer.
+representation with an interpretable explanation layer, followed by an
+external public-benchmark stress test on OULAD.
 
-All four experiments operate on schema `v1.2`, on the refined synthetic
+The first four experiments operate on schema `v1.2`, on the refined synthetic
 dataset produced by `generator_v1_3_refined.yaml`, with primary target
 `final_grade`, secondary context target `passed`, primary student-grouped
 split (`test_size = 0.25`, `seed = 42`), and a snapshot filter restricted to
 weeks `4..10`. The primary headline numbers below reproduce the values
 recorded in the per-experiment writeups under `docs/experiments/` and in the
 `experiment_metadata.json` artifacts under
-`data/artifacts/experiments/<experiment_id>/`.
+`data/artifacts/experiments/<experiment_id>/`. `exp_005_public_benchmark_oulad`
+is separate: it uses the local OULAD CSV files under `datasets/oulad`, an
+external adapter schema `external_oulad_adapter_v1`, primary target
+`final_weighted_score`, and secondary target `passed_observed`.
 
 ## 1. exp_001_baseline — Baseline Feature-Set Comparison
 
@@ -265,9 +269,90 @@ importance share, and that `overall_mastery` is known from
 are preserved as explicit caveats in the dissertation narrative rather than
 treated as resolved.
 
-## 5. Trajectory From Full Twin to Lean Twin
+## 5. exp_005_public_benchmark_oulad — Public OULAD Benchmark
 
-The four experiments form a single methodological arc. `exp_001_baseline`
+### 5.1 What it was designed to test
+
+`exp_005_public_benchmark_oulad` is an external representation-transfer
+benchmark. It does not compare the synthetic dataset against OULAD as if
+datasets were competing models. Instead, it asks whether the same
+representation logic can be approximated on OULAD and whether the lean
+mastery analogue improves over a strong OULAD LMS-style baseline.
+
+### 5.2 Setup
+
+The benchmark uses only the seven local OULAD files in `datasets/oulad`:
+`assessments.csv`, `courses.csv`, `studentInfo.csv`,
+`studentRegistration.csv`, `studentVle.csv`, `vle.csv`, and
+`studentAssessment.csv`. The configured subset is module-presentation
+`DDD` `2013J`, selected to keep the benchmark aligned with the current
+one-course scope while retaining a sufficiently large cohort and observed
+exam score rows.
+
+The adapter builds weekly rows at the grain
+`1 student-course presentation x 1 week`, using weeks `4..38`. The resulting
+modeling table has `67,830` snapshot rows and `1,938` students. The primary
+target is the derived `final_weighted_score`, computed from
+`assessments.weight` and `studentAssessment.score`; it is not treated as
+identical to the synthetic `final_grade`. The secondary label
+`passed_observed` maps OULAD `Pass` and `Distinction` to positive and
+`Fail` and `Withdrawn` to negative.
+
+The compared feature sets are:
+
+- `B_lms_oulad`: cumulative assessment performance, submission discipline,
+  VLE activity intensity/category features, course progression, and
+  registration state;
+- `B_lms_plus_mastery_oulad`: the same baseline plus assessment-structure
+  mastery proxies such as due-to-date weighted mastery, current assessment
+  cluster mastery, assessment-type mastery, and coverage context.
+
+The benchmark uses the same model-family discipline as the earlier phases:
+Ridge/linear baseline, random forest, and gradient boosting for regression,
+with logistic regression, random forest, and gradient boosting for the
+secondary classification task. The primary split is grouped by `id_student`;
+the secondary split is temporal-forward with held-out students.
+
+### 5.3 Key result
+
+On the primary student-grouped split, the lean mastery analogue does not
+improve over the OULAD LMS baseline:
+
+| Feature set | Best RMSE | Best model | Δ vs `B_lms_oulad` |
+| --- | ---: | --- | ---: |
+| `B_lms_oulad` | 12.658 | gradient boosting | +0.000 |
+| `B_lms_plus_mastery_oulad` | 12.724 | gradient boosting | +0.066 |
+
+On the secondary temporal-forward split, the direction reverses:
+
+| Feature set | Best RMSE | Best model | Δ vs `B_lms_oulad` |
+| --- | ---: | --- | ---: |
+| `B_lms_oulad` | 9.566 | gradient boosting | +0.000 |
+| `B_lms_plus_mastery_oulad` | 9.161 | gradient boosting | -0.406 |
+
+The secondary classification target is nearly level between feature sets:
+on the grouped split F1 is `0.863` for `B_lms_oulad` and `0.861` for
+`B_lms_plus_mastery_oulad`; on the temporal-forward split F1 is `0.887`
+and `0.884`, respectively.
+
+### 5.4 Research consequence
+
+The OULAD benchmark complicates rather than confirms the synthetic
+carry-forward claim. The lean mastery analogue is slightly worse on the
+primary grouped split but better on the secondary temporal-forward split.
+This mixed result suggests that mastery-transfer behavior is
+context-sensitive. The earlier synthetic experiments remain internally valid
+for the controlled generator environment, but the OULAD benchmark prevents a
+stronger claim that the lean mastery advantage has been externally validated.
+
+The correct dissertation conclusion is therefore bounded: OULAD provides a
+public-dataset stress test that keeps the lean Twin hypothesis plausible but
+unresolved externally. It is not evidence that the synthetic dataset is better
+than OULAD, and it is not full institutional validation.
+
+## 6. Trajectory From Full Twin to Lean Twin
+
+The first four experiments form a single methodological arc. `exp_001_baseline`
 poses the open question of whether the full Twin representation improves on
 the LMS baseline, and finds that it does not under the present setup.
 `exp_002_twin_ablation` decomposes the Twin layer into blocks and identifies
@@ -288,7 +373,14 @@ the project, accordingly, is not to defend full Twin superiority but to
 present a smaller, structurally credible Twin that delivers measurable
 predictive value over a stronger LMS baseline while remaining interpretable.
 
-## 6. Why XAI Was Introduced Only After Lean Validation
+`exp_005_public_benchmark_oulad` extends this arc by testing whether the
+representation logic transfers to a public benchmark. The result is mixed:
+primary grouped performance does not improve, while secondary temporal-forward
+performance does. That means the lean Twin candidate remains defensible as an
+internally validated representation, but external transfer remains an open
+empirical question.
+
+## 7. Why XAI Was Introduced Only After Lean Validation
 
 The explanation phase was deliberately deferred until a representation had
 been identified that could be explained meaningfully. Producing explanations

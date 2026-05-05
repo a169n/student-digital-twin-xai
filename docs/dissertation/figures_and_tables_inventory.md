@@ -60,12 +60,22 @@ Source: [docs/experiments/exp_004_xai_on_lean_twin.md](../experiments/exp_004_xa
   removed, average local mastery share, outcome and flags).
 - Local case findings table for the five representative cases.
 
-### 1.5 Cross-experiment progression
+### 1.5 Public OULAD benchmark (exp_005_public_benchmark_oulad)
+
+Source: [docs/experiments/exp_005_public_benchmark_oulad.md](../experiments/exp_005_public_benchmark_oulad.md)
+
+- OULAD row counts and target distribution for `DDD` `2013J`.
+- Headline regression table comparing `B_lms_oulad` and
+  `B_lms_plus_mastery_oulad` on student-grouped and temporal-forward splits.
+- Secondary classification table for `passed_observed`.
+- Interpretation section recording the mixed transfer result.
+
+### 1.6 Cross-experiment progression
 
 Source: [experiment_progression_summary.md](experiment_progression_summary.md)
 and [docs/experiments/exp_001_vs_exp_002_comparison.md](../experiments/exp_001_vs_exp_002_comparison.md)
 
-- The compact sequence table summarizing all four experiments by
+- The compact sequence table summarizing the experiment line by
   objective, comparison, target, splits, key result, and consequence.
 - The before/after RMSE table comparing `exp_001_baseline` and
   `exp_002_twin_ablation`.
@@ -110,7 +120,17 @@ appendix material when the dissertation needs to refer to exact numbers.
 - `data/artifacts/experiments/exp_004_xai_on_lean_twin/xai_carry_forward_recommendation.md`
 - `data/artifacts/experiments/exp_004_xai_on_lean_twin/experiment_metadata.json`
 
-### 2.5 Schema, data model, and realism artifacts
+### 2.5 exp_005_public_benchmark_oulad
+
+- `data/artifacts/experiments/exp_005_public_benchmark_oulad/exp_005_public_benchmark_oulad_results.json`
+- `data/artifacts/experiments/exp_005_public_benchmark_oulad/exp_005_public_benchmark_oulad_results.csv`
+- `data/artifacts/experiments/exp_005_public_benchmark_oulad/exp_005_public_benchmark_oulad_summary.md`
+- `data/artifacts/experiments/exp_005_public_benchmark_oulad/oulad_weekly_snapshots.csv`
+- `data/artifacts/experiments/exp_005_public_benchmark_oulad/public_benchmark_mapping_summary.md`
+- `data/artifacts/experiments/exp_005_public_benchmark_oulad/public_vs_synthetic_interpretation.md`
+- `data/artifacts/experiments/exp_005_public_benchmark_oulad/experiment_metadata.json`
+
+### 2.6 Schema, data model, and realism artifacts
 
 - `packages/contracts/schema_versions/schema_v1.2.yaml` (active contract)
 - `docs/data_model/00_scope.md` through
@@ -135,7 +155,8 @@ without rerunning experiments. Each is a candidate, not a commitment.
 | Drop-column delta bar chart for `B_lms_plus_mastery` | `exp_003_mastery_validation/mastery_diagnostics.json` | Visualizes the dependence on `overall_mastery`. |
 | Top-feature permutation importance horizontal bar chart per feature set | `exp_004_xai_on_lean_twin/global_feature_importance.csv` | Visualizes the dominance of `activity_score_to_date` and the position of `overall_mastery`. |
 | Local-case panel for the five representative cases | `exp_004_xai_on_lean_twin/local_case_explanations.json` | Visualizes the directional contributions per case. |
-| Decision-chain diagram | this directory | Visualizes the dependency `exp_001 → exp_002 → exp_003 → exp_004`. |
+| OULAD grouped vs temporal RMSE comparison | `exp_005_public_benchmark_oulad_results.csv` | Visualizes the mixed external-transfer result: primary grouped split level/slightly worse, temporal-forward improved. |
+| Decision-chain diagram | this directory | Visualizes the dependency `exp_001 → exp_002 → exp_003 → exp_004 → exp_005`. |
 | Mastery vs `final_grade` scatter or per-week correlation line | `exp_003_mastery_validation` | Visualizes the redundancy concern and the closeness of `overall_mastery` to `final_grade`. |
 
 When figures are produced, they should be exported into a dedicated

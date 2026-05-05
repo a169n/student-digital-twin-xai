@@ -1,7 +1,7 @@
 # Final Research Conclusions
 
 This document records the carefully bounded interpretation of the project's
-current contribution that follows from the four completed experiments. It
+current contribution that follows from the completed experiments. It
 does not claim more than the evidence supports, and it preserves the
 caveats that the experiment line itself preserves. It is intended to serve
 as the scaffold for a final-conclusions section in the dissertation, with
@@ -97,7 +97,27 @@ dissertation should reproduce this language and should not claim that the
 explanations recover causal mechanism, fully decompose the model's
 predictions, or constitute Shapley-value attribution.
 
-## 5. The Resulting Contribution Is a Lean Twin + XAI Research Prototype
+## 5. OULAD Complicates External Transfer Rather Than Proving It
+
+`exp_005_public_benchmark_oulad` adds an external public-benchmark stress
+test using the local OULAD files under `datasets/oulad`. The benchmark
+constructs OULAD weekly snapshots for module-presentation `DDD` `2013J`,
+uses a derived `final_weighted_score` target, and compares `B_lms_oulad`
+with `B_lms_plus_mastery_oulad`. On the primary student-grouped split, the
+mastery analogue is slightly worse than the LMS baseline (RMSE `12.724`
+versus `12.658`, delta `+0.066`). On the secondary temporal-forward split,
+the direction reverses: the mastery analogue improves RMSE (`9.161` versus
+`9.566`, delta `-0.406`).
+
+The defensible statement is that OULAD **complicates** the synthetic
+carry-forward claim. It neither confirms a general mastery advantage nor
+invalidates the internally validated synthetic result. Instead, it shows
+that transfer depends on dataset structure, target semantics, assessment
+timing, and missingness. The dissertation should present OULAD as a public
+benchmark stress test, not as proof of full external validity and not as a
+dataset-quality comparison.
+
+## 6. The Resulting Contribution Is a Lean Twin + XAI Research Prototype
 
 The project's resulting contribution, on the basis of the four
 experiments, is best framed as a **teacher-oriented, lean Twin + XAI
@@ -118,21 +138,24 @@ institutional validation. Specifically, the project produces:
   per-week diagnostics;
 - a model-behavior explanation phase with global permutation importance
   and local perturbation explanations on a representative case set;
+- a public OULAD benchmark adapter and external transfer stress test with
+  documented feature mapping and mixed results;
 - a versioned experiment governance layer with frozen configurations,
   metadata, machine-readable artifacts, per-experiment writeups, and a
   cumulative registry.
 
 Within these scaffolds, the substantive empirical contribution is the
-identification and validation of `B_lms_plus_mastery` as a compact Twin
-representation that predicts end-of-course outcomes more accurately than
-a stronger LMS baseline on the primary split, while remaining
-interpretable under documented permutation and local-perturbation
-methods. The project is therefore positioned as a research prototype that
-demonstrates **how to study** Digital Twin + XAI for academic risk
-analytics under disciplined methodological constraints, rather than as a
-proof that any specific full Twin formulation is superior.
+identification and internal validation of `B_lms_plus_mastery` as a compact
+Twin representation that predicts end-of-course outcomes more accurately
+than a stronger LMS baseline on the synthetic primary split, while
+remaining interpretable under documented permutation and local-perturbation
+methods. The OULAD benchmark then tests this representation logic externally
+and returns mixed evidence. The project is therefore positioned as a
+research prototype that demonstrates **how to study** Digital Twin + XAI
+for academic risk analytics under disciplined methodological constraints,
+rather than as a proof that any specific full Twin formulation is superior.
 
-## 6. What This Conclusion Does Not Claim
+## 7. What This Conclusion Does Not Claim
 
 For dissertation rigor, it is important to be explicit about the claims
 the present evidence does **not** support.
@@ -144,8 +167,10 @@ the present evidence does **not** support.
   synthetic environment**.
 - The conclusions do not claim that the explanation methods used recover
   causal mechanism. They are directional model-behavior explanations.
-- The conclusions do not claim external validity. The dataset is
-  synthetic and no institutional cohort has been used for validation.
+- The conclusions do not claim full external validity. The main development
+  dataset is synthetic; OULAD provides one public benchmark with mixed
+  transfer evidence, and no local institutional cohort has been used for
+  validation.
 - The conclusions do not claim that `passed` is a useful target for
   representation choice in the present setting; it is saturated.
 - The conclusions do not claim that the predictive advantage of the lean
@@ -157,7 +182,7 @@ the present evidence does **not** support.
   framing is part of the project's broader scope but is not yet validated
   against any of these experiments.
 
-## 7. Carry-Forward Statement for the Dissertation
+## 8. Carry-Forward Statement for the Dissertation
 
 The dissertation can therefore carry forward the following statement as
 the bounded conclusion of the current research phase:
@@ -172,9 +197,13 @@ the bounded conclusion of the current research phase:
 > resulting model-behavior explanations remained teacher-meaningful and
 > did not collapse onto a single feature, with the redundancy and
 > dominance caveats preserved as part of the conclusion. The
-> contribution is therefore a teacher-oriented, lean Twin + XAI research
-> prototype with a documented methodological pipeline, rather than a
-> proof of full Digital Twin superiority or an institutional validation.
+> OULAD public benchmark then complicated external transfer: the mastery
+> analogue did not improve the primary grouped OULAD split but did improve a
+> secondary temporal-forward split. The contribution is therefore a
+> teacher-oriented, lean Twin + XAI research prototype with a documented
+> methodological pipeline and an initial public-benchmark stress test, rather
+> than a proof of full Digital Twin superiority or an institutional
+> validation.
 
 This statement is consistent with every experiment artifact in the
 repository and overstates none of them.

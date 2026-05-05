@@ -242,28 +242,38 @@ experiment has:
 - a Markdown writeup in `docs/experiments/`,
 - a registry row in `docs/experiments/registry.md`.
 
-The preserved baseline experiment is:
+The current versioned experiment line is:
 
 - `exp_001_baseline`: baseline feature-set comparison for `A_simple`, `B_lms`,
   and `C_twin`.
-
-The current ablation experiment is:
-
 - `exp_002_twin_ablation`: Twin subgroup ablation testing which Twin blocks add
   value beyond `B_lms`.
+- `exp_003_mastery_validation`: validation of the lean
+  `B_lms_plus_mastery` carry-forward candidate.
+- `exp_004_xai_on_lean_twin`: explanation audit of the lean candidate.
+- `exp_005_public_benchmark_oulad`: OULAD public-benchmark transfer stress
+  test of `B_lms_oulad` vs `B_lms_plus_mastery_oulad`.
 
 Run from `services/ml`:
 
 ```powershell
 python -m src.experiments.run_baselines --config configs/experiments/exp_001_baseline.yaml
 python -m src.experiments.run_ablation --config configs/experiments/exp_002_twin_ablation.yaml
+python -m src.experiments.run_mastery_validation --config configs/experiments/exp_003_mastery_validation.yaml
+python -m src.experiments.run_xai_on_lean_twin --config configs/experiments/exp_004_xai_on_lean_twin.yaml
+python -m src.experiments.run_public_benchmark_oulad --config configs/experiments/exp_005_public_benchmark_oulad.yaml
 ```
 
 The teacher-facing heuristic `risk_level` is intentionally NOT used as a
-supervised target. Current experiments use:
+supervised target. Synthetic experiments use:
 
 - primary target: `final_grade`
 - secondary context target: `passed`
+
+The OULAD public benchmark uses a derived primary target,
+`final_weighted_score`, and a secondary `passed_observed` label from
+`studentInfo.final_result`; this target is documented as comparable but not
+identical to the synthetic `final_grade`.
 
 Legacy baseline outputs remain preserved under
 `data/artifacts/experiments/baselines/`, and versioned copies now live under

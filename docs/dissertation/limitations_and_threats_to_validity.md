@@ -2,8 +2,9 @@
 
 The methodological design and experimental results described in the
 companion documents are bounded by a specific research setting: a synthetic
-but schema-controlled dataset, a single-course prototype scope, and a
-deferred dependency on a real institutional cohort. This document records
+but schema-controlled dataset, a single-course prototype scope, one external
+public OULAD benchmark, and a deferred dependency on a real institutional
+cohort. This document records
 the limitations of that setting honestly and discusses the residual threats
 to validity that any dissertation account of the project should preserve
 rather than smooth over.
@@ -62,6 +63,15 @@ explicitly deferred. A dissertation account should be careful not to
 present internal realism as external validation, and should state that the
 generator parameters are working assumptions rather than empirically
 calibrated estimates.
+
+`exp_005_public_benchmark_oulad` adds a public-dataset stress test, but it
+does not erase this limitation. The benchmark uses OULAD module-presentation
+`DDD` `2013J`, a derived `final_weighted_score` target, and OULAD-specific
+feature analogues. The result is mixed: `B_lms_plus_mastery_oulad` is
+slightly worse than `B_lms_oulad` on the primary student-grouped split
+(`+0.066` RMSE) but better on the secondary temporal-forward split
+(`-0.406` RMSE). This complicates transfer rather than proving external
+validity.
 
 ## 3. Redundancy of `overall_mastery`
 
@@ -154,16 +164,22 @@ analysis must therefore be designed as a separate research artifact with
 explicit assumptions, not as a direct extrapolation of the present XAI
 output.
 
-## 7. Lack of Validation on a Real Institutional Dataset
+## 7. Public Benchmark Is Not Institutional Validation
 
-The project has no real-data validation step. The dissertation cannot
-therefore claim that the predictive advantage of the lean Twin replicates
-on an institutional cohort, that the explanation behavior remains
-teacher-meaningful under real noise, or that the early-warning framing
-(improvement at weeks 4–8) survives the absence of synthetic regularity.
-This is the dominant external-validity threat. It is acknowledged
-consistently in every experiment writeup and is recorded as a residual
-limitation in the data-model documentation as well.
+The project now includes a public OULAD benchmark, but it still has no
+validation on a local institutional cohort. OULAD is valuable because it
+stress-tests the representation logic on a public dataset with different
+assessment design, missingness, and outcome semantics. It does not provide
+institution-specific validation of the teacher workflow, intervention
+context, local LMS event semantics, or local grading policy.
+
+The dissertation therefore cannot claim that the predictive advantage of
+the lean Twin replicates on an institutional cohort, that the explanation
+behavior remains teacher-meaningful under real classroom noise, or that the
+early-warning framing survives outside both the synthetic generator and the
+selected OULAD module-presentation. The correct claim is narrower:
+external transfer was tested once against OULAD and produced mixed evidence.
+This remains a dominant external-validity threat.
 
 ## 8. Dependence on Generator Assumptions
 
@@ -224,10 +240,11 @@ The current results suggest, under the present synthetic experimental
 environment, that a lean Twin representation centered on the mastery block
 improves prediction beyond a stronger LMS baseline and remains
 interpretable in a model-behavior sense. The corresponding limitations are
-that the dataset is synthetic, the binary classification task is
-saturated, the dominant mastery feature is highly redundant with
-cumulative assignment scores, the explanations are model-behavior rather
-than causal and do not include SHAP, and no real institutional dataset has
-yet been used to test external validity. The dissertation account should
-present the contribution within these limits and should not overstate
-either predictive superiority or explanatory completeness.
+that the main development dataset is synthetic, the binary classification
+task is saturated there, the dominant mastery feature is highly redundant
+with cumulative assignment scores, the explanations are model-behavior
+rather than causal and do not include SHAP, and the public OULAD benchmark
+produces mixed transfer evidence rather than full external validation. The
+dissertation account should present the contribution within these limits
+and should not overstate either predictive superiority or explanatory
+completeness.

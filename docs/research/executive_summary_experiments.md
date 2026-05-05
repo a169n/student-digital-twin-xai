@@ -1,18 +1,21 @@
 # Executive Summary
 
-In this dissertation phase, I investigated whether a Digital Twin-inspired representation of a student adds predictive and explanatory value beyond a competent LMS-style baseline in a controlled, synthetic educational analytics environment. The experimental program was intentionally conservative. I began with standard tabular baseline models, introduced richer feature representations only under explicit hypotheses, validated the remaining Twin signal after ablation, and added explainability only after the candidate representation had passed predictive and structural checks.
+In this dissertation phase, I investigated whether a Digital Twin-inspired representation of a student adds predictive and explanatory value beyond a competent LMS-style baseline in a controlled, synthetic educational analytics environment, then stress-tested the carry-forward representation on OULAD as a public external benchmark. The experimental program was intentionally conservative. I began with standard tabular baseline models, introduced richer feature representations only under explicit hypotheses, validated the remaining Twin signal after ablation, added explainability only after the candidate representation had passed predictive and structural checks, and treated the OULAD phase as transfer validation rather than dataset competition.
 
 The main outcome is not a claim of full Digital Twin superiority. Instead, the evidence supports a narrower and more defensible conclusion. The full Twin representation (`C_twin`) was not justified under the present setup: it failed to outperform the stronger LMS baseline (`B_lms`) on the primary student-grouped split and degraded more clearly under the stricter temporal-forward split. The subsequent ablation showed that the useful signal of the Twin layer was concentrated mainly in the mastery block. In particular, `B_lms_plus_mastery` reduced RMSE from `2.101` to `1.894` on the primary student-grouped split, while the full Twin remained worse than the LMS baseline. The mastery block was then validated through correlation analysis, redundancy analysis, week-wise evaluation, and drop-column diagnostics. Finally, the lean candidate was explained using permutation importance and local perturbation-based explanations.
 
 The principal caveat concerns `overall_mastery`. It is operationally legitimate in the current pipeline: it is computed only from submission information available up to the snapshot week, and it does not read end-of-course targets. However, it is also highly redundant with LMS aggregates, especially `avg_assignment_score_to_date` (`|r| = 0.993`). Removing `overall_mastery` from the lean Twin raises RMSE by `+0.228`, which confirms that a substantial part of the improvement is concentrated in this single feature. The XAI phase nevertheless showed that the model did not collapse completely onto one variable. Under gradient boosting on the primary split, `activity_score_to_date` ranked first by global permutation importance share (`0.648`), `overall_mastery` ranked second (`0.178`), and the average local mastery contribution share was `0.194`, below the configured warning threshold.
 
-I therefore carry forward a bounded conclusion: within the current synthetic and schema-controlled environment, a **lean Twin representation** centered on mastery (`B_lms_plus_mastery`) provides measurable predictive value beyond a stronger LMS baseline on the primary split and remains interpretable under a documented XAI procedure. The dissertation should present this contribution as a **teacher-oriented lean Twin + XAI research prototype**, not as proof that the full Digital Twin formulation is superior in general, and not as an externally validated institutional model.  
+The OULAD benchmark complicates external transfer. On OULAD `DDD` `2013J`, `B_lms_plus_mastery_oulad` did not improve the primary student-grouped split (RMSE `12.724` versus `12.658`, delta `+0.066`), but it did improve the secondary temporal-forward split (RMSE `9.161` versus `9.566`, delta `-0.406`). This mixed result keeps the lean mastery logic plausible but unresolved externally.
+
+I therefore carry forward a bounded conclusion: within the current synthetic and schema-controlled environment, a **lean Twin representation** centered on mastery (`B_lms_plus_mastery`) provides measurable predictive value beyond a stronger LMS baseline on the primary split and remains interpretable under a documented XAI procedure. The dissertation should present this contribution as a **teacher-oriented lean Twin + XAI research prototype** with an initial OULAD transfer caveat, not as proof that the full Digital Twin formulation is superior in general, and not as an externally validated institutional model.  
 Primary repository artifacts for the headline results are:  
 
 - `data/artifacts/experiments/exp_001_baseline/baseline_v1_results.json`  
 - `data/artifacts/experiments/exp_002_twin_ablation/exp_002_twin_ablation_results.json`  
 - `data/artifacts/experiments/exp_003_mastery_validation/exp_003_mastery_validation_results.json`  
 - `data/artifacts/experiments/exp_004_xai_on_lean_twin/exp_004_xai_on_lean_twin_results.json`
+- `data/artifacts/experiments/exp_005_public_benchmark_oulad/exp_005_public_benchmark_oulad_results.json`
 
 ## Methodological Justification of Model and Experiment Design
 
@@ -147,6 +150,9 @@ timeline
     Step 4 : exp_004_xai_on_lean_twin
            : Explain lean Twin and audit dominance
            : Result: carry_forward_with_caveat
+    Step 5 : exp_005_public_benchmark_oulad
+           : Public OULAD transfer benchmark
+           : Result: mixed, external transfer unresolved
 ```
 
 
@@ -160,6 +166,7 @@ timeline
 | `exp_002_twin_ablation`      | identify useful Twin subgroups                                  | `B_lms` vs Twin blocks            | `student_group`             | `B_lms_plus_mastery` best lean extension           | validate mastery                    |
 | `exp_003_mastery_validation` | test whether mastery is genuine signal rather than target proxy | `B_lms` vs `B_lms_plus_mastery`   | `student_group` + week-wise | mastery improves early weeks but is redundant      | proceed to XAI with caveat          |
 | `exp_004_xai_on_lean_twin`   | explain lean Twin and audit single-feature dominance            | `B_lms` vs `B_lms_plus_mastery`   | `student_group`             | explanations teacher-meaningful; no total collapse | carry forward lean Twin with caveat |
+| `exp_005_public_benchmark_oulad` | stress-test lean representation logic on OULAD              | `B_lms_oulad` vs `B_lms_plus_mastery_oulad` | `student_group` | primary split slightly worse, temporal-forward improved | external transfer remains unresolved |
 
 
 ### Experiment 1: `exp_001_baseline`
@@ -328,6 +335,43 @@ To explain the lean Twin candidate and determine whether its behavior remained i
 **Interpretation.**  
 This phase did **not** show total explanation collapse. `overall_mastery` was important, but not singularly dominant. The top feature remained an LMS-behavior signal (`activity_score_to_date`), and the average local mastery contribution share (`0.194`) remained below the configured warning threshold (`0.60`). I therefore retained the lean Twin as explainable **with caveats**.
 
+### Experiment 5: `exp_005_public_benchmark_oulad`
+
+**Objective.**  
+To test whether the lean representation logic could be approximated on OULAD
+and whether an OULAD mastery analogue improved over a strong OULAD LMS-style
+baseline.
+
+**Setup.**  
+
+- Dataset: local OULAD files under `datasets/oulad`.
+- Subset: `DDD` `2013J`.
+- Snapshot grain: `1 student-course presentation x 1 week`, weeks `4..38`.
+- Rows/students: `67,830` weekly snapshots, `1,938` students.
+- Targets: `final_weighted_score` primary, `passed_observed` secondary,
+  `risk_level` excluded.
+- Feature sets: `B_lms_oulad` and `B_lms_plus_mastery_oulad`.
+- Splits: grouped by `id_student` and temporal-forward with held-out students.
+- Numeric sources:
+  `data/artifacts/experiments/exp_005_public_benchmark_oulad/exp_005_public_benchmark_oulad_results.json`,
+  `experiment_metadata.json`, and `public_vs_synthetic_interpretation.md`.
+
+**Headline regression results.**
+
+| Split | Feature set | Best RMSE | Best model | Delta vs baseline |
+| --- | --- | ---: | --- | ---: |
+| `student_group` | `B_lms_oulad` | 12.658 | gradient_boosting | +0.000 |
+| `student_group` | `B_lms_plus_mastery_oulad` | 12.724 | gradient_boosting | +0.066 |
+| `temporal_forward` | `B_lms_oulad` | 9.566 | gradient_boosting | +0.000 |
+| `temporal_forward` | `B_lms_plus_mastery_oulad` | 9.161 | gradient_boosting | -0.406 |
+
+**Interpretation.**  
+OULAD complicates the synthetic carry-forward claim. The mastery analogue
+does not improve the primary grouped split, but it does improve the secondary
+temporal-forward split. This is not a dataset-quality comparison and not full
+external validation. It is evidence that transfer of the mastery block is
+plausible but context-sensitive and unresolved.
+
 ## Diagnostics and XAI Methods
 
 ### What `overall_mastery` is
@@ -411,7 +455,7 @@ The dissertation should preserve the current limitations explicitly rather than 
 | redundancy of `overall_mastery`                 | the most useful mastery feature is also the most redundant with LMS aggregates                                                      | the lean Twin gain is not fully independent of cumulative score behavior                                             |
 | absence of SHAP                                 | the XAI phase uses permutation and local perturbation fallbacks                                                                     | explanation findings must be described as directional model-behavior explanations, not Shapley attributions          |
 | lineage verified by code review, not automation | feature legitimacy is documented but not machine-enforced                                                                           | temporal correctness is credible but not guaranteed by executable invariant                                          |
-| no real institutional validation                | no external test cohort exists                                                                                                      | the dissertation must not claim generalization to real educational settings                                          |
+| public benchmark but no institutional validation | OULAD provides one public stress test, but no local institutional cohort exists                                                      | the dissertation may discuss mixed external-transfer evidence but must not claim institutional generalization         |
 | dependence on generator assumptions             | feature strengths depend partly on latent generator parameters                                                                      | relative feature importance could shift under generator recalibration or real data                                   |
 
 
@@ -448,11 +492,11 @@ I recommend the following as the dissertation carry-forward configuration for th
 
 A defensible final claim is:
 
-> Under the present synthetic and schema-controlled experimental environment, the full Digital Twin representation was not justified relative to a stronger LMS baseline. A compact Twin subset centered on mastery, `B_lms_plus_mastery`, delivered measurable predictive value on the primary student-grouped split, improved performance at early-course weeks, and remained interpretable under documented model-behavior explanation methods. The contribution is therefore a teacher-oriented lean Twin + XAI research prototype with an explicit redundancy caveat for `overall_mastery`, not a proof of full Digital Twin superiority and not an institutional validation study.
+> Under the present synthetic and schema-controlled experimental environment, the full Digital Twin representation was not justified relative to a stronger LMS baseline. A compact Twin subset centered on mastery, `B_lms_plus_mastery`, delivered measurable predictive value on the primary student-grouped split, improved performance at early-course weeks, and remained interpretable under documented model-behavior explanation methods. The OULAD public benchmark then produced mixed transfer evidence: the mastery analogue did not improve the primary grouped OULAD split but did improve the secondary temporal-forward split. The contribution is therefore a teacher-oriented lean Twin + XAI research prototype with an explicit redundancy caveat for `overall_mastery` and an OULAD transfer caveat, not a proof of full Digital Twin superiority and not an institutional validation study.
 
 ## Appendix A: Exact Configs, Shared Invariants, and Repository Paths
 
-### Shared experimental invariants
+### Shared synthetic experimental invariants
 
 
 | Parameter                  | Value                                          |
@@ -480,6 +524,18 @@ A defensible final claim is:
 | generator config                          | `generator_v1_3_refined.yaml`                                     |
 | snapshot table                            | `data/processed/student_twin_snapshots.csv`                       |
 | final results table                       | `data/raw/final_results.csv`                                      |
+
+### OULAD benchmark configuration
+
+| Parameter | Value |
+| --- | --- |
+| experiment config | `services/ml/configs/experiments/exp_005_public_benchmark_oulad.yaml` |
+| raw directory | `datasets/oulad` |
+| module-presentation | `DDD` `2013J` |
+| adapter schema | `external_oulad_adapter_v1` |
+| primary target | `final_weighted_score` |
+| secondary target | `passed_observed` |
+| processed snapshots | `data/artifacts/experiments/exp_005_public_benchmark_oulad/oulad_weekly_snapshots.csv` |
 
 
 ### Common split parameters
@@ -528,6 +584,16 @@ A defensible final claim is:
 - `data/artifacts/experiments/exp_004_xai_on_lean_twin/xai_carry_forward_recommendation.md`
 - `data/artifacts/experiments/exp_004_xai_on_lean_twin/experiment_metadata.json`
 
+### `exp_005_public_benchmark_oulad`
+
+- `data/artifacts/experiments/exp_005_public_benchmark_oulad/exp_005_public_benchmark_oulad_results.json`
+- `data/artifacts/experiments/exp_005_public_benchmark_oulad/exp_005_public_benchmark_oulad_results.csv`
+- `data/artifacts/experiments/exp_005_public_benchmark_oulad/exp_005_public_benchmark_oulad_summary.md`
+- `data/artifacts/experiments/exp_005_public_benchmark_oulad/oulad_weekly_snapshots.csv`
+- `data/artifacts/experiments/exp_005_public_benchmark_oulad/public_benchmark_mapping_summary.md`
+- `data/artifacts/experiments/exp_005_public_benchmark_oulad/public_vs_synthetic_interpretation.md`
+- `data/artifacts/experiments/exp_005_public_benchmark_oulad/experiment_metadata.json`
+
 ### Schema, data-model, and realism artifacts
 
 - `packages/contracts/schema_versions/schema_v1.2.yaml`
@@ -546,7 +612,8 @@ A defensible final claim is:
 | Figure 4    | Drop-column delta for mastery features                             | `mastery_diagnostics.json`                                     |
 | Figure 5    | Global permutation importance for `B_lms` vs `B_lms_plus_mastery`  | `global_feature_importance.csv`                                |
 | Figure 6    | Local-case explanatory panels for five representative students     | `local_case_explanations.json`                                 |
-| Figure 7    | Mastery vs `final_grade` correlation / redundancy visualization    | `exp_003_mastery_validation` diagnostics tables                |
+| Figure 7    | OULAD grouped vs temporal RMSE comparison                          | `exp_005_public_benchmark_oulad_results.csv`                   |
+| Figure 8    | Mastery vs `final_grade` correlation / redundancy visualization    | `exp_003_mastery_validation` diagnostics tables                |
 
 
 ## References
@@ -559,4 +626,3 @@ The repository synthesis is the primary evidence base for this report. External 
 - [REF_4] Primary or official references on tree ensembles for structured/tabular regression and classification.
 - [REF_5] Literature on evaluation metrics and leakage-aware validation in repeated-measures educational datasets.
 - [REF_6] Literature on explainable AI for tabular models, including the distinction between global importance, local perturbation explanations, and SHAP-based methods
-

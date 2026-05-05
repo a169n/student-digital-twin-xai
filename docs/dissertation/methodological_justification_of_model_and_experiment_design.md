@@ -12,8 +12,9 @@ baselines are established first; richer representations are introduced under
 explicit hypotheses; and the explanation layer is added only after a
 predictively useful and structurally credible representation has been
 identified. This document formalizes the rationale behind the chosen models,
-targets, feature sets, splits, evaluation metrics, and the use of a synthetic
-but schema-controlled dataset.
+targets, feature sets, splits, evaluation metrics, the use of a synthetic
+but schema-controlled dataset, and the later OULAD public-benchmark stress
+test.
 
 The argument throughout is bounded by the current research setting. The
 experiments operate on a synthetic but structurally constrained dataset
@@ -22,6 +23,9 @@ generated under schema `v1.2` using the refined generator configuration
 `1 row = 1 student × 1 week`. All claims below should therefore be read as
 statements about internal methodological validity within this controlled
 environment, not as statements about real-institutional generalization.
+`exp_005_public_benchmark_oulad` adds a separate external benchmark using
+OULAD `DDD` `2013J`, but it is treated as transfer stress rather than as full
+external validation.
 
 ## 2. Justification of the Model Stack
 
@@ -70,8 +74,8 @@ research question concerns the **representation** rather than the predictor.
 
 ### 3.1 Why `final_grade` is the primary target
 
-`final_grade` is treated as the primary supervised target across all four
-experiments. The motivation is informational. A continuous numeric grade
+`final_grade` is treated as the primary supervised target across the first
+four synthetic experiments. The motivation is informational. A continuous numeric grade
 preserves both rank order and distance between students; a thresholded
 pass/fail label collapses those distinctions into a single boundary decision.
 Within a teacher-oriented analytics context, the magnitude of distance from
@@ -90,7 +94,7 @@ construction.
 ### 3.2 Why `passed` is treated as a secondary context target
 
 `passed` is reported throughout the experiment sequence, but only as
-secondary context. The decisive observation, documented across all four
+secondary context. The decisive observation, documented across the synthetic
 experiments, is that the binary task is essentially saturated on the current
 synthetic dataset: best F1 reaches `1.000` for every feature set under both
 splits in `exp_001_baseline` and `exp_002_twin_ablation`. A target that
@@ -210,13 +214,17 @@ experimental design.
 
 ### 5.2 Why student-grouped splitting is the primary split
 
-The primary split across all four experiments is grouped by `student_id` with
+The primary split across the synthetic experiments is grouped by `student_id` with
 a held-out fraction of `0.25` and a fixed seed of `42`. This split prevents
 the same learner from appearing in both the training and test partitions and
 therefore yields a defensible estimate of generalization to **new students**.
 Student-grouped splitting is the minimum requirement for any fair evaluation
 in this setting; it is the regime under which the headline RMSE comparisons
 between feature sets are reported.
+
+The OULAD benchmark keeps the same principle by grouping on OULAD
+`id_student`, while using the OULAD-derived `final_weighted_score` target
+instead of the synthetic `final_grade`.
 
 ### 5.3 Why temporal-forward splitting is used as a secondary split
 
@@ -300,6 +308,9 @@ limitation, that the experiments cannot establish generalization to real
 institutional data, is acknowledged consistently across the experiment writeups
 and is discussed in detail in
 [limitations_and_threats_to_validity.md](limitations_and_threats_to_validity.md).
+The OULAD benchmark partially addresses transfer plausibility, but because it
+uses a public dataset, a derived target, and one selected module-presentation,
+it remains a stress test rather than institutional validation.
 
 ## 8. Reproducibility and Experiment Governance
 
@@ -327,7 +338,7 @@ shared experiment-runner pipeline.
 
 ## 9. Summary
 
-The methodological design reflected in the four experiments is conservative,
+The methodological design reflected in the experiment sequence is conservative,
 hypothesis-driven, and reproducibility-aware. Standard baseline ML models are
 appropriate because the prediction problem is tabular and interpretability is
 a research requirement; the four-estimator stack spans the necessary
@@ -340,7 +351,9 @@ hierarchy from `A_simple` through `B_lms` to `C_twin` makes the
 representation question concrete; the subsequent ablation refines it into a
 component-level diagnostic; the mastery validation tests the carry-forward
 candidate against redundancy and target-leakage concerns; and the explanation
-phase is performed only on the validated lean candidate. Student-grouped and
+phase is performed only on the validated lean candidate. The OULAD public
+benchmark then tests the transfer logic and produces mixed evidence rather
+than full external confirmation. Student-grouped and
 temporal-forward splits, rather than row-random splits, are necessary
 consequences of the snapshot grain. The reported metrics (RMSE, MAE, R² for
 regression; accuracy, precision, recall, F1, ROC-AUC for classification)

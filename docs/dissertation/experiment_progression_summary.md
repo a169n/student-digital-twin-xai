@@ -8,7 +8,7 @@ the canonical numbers are recorded in the per-experiment writeups under
 `docs/experiments/` and the metadata under
 `data/artifacts/experiments/<experiment_id>/`.
 
-All four experiments share the following invariants:
+The first four synthetic experiments share the following invariants:
 
 - Schema version: `v1.2`
 - Dataset / config: `v1_3_refined` / `generator_v1_3_refined.yaml`
@@ -19,6 +19,10 @@ All four experiments share the following invariants:
 - Secondary context target: `passed`
 - Excluded supervised target: `risk_level`
 
+`exp_005_public_benchmark_oulad` is separate: it uses the local OULAD files,
+adapter schema `external_oulad_adapter_v1`, module-presentation `DDD` `2013J`,
+primary target `final_weighted_score`, and secondary target `passed_observed`.
+
 ## 1. Sequence Table
 
 | ID | Objective | Main comparison | Primary target | Primary split | Secondary split | Key result | Research consequence |
@@ -27,10 +31,11 @@ All four experiments share the following invariants:
 | `exp_002_twin_ablation` | Identify which Twin subgroups add value beyond `B_lms`. | `B_lms` vs single-block additions and `C_twin_full`. | `final_grade` | student-grouped | temporal-forward | On primary split: `B_lms_plus_mastery` RMSE = 1.894 (Δ = -0.206); `C_twin_full` RMSE = 2.149 (Δ = +0.049). On forward split: `B_lms_plus_mastery` Δ = +0.006; `C_twin_full` Δ = +0.667. | Carry forward `B_lms_plus_mastery` as the lean Twin candidate. Full `C_twin` remains not justified. |
 | `exp_003_mastery_validation` | Audit whether the mastery block is genuine signal or a `final_grade` proxy. | `B_lms` vs `B_lms_plus_mastery`, with diagnostic checks. | `final_grade` | student-grouped | temporal-forward (and per-week) | Primary delta confirmed at `-0.206`. Mastery improves baseline at weeks 4–8. `overall_mastery` Pearson r vs `final_grade` = 0.984; |r| with `avg_assignment_score_to_date` = 0.993; drop-column delta = +0.228. | Decision: `carry_forward` with explicit redundancy caveat for `overall_mastery`. Use the lean candidate in the explanation phase. |
 | `exp_004_xai_on_lean_twin` | Explain the lean Twin and audit single-feature dominance. | `B_lms` vs `B_lms_plus_mastery` under gradient boosting, with permutation and local-perturbation explanations. | `final_grade` | student-grouped | (none configured) | Lean RMSE = 1.894 vs baseline 2.101. Top global feature `activity_score_to_date` (share 0.648); `overall_mastery` rank 2 (share 0.178). Average local mastery share = 0.194. Dominance audit outcome: `acceptable_with_caveat`. | Decision: `carry_forward_with_caveat`. Explanations remain teacher-meaningful and do not collapse onto a single feature. SHAP not used in this phase. |
+| `exp_005_public_benchmark_oulad` | Stress-test whether the lean representation logic transfers to OULAD. | `B_lms_oulad` vs `B_lms_plus_mastery_oulad`. | `final_weighted_score` | student-grouped | temporal-forward with held-out students | Primary grouped split: candidate RMSE = 12.724 vs baseline 12.658 (Δ = +0.066). Temporal-forward split: candidate RMSE = 9.161 vs baseline 9.566 (Δ = -0.406). | Decision: `complicates`. OULAD does not confirm the primary synthetic mastery advantage, but the secondary split keeps transfer plausibility open. |
 
 ## 2. Decision Chain
 
-The four experiments form a single dependency chain in which each result
+The experiments form a dependency chain in which each result
 constrains the next experiment's question. The chain is also recorded in the
 `parent_experiment` field of each experiment's configuration.
 
@@ -47,7 +52,10 @@ exp_003_mastery_validation
 exp_004_xai_on_lean_twin
         │  explanations teacher-meaningful → carry forward
         ▼
-(dissertation narrative on lean Twin + XAI)
+exp_005_public_benchmark_oulad
+        │  public benchmark mixed → external transfer unresolved
+        ▼
+(dissertation narrative on lean Twin + XAI with OULAD transfer caveat)
 ```
 
 ## 3. Outcome Tags
@@ -61,9 +69,11 @@ between experiments:
 | `carry_forward` | The candidate is retained for the next experiment under documented assumptions. |
 | `carry_forward_with_caveat` | The candidate is retained, but a specific structural concern (e.g., redundancy) is preserved as an explicit caveat. |
 | `acceptable_with_caveat` | The dominance audit on the lean Twin's explanations passes, with one warning flag preserved. |
+| `complicates` | The public benchmark gives mixed evidence, so the internal finding remains valid but external transfer is unresolved. |
 
-The terminal state of the experiment line is `carry_forward_with_caveat`
-applied to `B_lms_plus_mastery`.
+The terminal state of the synthetic experiment line is
+`carry_forward_with_caveat` applied to `B_lms_plus_mastery`. The public OULAD
+benchmark adds a `complicates` external-transfer caveat.
 
 ## 4. Citation-Friendly References
 
@@ -74,7 +84,10 @@ applied to `B_lms_plus_mastery`.
 | Ablation writeup | [docs/experiments/exp_002_twin_ablation.md](../experiments/exp_002_twin_ablation.md) |
 | Mastery validation writeup | [docs/experiments/exp_003_mastery_validation.md](../experiments/exp_003_mastery_validation.md) |
 | XAI writeup | [docs/experiments/exp_004_xai_on_lean_twin.md](../experiments/exp_004_xai_on_lean_twin.md) |
+| OULAD benchmark writeup | [docs/experiments/exp_005_public_benchmark_oulad.md](../experiments/exp_005_public_benchmark_oulad.md) |
+| OULAD feature mapping | [docs/experiments/oulad_feature_mapping.md](../experiments/oulad_feature_mapping.md) |
 | Baseline vs ablation comparison | [docs/experiments/exp_001_vs_exp_002_comparison.md](../experiments/exp_001_vs_exp_002_comparison.md) |
 | Lean Twin recommendation | `data/artifacts/experiments/exp_002_twin_ablation/lean_twin_recommendation.md` |
 | Mastery carry-forward recommendation | `data/artifacts/experiments/exp_003_mastery_validation/mastery_carry_forward_recommendation.md` |
 | XAI carry-forward recommendation | `data/artifacts/experiments/exp_004_xai_on_lean_twin/xai_carry_forward_recommendation.md` |
+| OULAD benchmark interpretation | `data/artifacts/experiments/exp_005_public_benchmark_oulad/public_vs_synthetic_interpretation.md` |

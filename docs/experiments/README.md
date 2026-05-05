@@ -32,3 +32,8 @@ Markdown summaries are the citation-friendly artifacts tracked in the repository
 These experiments currently use schema `v1.2`. Experiment logging and ablation
 do not require a schema bump because no fields are added, removed, renamed, or
 reinterpreted.
+
+`exp_005_public_benchmark_oulad` is an external public-benchmark adapter rather
+than a synthetic schema extension. Its schema field is recorded as
+`external_oulad_adapter_v1`, and its mapping is documented separately in
+[oulad_feature_mapping.md](oulad_feature_mapping.md).
