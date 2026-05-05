@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="220" viewBox="0 0 980 220">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="24" y="34" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#111827">Experiment Sequence</text>
+<text x="24" y="58" font-family="Arial, sans-serif" font-size="13" fill="#4b5563">Dependency chain for the fixed dissertation evidence base.</text>
+<rect x="24" y="90" width="160" height="72" rx="8" fill="#f9fafb" stroke="#d1d5db"/>
+<text x="38" y="118" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#111827">exp_001</text>
+<text x="38" y="141" font-family="Arial, sans-serif" font-size="11" fill="#374151">Full Twin not justified</text>
+<line x1="184" y1="126" x2="206" y2="126" stroke="#6b7280" stroke-width="2"/>
+<polygon points="206,126 198,121 198,131" fill="#6b7280"/>
+<rect x="214" y="90" width="160" height="72" rx="8" fill="#f9fafb" stroke="#d1d5db"/>
+<text x="228" y="118" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#111827">exp_002</text>
+<text x="228" y="141" font-family="Arial, sans-serif" font-size="11" fill="#374151">Lean mastery candidate</text>
+<line x1="374" y1="126" x2="396" y2="126" stroke="#6b7280" stroke-width="2"/>
+<polygon points="396,126 388,121 388,131" fill="#6b7280"/>
+<rect x="404" y="90" width="160" height="72" rx="8" fill="#f9fafb" stroke="#d1d5db"/>
+<text x="418" y="118" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#111827">exp_003</text>
+<text x="418" y="141" font-family="Arial, sans-serif" font-size="11" fill="#374151">Validated with redundancy caveat</text>
+<line x1="564" y1="126" x2="586" y2="126" stroke="#6b7280" stroke-width="2"/>
+<polygon points="586,126 578,121 578,131" fill="#6b7280"/>
+<rect x="594" y="90" width="160" height="72" rx="8" fill="#f9fafb" stroke="#d1d5db"/>
+<text x="608" y="118" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#111827">exp_004</text>
+<text x="608" y="141" font-family="Arial, sans-serif" font-size="11" fill="#374151">XAI acceptable with caveat</text>
+<line x1="754" y1="126" x2="776" y2="126" stroke="#6b7280" stroke-width="2"/>
+<polygon points="776,126 768,121 768,131" fill="#6b7280"/>
+<rect x="784" y="90" width="160" height="72" rx="8" fill="#f9fafb" stroke="#d1d5db"/>
+<text x="798" y="118" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#111827">exp_005</text>
+<text x="798" y="141" font-family="Arial, sans-serif" font-size="11" fill="#374151">OULAD transfer mixed</text>
+</svg>

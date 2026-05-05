@@ -380,6 +380,12 @@ performance does. That means the lean Twin candidate remains defensible as an
 internally validated representation, but external transfer remains an open
 empirical question.
 
+For final dissertation packaging, this internal-versus-external distinction is
+the controlling interpretation. The first four experiments support a bounded
+internal conclusion about `B_lms_plus_mastery`; the fifth experiment adds a
+public stress test that complicates transfer and prevents a stronger
+external-validity claim.
+
 ## 7. Why XAI Was Introduced Only After Lean Validation
 
 The explanation phase was deliberately deferred until a representation had
@@ -400,3 +406,8 @@ experiment's configuration:
 - `exp_004_xai_on_lean_twin` → parent `exp_003_mastery_validation`
 
 The dissertation narrative inherits this same dependency chain.
+
+`exp_005_public_benchmark_oulad` is not an additional synthetic validation
+step in that chain. It is the external benchmark appended after the XAI phase
+to test whether the representation logic remains plausible outside the
+generator-controlled setting.

@@ -283,6 +283,12 @@ See [docs/experiments/README.md](docs/experiments/README.md) and
 [services/ml/README.md](services/ml/README.md) for full documentation of the
 feature sets, splits, outputs, and experiment lifecycle.
 
+For dissertation packaging and defense preparation, see
+[docs/dissertation/README.md](docs/dissertation/README.md). The final package
+includes the integrated report, defense Q&A, claim guardrails, generated
+figures/tables, and a read-only `/research-demo` web route backed by frozen
+experiment artifacts.
+
 ---
 
 ## First-Phase Scope
@@ -430,15 +436,20 @@ At this stage, the repository is intended to provide:
 - schema-aware dataset validation,
 - generated raw LMS-like outputs and processed twin snapshots,
 - backend/frontend/ML skeletons,
-- versioned baseline and Twin ablation experiment records,
+- the completed versioned experiment line from `exp_001_baseline` through
+  `exp_005_public_benchmark_oulad`,
 - structured experiment metadata and documentation,
+- dissertation synthesis and defense packaging docs,
+- curated dissertation figure/table assets generated from frozen artifacts,
+- a minimal read-only research demo route for defense explanation,
 - local development setup,
 - future-ready structure.
 
 The repository still intentionally leaves major later-phase pieces unimplemented, especially:
-- explainability outputs beyond scaffolding,
-- backend API endpoints,
-- teacher-facing UI flows.
+- full production backend workflows,
+- polished teacher-facing product UI flows,
+- validated scenario simulation and intervention recommendation logic,
+- institutional-cohort validation.
 
 That is still intentional.
 

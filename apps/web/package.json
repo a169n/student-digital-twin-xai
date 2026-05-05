@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:research-demo": "node --test tests/research-demo.test.js"
   },
   "dependencies": {
     "next": "14.2.5",

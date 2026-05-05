@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="420" viewBox="0 0 900 420">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="24" y="34" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#111827">exp_003 Weekly Mastery Delta</text>
+<text x="24" y="58" font-family="Arial, sans-serif" font-size="13" fill="#4b5563">B_lms_plus_mastery minus B_lms by week on the synthetic validation protocol.</text>
+<line x1="74" x2="860" y1="113.4" y2="113.4" stroke="#9ca3af" stroke-dasharray="4 4"/>
+<polyline points="74.0,191.3 205.0,324.6 336.0,188.4 467.0,145.0 598.0,250.9 729.0,120.0 860.0,122.4" fill="none" stroke="#0f766e" stroke-width="3"/>
+<circle cx="74.0" cy="191.3" r="5" fill="#0f766e"/>
+<text x="52.0" y="382" font-family="Arial, sans-serif" font-size="12" fill="#111827">W4</text>
+<text x="46.0" y="181.3" font-family="Arial, sans-serif" font-size="12" fill="#111827">-0.218</text>
+<circle cx="205.0" cy="324.6" r="5" fill="#0f766e"/>
+<text x="183.0" y="382" font-family="Arial, sans-serif" font-size="12" fill="#111827">W5</text>
+<text x="177.0" y="314.6" font-family="Arial, sans-serif" font-size="12" fill="#111827">-0.591</text>
+<circle cx="336.0" cy="188.4" r="5" fill="#0f766e"/>
+<text x="314.0" y="382" font-family="Arial, sans-serif" font-size="12" fill="#111827">W6</text>
+<text x="308.0" y="178.4" font-family="Arial, sans-serif" font-size="12" fill="#111827">-0.210</text>
+<circle cx="467.0" cy="145.0" r="5" fill="#0f766e"/>
+<text x="445.0" y="382" font-family="Arial, sans-serif" font-size="12" fill="#111827">W7</text>
+<text x="439.0" y="135.0" font-family="Arial, sans-serif" font-size="12" fill="#111827">-0.089</text>
+<circle cx="598.0" cy="250.9" r="5" fill="#0f766e"/>
+<text x="576.0" y="382" font-family="Arial, sans-serif" font-size="12" fill="#111827">W8</text>
+<text x="570.0" y="240.9" font-family="Arial, sans-serif" font-size="12" fill="#111827">-0.385</text>
+<circle cx="729.0" cy="120.0" r="5" fill="#0f766e"/>
+<text x="707.0" y="382" font-family="Arial, sans-serif" font-size="12" fill="#111827">W9</text>
+<text x="701.0" y="110.0" font-family="Arial, sans-serif" font-size="12" fill="#111827">-0.019</text>
+<circle cx="860.0" cy="122.4" r="5" fill="#0f766e"/>
+<text x="838.0" y="382" font-family="Arial, sans-serif" font-size="12" fill="#111827">W10</text>
+<text x="832.0" y="112.4" font-family="Arial, sans-serif" font-size="12" fill="#111827">-0.025</text>
+<text x="24" y="96" font-family="Arial, sans-serif" font-size="12" fill="#4b5563">Delta RMSE</text>
+<text x="74" y="404" font-family="Arial, sans-serif" font-size="12" fill="#4b5563">Negative values favor B_lms_plus_mastery.</text>
+</svg>

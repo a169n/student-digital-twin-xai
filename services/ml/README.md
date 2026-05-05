@@ -5,7 +5,8 @@ Python service for research workflows around:
 - synthetic LMS-like data generation,
 - weekly student twin snapshot construction,
 - schema-aware validation,
-- future feature engineering and baseline modeling.
+- feature engineering and versioned experiments,
+- explainability and public-benchmark artifact generation.
 
 ## Dependency Management
 
@@ -191,26 +192,44 @@ To inspect the declared feature sets without running the experiments:
 python -m src.experiments.run_baselines --list-feature-sets
 ```
 
-## Versioned Ablation Experiments
+## Versioned Experiments
 
-The second experiment, `exp_002_twin_ablation`, uses the same current refined
-dataset and schema `v1.2`, but tests Twin feature subgroups against `B_lms`.
-It keeps `final_grade` as the primary target and reports `passed` only as
-secondary context.
+The completed experiment line is frozen for dissertation packaging:
+
+- `exp_001_baseline`: baseline feature-set comparison.
+- `exp_002_twin_ablation`: Twin subgroup ablation.
+- `exp_003_mastery_validation`: mastery-block validation.
+- `exp_004_xai_on_lean_twin`: XAI on the lean Twin candidate.
+- `exp_005_public_benchmark_oulad`: OULAD public-benchmark transfer stress
+  test.
+
+The synthetic experiments use schema `v1.2`, keep `final_grade` as the primary
+target, and report `passed` only as secondary context. `risk_level` is
+intentionally excluded from supervised training. The OULAD benchmark uses the
+external adapter schema `external_oulad_adapter_v1` and the derived
+`final_weighted_score` target.
 
 Run from `services/ml`:
 
 ```powershell
 python -m src.experiments.run_ablation --config configs/experiments/exp_002_twin_ablation.yaml
+python -m src.experiments.run_mastery_validation --config configs/experiments/exp_003_mastery_validation.yaml
+python -m src.experiments.run_xai_on_lean_twin --config configs/experiments/exp_004_xai_on_lean_twin.yaml
+python -m src.experiments.run_public_benchmark_oulad --config configs/experiments/exp_005_public_benchmark_oulad.yaml
 ```
 
-The runner writes:
+Each runner writes versioned outputs under
+`data/artifacts/experiments/<experiment_id>/`, updates the corresponding
+human-readable experiment documentation, and preserves prior experiment
+artifacts by experiment ID. Do not rerun the full experiment stack during
+dissertation packaging unless a specific verification requires it.
+
+The runner family writes:
 
 - `experiment_metadata.json`
-- `ablation_diagnostics.json`
 - JSON / CSV / Markdown result tables
-- `lean_twin_recommendation.md`
-- `docs/experiments/exp_002_twin_ablation.md`
+- experiment-specific recommendation or diagnostic artifacts
+- `docs/experiments/<experiment_id>.md`
 - an updated row in `docs/experiments/registry.md`
 
 Experiment conventions are documented in `docs/experiments/README.md`.

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="360" viewBox="0 0 900 360">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="24" y="34" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#111827">exp_005 OULAD RMSE</text>
+<text x="24" y="58" font-family="Arial, sans-serif" font-size="13" fill="#4b5563">Best regression RMSE by split; primary grouped split is mixed against the lean candidate.</text>
+<text x="24" y="117" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#111827">student_group</text>
+<rect x="96" y="90" width="754" height="22" fill="#f3f4f6"/>
+<rect x="96" y="90" width="750.1" height="22" fill="#2563eb"/>
+<text x="104" y="106" font-family="Arial, sans-serif" font-size="12" fill="#ffffff">B_lms_oulad</text>
+<text x="854.1" y="106" font-family="Arial, sans-serif" font-size="12" fill="#111827">12.658</text>
+<rect x="96" y="120" width="754" height="22" fill="#f3f4f6"/>
+<rect x="96" y="120" width="754.0" height="22" fill="#0f766e"/>
+<text x="104" y="136" font-family="Arial, sans-serif" font-size="12" fill="#ffffff">B_lms_plus_mastery_oulad</text>
+<text x="858.0" y="136" font-family="Arial, sans-serif" font-size="12" fill="#111827">12.724</text>
+<text x="24" y="199" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#111827">temporal_forward</text>
+<rect x="96" y="172" width="754" height="22" fill="#f3f4f6"/>
+<rect x="96" y="172" width="566.9" height="22" fill="#2563eb"/>
+<text x="104" y="188" font-family="Arial, sans-serif" font-size="12" fill="#ffffff">B_lms_oulad</text>
+<text x="670.9" y="188" font-family="Arial, sans-serif" font-size="12" fill="#111827">9.566</text>
+<rect x="96" y="202" width="754" height="22" fill="#f3f4f6"/>
+<rect x="96" y="202" width="542.8" height="22" fill="#0f766e"/>
+<text x="104" y="218" font-family="Arial, sans-serif" font-size="12" fill="#ffffff">B_lms_plus_mastery_oulad</text>
+<text x="646.8" y="218" font-family="Arial, sans-serif" font-size="12" fill="#111827">9.161</text>
+</svg>

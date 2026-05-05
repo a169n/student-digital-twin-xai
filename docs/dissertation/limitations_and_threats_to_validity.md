@@ -248,3 +248,8 @@ produces mixed transfer evidence rather than full external validation. The
 dissertation account should present the contribution within these limits
 and should not overstate either predictive superiority or explanatory
 completeness.
+
+For defense packaging, these limitations should be treated as guardrails, not
+as afterthoughts. The demo and final report should explicitly distinguish
+synthetic internal evidence, OULAD public-benchmark transfer evidence,
+model-behavior explanation, and causal intervention reasoning.

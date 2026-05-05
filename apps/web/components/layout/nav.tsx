@@ -5,7 +5,8 @@ const links = [
   ["Students", "/students"],
   ["Twins", "/twins"],
   ["Predictions", "/predictions"],
-  ["Interventions", "/interventions"]
+  ["Interventions", "/interventions"],
+  ["Research Demo", "/research-demo"]
 ] as const;
 
 export function AppNav() {

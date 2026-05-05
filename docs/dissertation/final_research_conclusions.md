@@ -119,7 +119,7 @@ dataset-quality comparison.
 
 ## 6. The Resulting Contribution Is a Lean Twin + XAI Research Prototype
 
-The project's resulting contribution, on the basis of the four
+The project's resulting contribution, on the basis of the five
 experiments, is best framed as a **teacher-oriented, lean Twin + XAI
 research prototype**. The contribution is methodological and structural,
 not a demonstration of full Digital Twin superiority and not an
@@ -207,3 +207,7 @@ the bounded conclusion of the current research phase:
 
 This statement is consistent with every experiment artifact in the
 repository and overstates none of them.
+
+The defense-ready version of this conclusion is summarized separately in
+[defense_summary.md](defense_summary.md) and guarded by
+[core_claims_and_nonclaims.md](core_claims_and_nonclaims.md).

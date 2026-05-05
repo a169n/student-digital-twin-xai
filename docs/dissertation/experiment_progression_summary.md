@@ -75,7 +75,22 @@ The terminal state of the synthetic experiment line is
 `carry_forward_with_caveat` applied to `B_lms_plus_mastery`. The public OULAD
 benchmark adds a `complicates` external-transfer caveat.
 
-## 4. Citation-Friendly References
+## 4. Internal Versus External Validity Status
+
+The first four experiments provide the internal synthetic evidence base. Their
+numbers are comparable because they share the same schema, generator,
+snapshot filter, target, seed, and split discipline. They support the bounded
+internal claim that `B_lms_plus_mastery` is the best lean candidate under the
+current controlled setup.
+
+`exp_005_public_benchmark_oulad` has a different role. It is an external
+public-benchmark stress test with different data semantics, a derived
+`final_weighted_score` target, OULAD-specific missingness, and a longer
+weekly horizon. Its mixed result prevents a stronger external-validation
+claim. It should be cited as transfer evidence that complicates the internal
+finding, not as a replacement for institutional validation.
+
+## 5. Citation-Friendly References
 
 | Component | Path |
 | --- | --- |
@@ -91,3 +106,5 @@ benchmark adds a `complicates` external-transfer caveat.
 | Mastery carry-forward recommendation | `data/artifacts/experiments/exp_003_mastery_validation/mastery_carry_forward_recommendation.md` |
 | XAI carry-forward recommendation | `data/artifacts/experiments/exp_004_xai_on_lean_twin/xai_carry_forward_recommendation.md` |
 | OULAD benchmark interpretation | `data/artifacts/experiments/exp_005_public_benchmark_oulad/public_vs_synthetic_interpretation.md` |
+| Final integrated report | [final_integrated_report.md](final_integrated_report.md) |
+| Defense claim guardrails | [core_claims_and_nonclaims.md](core_claims_and_nonclaims.md) |
