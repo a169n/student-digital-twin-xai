@@ -2,11 +2,9 @@ from __future__ import annotations
 
 from datetime import date
 from pathlib import Path
-from typing import Any
 
 import yaml
 from pydantic import BaseModel, Field, model_validator
-
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
 SERVICE_ROOT = Path(__file__).resolve().parents[2]
@@ -30,6 +28,16 @@ def _resolve_repo_path(value: str | Path) -> Path:
     if path.is_absolute():
         return path
     return REPO_ROOT / path
+
+
+def _extended_topic_titles(titles: list[str], num_weeks: int) -> list[str]:
+    """Return enough topic titles for generated courses longer than the base template."""
+
+    extended = list(titles)
+    while len(extended) < num_weeks:
+        week_number = len(extended) + 1
+        extended.append(f"Extended Practice Week {week_number}")
+    return extended
 
 
 class CourseConfig(BaseModel):
@@ -134,23 +142,43 @@ def load_generator_config(
     *,
     seed_override: int | None = None,
     output_root: str | Path | None = None,
+    num_students_override: int | None = None,
+    num_weeks_override: int | None = None,
+    num_groups_override: int | None = None,
+    assignments_per_week_override: int | None = None,
+    sessions_per_week_override: int | None = None,
 ) -> tuple[GeneratorConfig, Path]:
     resolved_config_path = _resolve_config_path(config_path)
     raw_payload = yaml.safe_load(resolved_config_path.read_text(encoding="utf-8")) or {}
-    config = GeneratorConfig.model_validate(raw_payload)
 
-    updates: dict[str, Any] = {}
     if seed_override is not None:
-        updates["seed"] = seed_override
+        raw_payload["seed"] = seed_override
+    if num_students_override is not None:
+        raw_payload["num_students"] = num_students_override
+    if num_weeks_override is not None:
+        raw_payload["num_weeks"] = num_weeks_override
+    if num_groups_override is not None:
+        raw_payload["num_groups"] = num_groups_override
+    if assignments_per_week_override is not None:
+        raw_payload["assignments_per_week"] = assignments_per_week_override
+    if sessions_per_week_override is not None:
+        raw_payload["sessions_per_week"] = sessions_per_week_override
+
+    num_weeks = int(
+        raw_payload.get("num_weeks", GeneratorConfig.model_fields["num_weeks"].default)
+    )
+    course_payload = dict(raw_payload.get("course") or {})
+    topic_titles = course_payload.get("topic_titles") or list(DEFAULT_TOPIC_TITLES)
+    course_payload["topic_titles"] = _extended_topic_titles(list(topic_titles), num_weeks)
+    raw_payload["course"] = course_payload
+
     if output_root is not None:
         root = Path(output_root)
-        updates["outputs"] = OutputConfig(
-            raw_dir=root / "raw",
-            processed_dir=root / "processed",
-            artifacts_dir=root / "artifacts",
-        )
+        raw_payload["outputs"] = {
+            "raw_dir": root / "raw",
+            "processed_dir": root / "processed",
+            "artifacts_dir": root / "artifacts",
+        }
 
-    if updates:
-        config = config.model_copy(update=updates)
-
+    config = GeneratorConfig.model_validate(raw_payload)
     return config, resolved_config_path

@@ -1,15 +1,16 @@
 import Link from "next/link";
 
 import { PlatformUnavailableNotice } from "@/components/common/platform-unavailable";
+import { PlatformStatusStrip } from "@/components/common/platform-status-strip";
 import { ResearchBanner } from "@/components/common/research-banner";
 import { CohortCards } from "@/components/dashboard/cohort-cards";
 import { StudentTable } from "@/components/dashboard/student-table";
-import { tryLoadDashboard } from "@/lib/platform/loaders";
+import { tryLoadDashboard, tryLoadPlatformStatus } from "@/lib/platform/loaders";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const data = await tryLoadDashboard();
+  const [data, status] = await Promise.all([tryLoadDashboard(), tryLoadPlatformStatus()]);
 
   if (!data) {
     return (
@@ -24,6 +25,7 @@ export default async function DashboardPage() {
   return (
     <main className="page page--dashboard">
       <ResearchBanner />
+      <PlatformStatusStrip status={status} />
 
       <header className="page-header">
         <div>
@@ -32,7 +34,8 @@ export default async function DashboardPage() {
           <p className="page-header__lede">
             Cohort-level snapshot for <strong>{cohort.studentCount}</strong> students currently at
             week <strong>{cohort.currentWeek ?? "—"}</strong>. Open any row to see the
-            student&rsquo;s weekly Twin trajectory and the lean Twin explanation.
+            student&rsquo;s weekly Twin trajectory and the lean Twin explanation. Actual final
+            grades are shown only as retrospective evaluation evidence.
           </p>
         </div>
         <Link href="/research-demo" className="page-header__secondary">
@@ -63,6 +66,7 @@ export default async function DashboardPage() {
                       · mastery{" "}
                       {student.overallMastery !== null ? student.overallMastery.toFixed(1) : "—"}
                     </span>
+                    <em>Open Twin view</em>
                   </Link>
                 </li>
               ))}
@@ -79,6 +83,7 @@ export default async function DashboardPage() {
                       Now {student.predictedFinalGrade?.toFixed(1) ?? "—"} · activity{" "}
                       {student.activityScore?.toFixed(1) ?? "—"}
                     </span>
+                    <em>Open Twin view</em>
                   </Link>
                 </li>
               ))}

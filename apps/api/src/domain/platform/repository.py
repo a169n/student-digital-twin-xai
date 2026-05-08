@@ -120,6 +120,7 @@ class PlatformRepository:
         rows = self.session.scalars(
             select(ExplanationCaseRecord)
             .options(selectinload(ExplanationCaseRecord.contributions))
+            .options(selectinload(ExplanationCaseRecord.student))
             .order_by(ExplanationCaseRecord.week_number, ExplanationCaseRecord.case_type)
         ).all()
         return [case for row in rows if (case := explanation_to_dto(row)) is not None]

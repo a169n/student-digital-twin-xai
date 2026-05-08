@@ -22,7 +22,7 @@ type SortKey = "label" | "predicted" | "actual" | "mastery" | "activity" | "risk
 const SORT_LABELS: Record<SortKey, string> = {
   label: "Student",
   predicted: "Predicted",
-  actual: "Actual",
+  actual: "Actual (retro)",
   mastery: "Mastery",
   activity: "Activity",
   risk: "Risk"
@@ -125,6 +125,16 @@ export function StudentTable({ students }: { students: StudentSummary[] }) {
     return applySort(filtered, sort, ascending);
   }, [students, filter, query, sort, ascending]);
 
+  const filterCounts = useMemo(() => {
+    return FILTERS.reduce(
+      (acc, option) => {
+        acc[option.key] = applyFilter(students, option.key, "").length;
+        return acc;
+      },
+      {} as Record<FilterKey, number>
+    );
+  }, [students]);
+
   const toggleSort = (key: SortKey) => {
     if (key === sort) {
       setAscending((prev) => !prev);
@@ -148,7 +158,8 @@ export function StudentTable({ students }: { students: StudentSummary[] }) {
               }
               onClick={() => setFilter(option.key)}
             >
-              {option.label}
+              <span>{option.label}</span>
+              <strong>{filterCounts[option.key]}</strong>
             </button>
           ))}
         </div>
@@ -231,7 +242,7 @@ export function StudentTable({ students }: { students: StudentSummary[] }) {
       ) : null}
       <p className="student-table__caveat">
         Attendance values like {formatPercent(0.65)} are 0–1 ratios. Predicted grades come from the
-        frozen lean Twin model.
+        frozen lean Twin model; actual final grades are retrospective evaluation fields.
       </p>
     </div>
   );

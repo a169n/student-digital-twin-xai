@@ -22,6 +22,11 @@ const BASE_SERIES: Series[] = [
     label: "Activity score",
     accessor: (row) => row.activityScore,
     color: "#b45309"
+  },
+  {
+    label: "Risk score x100",
+    accessor: (row) => (row.riskScore === null ? null : row.riskScore * 100),
+    color: "#b91c1c"
   }
 ];
 

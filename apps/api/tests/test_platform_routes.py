@@ -74,6 +74,9 @@ def test_predictions_explanations_and_research_evidence(client: TestClient) -> N
     cases = client.get("/api/explanations/cases")
     assert cases.status_code == 200
     assert len(cases.json()) == 5
+    first_case = cases.json()[0]
+    assert first_case["studentId"]
+    assert first_case["studentLabel"]
 
     evidence = client.get("/api/research/evidence")
     assert evidence.status_code == 200

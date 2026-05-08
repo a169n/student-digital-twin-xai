@@ -17,6 +17,8 @@ export type ExplanationContribution = {
 };
 
 export type ExplanationSummary = {
+  studentId: string;
+  studentLabel: string;
   caseType: string;
   caseTypeLabel: string;
   predictedFinalGrade: number | null;

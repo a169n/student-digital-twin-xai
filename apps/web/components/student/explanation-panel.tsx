@@ -44,7 +44,7 @@ export function ExplanationPanel({ explanation }: { explanation: ExplanationSumm
     <div className="explanation-panel">
       <header className="explanation-panel__header">
         <span className="explanation-panel__case-tag">{explanation.caseTypeLabel}</span>
-        <h3>Lean Twin explanation · week {explanation.weekNumber}</h3>
+        <h3>Local model-behavior explanation · week {explanation.weekNumber}</h3>
         <p className="muted">
           Predicted {formatNumber(explanation.predictedFinalGrade, 2)} · actual{" "}
           {formatNumber(explanation.actualFinalGrade, 2)} · error{" "}
@@ -55,7 +55,7 @@ export function ExplanationPanel({ explanation }: { explanation: ExplanationSumm
 
       <div className="explanation-panel__columns">
         <section>
-          <h4>Top positive factors</h4>
+          <h4>Model raises prediction</h4>
           {explanation.topPositive.length === 0 ? (
             <p className="muted">No raising factors in the top six.</p>
           ) : (
@@ -67,7 +67,7 @@ export function ExplanationPanel({ explanation }: { explanation: ExplanationSumm
           )}
         </section>
         <section>
-          <h4>Top negative factors</h4>
+          <h4>Model lowers prediction</h4>
           {explanation.topNegative.length === 0 ? (
             <p className="muted">No lowering factors in the top six.</p>
           ) : (
@@ -85,9 +85,9 @@ export function ExplanationPanel({ explanation }: { explanation: ExplanationSumm
       </p>
 
       <p className="explanation-panel__caveat">
-        Explanations come from a permutation-importance + local perturbation analysis on the lean
-        Twin model. They describe how the model behaves around this snapshot — they are not causal
-        claims about the student.
+        Explanations come from a permutation-importance plus local perturbation analysis on the lean
+        Twin model. The bars show how the fitted model changes around this snapshot; they are not
+        causal claims and do not recommend an intervention.
       </p>
     </div>
   );

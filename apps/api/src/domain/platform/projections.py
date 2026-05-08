@@ -80,6 +80,8 @@ def explanation_to_dto(row: ExplanationCaseRecord | None) -> dict[str, Any] | No
         reverse=True,
     )
     return {
+        "studentId": row.student_id,
+        "studentLabel": row.student.student_label if row.student else row.student_id,
         "caseType": row.case_type,
         "caseTypeLabel": case_type_label(row.case_type),
         "predictedFinalGrade": row.predicted_final_grade,

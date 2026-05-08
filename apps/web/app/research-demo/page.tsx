@@ -1,16 +1,22 @@
 import Link from "next/link";
 
 import { PlatformUnavailableNotice } from "@/components/common/platform-unavailable";
+import { PlatformStatusStrip } from "@/components/common/platform-status-strip";
 import { ResearchBanner } from "@/components/common/research-banner";
 import { formatNumber, formatSigned } from "@/lib/platform/format";
-import { tryLoadExplanationCases, tryLoadResearchEvidence } from "@/lib/platform/loaders";
+import {
+  tryLoadExplanationCases,
+  tryLoadPlatformStatus,
+  tryLoadResearchEvidence
+} from "@/lib/platform/loaders";
 
 export const dynamic = "force-dynamic";
 
 export default async function ResearchDemoPage() {
-  const [research, cases] = await Promise.all([
+  const [research, cases, status] = await Promise.all([
     tryLoadResearchEvidence(),
-    tryLoadExplanationCases()
+    tryLoadExplanationCases(),
+    tryLoadPlatformStatus()
   ]);
   if (!research || !cases || !research.leanTwin || !research.oulad || !research.xai.dominance) {
     return (
@@ -33,6 +39,7 @@ export default async function ResearchDemoPage() {
   return (
     <main className="page page--research">
       <ResearchBanner />
+      <PlatformStatusStrip status={status} />
 
       <section className="research-hero">
         <div>
@@ -58,6 +65,47 @@ export default async function ResearchDemoPage() {
             <span>OULAD primary Δ</span>
             <strong>{formatSigned(research.oulad.grouped.delta, 3)}</strong>
           </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="section__heading">
+          <h2>Claim guardrails</h2>
+          <p className="muted">What this platform can show, and what it must not overclaim.</p>
+        </div>
+        <div className="guardrail-grid">
+          <article className="guardrail-card">
+            <span>Synthetic core</span>
+            <strong>Internal validity, not institutional proof</strong>
+            <p>
+              The main evidence comes from the schema-controlled synthetic course, with OULAD used
+              as a public transfer stress test.
+            </p>
+          </article>
+          <article className="guardrail-card">
+            <span>OULAD transfer</span>
+            <strong>Mixed external evidence</strong>
+            <p>
+              The lean analogue improves the temporal split but not the primary grouped split, so
+              transfer remains a caveat.
+            </p>
+          </article>
+          <article className="guardrail-card">
+            <span>XAI method</span>
+            <strong>No SHAP in this phase</strong>
+            <p>
+              Importance shares are permutation-based, and local factors are one-feature
+              perturbations around representative snapshots.
+            </p>
+          </article>
+          <article className="guardrail-card">
+            <span>Interventions</span>
+            <strong>No causal scenario claim</strong>
+            <p>
+              The UI supports explanation review only. It does not simulate teacher actions or claim
+              outcome changes.
+            </p>
+          </article>
         </div>
       </section>
 
@@ -147,7 +195,7 @@ export default async function ResearchDemoPage() {
       </section>
 
       {highlightedCase ? (
-        <section className="section section--two-column">
+        <section className="section section--two-column" id="representative-cases">
           <article className="panel">
             <h2>Representative cases</h2>
             <ul className="case-list">
@@ -155,10 +203,12 @@ export default async function ResearchDemoPage() {
                 <li key={`${item.caseType}-${item.weekNumber}`}>
                   <span className="case-list__type">{item.caseTypeLabel}</span>
                   <strong>
-                    Week {item.weekNumber} · pred {formatNumber(item.predictedFinalGrade, 1)} ·
-                    actual {formatNumber(item.actualFinalGrade, 1)}
+                    {item.studentLabel} · week {item.weekNumber} · pred{" "}
+                    {formatNumber(item.predictedFinalGrade, 1)} · actual{" "}
+                    {formatNumber(item.actualFinalGrade, 1)}
                   </strong>
                   <span className="muted">{item.riskLevelContext} risk context</span>
+                  <Link href={`/students/${item.studentId}`}>Open linked Twin view</Link>
                 </li>
               ))}
             </ul>
@@ -171,6 +221,9 @@ export default async function ResearchDemoPage() {
               {formatNumber(highlightedCase.actualFinalGrade, 2)} · error{" "}
               {formatSigned(highlightedCase.predictionError, 2)}
             </p>
+            <Link className="case-detail-link" href={`/students/${highlightedCase.studentId}`}>
+              Open {highlightedCase.studentLabel} Twin view
+            </Link>
             <div className="contribution-list">
               {[...highlightedCase.topNegative, ...highlightedCase.topPositive]
                 .slice(0, 5)

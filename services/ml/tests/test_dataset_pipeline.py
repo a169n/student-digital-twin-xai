@@ -38,13 +38,8 @@ def make_config(
         SERVICE_ROOT / "configs" / "generator_v1.yaml",
         seed_override=seed,
         output_root=workspace / "dataset",
-    )
-    config = config.model_copy(
-        update={
-            "num_students": num_students,
-            "num_weeks": num_weeks,
-            "course": config.course.model_copy(update={"topic_titles": config.course.topic_titles[:num_weeks]}),
-        }
+        num_students_override=num_students,
+        num_weeks_override=num_weeks,
     )
     return config, config_path
 
@@ -91,6 +86,37 @@ def test_pipeline_is_deterministic_for_same_seed() -> None:
                 result_b.datasets[table_name].reset_index(drop=True),
                 check_dtype=False,
             )
+
+
+def test_generator_cli_style_overrides_change_size_and_extend_topics() -> None:
+    with temporary_workspace() as workspace:
+        config, config_path = load_generator_config(
+            SERVICE_ROOT / "configs" / "generator_v1.yaml",
+            seed_override=123,
+            output_root=workspace / "dataset",
+            num_students_override=8,
+            num_weeks_override=12,
+            num_groups_override=2,
+            assignments_per_week_override=1,
+            sessions_per_week_override=1,
+        )
+
+        assert config.num_students == 8
+        assert config.num_weeks == 12
+        assert config.num_groups == 2
+        assert config.assignments_per_week == 1
+        assert config.sessions_per_week == 1
+        assert config.course.topic_titles[10] == "Extended Practice Week 11"
+        assert config.course.topic_titles[11] == "Extended Practice Week 12"
+
+        result = run_generation_pipeline(config, config_path=config_path)
+
+        assert result.summary.seed == 123
+        assert result.summary.row_counts["students"] == 8
+        assert result.summary.row_counts["course_topics"] == 12
+        assert result.summary.row_counts["assignments"] == 12
+        assert result.summary.row_counts["attendance"] == 96
+        assert result.summary.row_counts["student_twin_snapshots"] == 96
 
 
 def test_validation_fails_on_missing_required_column() -> None:

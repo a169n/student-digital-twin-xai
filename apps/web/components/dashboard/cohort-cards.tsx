@@ -11,7 +11,7 @@ export function CohortCards({ cohort }: { cohort: CohortSummary }) {
     {
       label: "Mean predicted grade",
       value: formatNumber(cohort.meanPredictedFinalGrade, 1),
-      detail: `Actual avg ${formatNumber(cohort.meanActualFinalGrade, 1)}`
+      detail: `Retrospective actual avg ${formatNumber(cohort.meanActualFinalGrade, 1)}`
     },
     {
       label: "Mean overall mastery",
@@ -19,14 +19,14 @@ export function CohortCards({ cohort }: { cohort: CohortSummary }) {
       detail: `Activity ${formatNumber(cohort.meanActivityScore, 1)}`
     },
     {
-      label: "Flagged students",
+      label: "Predicted below pass mark",
       value: cohort.atRiskCount.toString(),
       detail: `Mastery <60: ${cohort.lowMasteryCount} · Activity <40: ${cohort.lowActivityCount}`
     },
     {
-      label: "Risk distribution",
-      value: `${cohort.riskDistribution.low}/${cohort.riskDistribution.medium}/${cohort.riskDistribution.high}`,
-      detail: "Low / Medium / High"
+      label: "Current risk mix",
+      value: `${cohort.riskDistribution.high} high`,
+      detail: `${cohort.riskDistribution.medium} medium · ${cohort.riskDistribution.low} low`
     },
     {
       label: "Attendance avg",

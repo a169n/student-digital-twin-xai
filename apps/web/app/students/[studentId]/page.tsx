@@ -37,6 +37,10 @@ export default async function StudentDetailPage({ params }: { params: Params }) 
       value: formatNumber(detail.actualFinalGrade, 1)
     },
     {
+      label: "Heuristic risk score",
+      value: formatNumber(detail.riskScore, 2)
+    },
+    {
       label: "Overall mastery",
       value: formatNumber(detail.overallMastery, 1)
     },
@@ -97,9 +101,46 @@ export default async function StudentDetailPage({ params }: { params: Params }) 
         ))}
       </section>
 
+      <section className="section latest-state">
+        <article className="panel latest-state__main">
+          <h2>Latest state for week {detail.currentWeek}</h2>
+          <p>
+            The current Twin projects a final grade of{" "}
+            <strong>{formatNumber(detail.predictedFinalGrade, 1)}</strong> with a{" "}
+            <strong>{detail.riskBadge}</strong> heuristic risk label. Overall mastery is{" "}
+            <strong>{formatNumber(detail.overallMastery, 1)}</strong>, activity is{" "}
+            <strong>{formatNumber(detail.activityScore, 1)}</strong>, and attendance is{" "}
+            <strong>{formatPercent(detail.attendanceRate)}</strong>.
+          </p>
+          {detail.explanation ? (
+            <p className="muted">
+              This student is one of the frozen XAI representative cases:{" "}
+              <strong>{detail.explanation.caseTypeLabel}</strong>. The explanation below links the
+              model-behavior factors to the same week-{detail.explanation.weekNumber} snapshot.
+            </p>
+          ) : (
+            <p className="muted">
+              This student is not one of the five frozen local XAI cases. Use the research overview
+              for global feature importance and representative case context.
+            </p>
+          )}
+        </article>
+        <article className="panel latest-state__guardrail">
+          <h2>Reading guardrail</h2>
+          <p>
+            The actual final grade is retained for retrospective evaluation. It is not an input to
+            weekly Twin features, and this UI does not retrain or refresh predictions.
+          </p>
+          <Link href="/research-demo">Open evidence chain</Link>
+        </article>
+      </section>
+
       <section className="section section--two-thirds">
         <article className="panel">
-          <TimelineChart timeline={detail.timeline} />
+          <TimelineChart
+            timeline={detail.timeline}
+            title="Prediction, mastery, activity, and risk trajectory"
+          />
         </article>
         <article className="panel">
           <h3>Weekly snapshots</h3>
@@ -110,6 +151,7 @@ export default async function StudentDetailPage({ params }: { params: Params }) 
                 <th>Pred</th>
                 <th>Mastery</th>
                 <th>Activity</th>
+                <th>Risk score</th>
                 <th>Risk</th>
               </tr>
             </thead>
@@ -120,6 +162,7 @@ export default async function StudentDetailPage({ params }: { params: Params }) 
                   <td>{formatNumber(row.predictedFinalGrade, 1)}</td>
                   <td>{formatNumber(row.overallMastery, 1)}</td>
                   <td>{formatNumber(row.activityScore, 1)}</td>
+                  <td>{formatNumber(row.riskScore, 2)}</td>
                   <td>
                     <RiskBadge value={row.riskLevel} />
                   </td>
@@ -150,8 +193,8 @@ export default async function StudentDetailPage({ params }: { params: Params }) 
       <footer className="page-footer">
         <p>
           This Twin view is a read-only projection of frozen data. The model is not retrained from
-          the UI; predictions, mastery, and risk are served through the FastAPI application store
-          seeded from the frozen artifacts.
+          the UI; predictions, mastery, risk, and explanation factors are served through the FastAPI
+          application store seeded from the frozen artifacts.
         </p>
       </footer>
     </main>

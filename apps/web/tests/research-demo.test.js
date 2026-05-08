@@ -24,6 +24,9 @@ test("research evidence route is present", () => {
   const source = fs.readFileSync(pagePath, "utf-8");
   assert.match(source, /export default async function ResearchDemoPage/);
   assert.match(source, /tryLoadResearchEvidence/);
+  assert.match(source, /tryLoadPlatformStatus/);
+  assert.match(source, /href=\{`\/students\/\$\{item\.studentId\}`\}/);
+  assert.match(source, /id="representative-cases"/);
 });
 
 test("research artifact files exist", () => {

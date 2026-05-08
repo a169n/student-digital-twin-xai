@@ -275,6 +275,44 @@ h4 {
   flex-shrink: 0;
 }
 
+/* ---------- Platform evidence status ---------- */
+
+.platform-status-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin: 10px 0 16px;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.platform-status-strip span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding-right: 8px;
+  border-right: 1px solid var(--border);
+}
+
+.platform-status-strip span:last-child {
+  border-right: none;
+}
+
+.platform-status-strip strong {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.platform-status-strip__source {
+  color: var(--primary);
+  font-weight: 600;
+}
+
 /* ---------- Hero ---------- */
 
 .hero {
@@ -367,6 +405,63 @@ h4 {
 .hero-metrics strong {
   font-size: 22px;
   font-weight: 700;
+}
+
+/* ---------- Reviewer entry cards ---------- */
+
+.entry-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px;
+}
+
+.entry-card {
+  display: flex;
+  min-height: 180px;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  transition:
+    border-color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.entry-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.entry-card__eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+
+.entry-card strong {
+  font-size: 18px;
+}
+
+.entry-card__metric {
+  align-self: flex-start;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.entry-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
 }
 
 /* ---------- Cohort cards ---------- */
@@ -474,6 +569,13 @@ h4 {
   color: var(--muted);
 }
 
+.watchlist a em {
+  font-size: 12px;
+  font-style: normal;
+  color: var(--primary);
+  font-weight: 600;
+}
+
 /* ---------- Student table ---------- */
 
 .student-table {
@@ -501,6 +603,9 @@ h4 {
 }
 
 .student-table__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 6px 12px;
   font-size: 12px;
   font-weight: 600;
@@ -511,10 +616,24 @@ h4 {
   cursor: pointer;
 }
 
+.student-table__chip strong {
+  min-width: 20px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.07);
+  color: inherit;
+  font-size: 11px;
+  text-align: center;
+}
+
 .student-table__chip--active {
   background: var(--primary);
   border-color: var(--primary);
   color: #fff;
+}
+
+.student-table__chip--active strong {
+  background: rgba(255, 255, 255, 0.18);
 }
 
 .student-table__search {
@@ -732,6 +851,38 @@ h4 {
   letter-spacing: 0.04em;
 }
 
+.latest-state {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.8fr);
+  gap: 18px;
+}
+
+.latest-state h2 {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.latest-state p {
+  margin: 0 0 8px;
+}
+
+.latest-state p:last-child {
+  margin-bottom: 0;
+}
+
+.latest-state__guardrail {
+  border-color: var(--warn-soft);
+  background: #fffbeb;
+}
+
+.latest-state__guardrail a {
+  display: inline-flex;
+  margin-top: 6px;
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 700;
+}
+
 .timeline-chart {
   margin: 0;
 }
@@ -918,6 +1069,41 @@ h4 {
   color: var(--text);
 }
 
+.guardrail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.guardrail-card {
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--warn);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.guardrail-card span {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--warn);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.guardrail-card strong {
+  display: block;
+  font-size: 15px;
+}
+
+.guardrail-card p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
 .metric-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -996,6 +1182,13 @@ h4 {
   font-size: 13px;
 }
 
+.case-list a,
+.case-detail-link {
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .case-list__type {
   display: inline-block;
   padding: 2px 8px;
@@ -1005,6 +1198,11 @@ h4 {
   background: var(--primary-soft);
   color: var(--primary);
   align-self: flex-start;
+}
+
+.case-detail-link {
+  display: inline-flex;
+  margin: -2px 0 10px;
 }
 
 .result-table {
@@ -1118,6 +1316,7 @@ h4 {
   .section--two-thirds,
   .research-hero,
   .watchlists,
+  .latest-state,
   .explanation-panel__columns {
     grid-template-columns: 1fr;
   }
@@ -1138,6 +1337,10 @@ h4 {
 
   .student-table table {
     font-size: 12px;
+  }
+
+  .platform-status-strip span {
+    border-right: none;
   }
 
   .student-table__factors {

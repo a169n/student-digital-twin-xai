@@ -1,464 +1,164 @@
 # AGENTS.md
 
-## Purpose
-
-This repository contains a **research-oriented prototype**, not a production LMS.
-
-The project explores a teacher-oriented educational analytics system based on:
-
-- **Student Digital Twin**
-- **Explainable AI (XAI)**
-- **early academic risk detection**
-- **final grade prediction**
-- **intervention-oriented decision support**
-
-The main goal is to build a technically solid and academically defensible prototype.
+Short, token-efficient context primer for AI coding agents working in this repo.
+Read this first. Drill into the linked authoritative docs only when the task needs them.
 
 ---
 
-## What This Project Is
+## 1. What this project is
 
-This project is an **analytics and decision-support layer** for education.
+A **research prototype** for teacher-oriented educational analytics built around three ideas:
 
-It is meant to help instructors:
+- **Student Digital Twin** — per-student, per-week stateful representation
+- **Predictive analytics** — early academic risk + final grade prediction
+- **Explainable AI (XAI)** — teacher-readable reasons behind predictions
 
-- identify students at risk early,
-- understand why a student is considered at risk,
-- inspect the student’s dynamic learning state,
-- explore possible intervention scenarios.
+It is **not** an LMS, SIS, or production edtech product. The dataset is synthetic
+(plus an OULAD public benchmark). Auth, live LMS integration, and production
+deployment are explicitly out of scope.
 
----
-
-## What This Project Is Not
-
-Do **not** treat this repository as:
-
-- a full LMS,
-- a student information system,
-- a production-ready edtech platform,
-- a complete intervention management system,
-- a place to invent unapproved business logic.
-
-Do **not** expand scope casually.
+Primary user: **teacher / instructor**.
+Primary ML target: `final_grade`. Secondary: `passed`. Heuristic teacher label: `risk_level` (NOT used as supervised target).
 
 ---
 
-## Core Research Framing
+## 2. Current state (what actually exists today)
 
-### Primary user
+The dissertation experiment line is **complete**:
 
-- **Teacher / instructor**
+| ID | Purpose | Outcome |
+| --- | --- | --- |
+| `exp_001_baseline` | Compare feature sets `A_simple` / `B_lms` / `C_twin` | Full Twin did not beat LMS baseline reliably |
+| `exp_002_twin_ablation` | Twin subgroup ablation | Carry forward `B_lms_plus_mastery` |
+| `exp_003_mastery_validation` | Validate lean Twin candidate | Confirmed early-warning lift |
+| `exp_004_xai_on_lean_twin` | XAI audit of lean candidate | Teacher-meaningful explanations |
+| `exp_005_public_benchmark_oulad` | OULAD transfer stress test | Mixed: lift on temporal split, not grouped |
 
-### Core object
+Built and working:
 
-- **Student as a Digital Twin**
+- Versioned schema contracts (`schema_v0.1` → `v1.2`) under [packages/contracts/schema_versions](packages/contracts/schema_versions/)
+- Synthetic LMS-like dataset generator (`services/ml/src/generator`), latest config `generator_v1_3_refined.yaml`
+- Twin snapshot pipeline (1 row = 1 student × 1 week)
+- Baseline ML training, ablation, mastery validation, XAI audit, OULAD benchmark runners under [services/ml/src/experiments/](services/ml/src/experiments/)
+- FastAPI backend with SQLite app store, fed from frozen experiment payload
+- Next.js teacher-facing web app with read-only `/research-demo` route backed by frozen artifacts
+- Dissertation synthesis package under [docs/dissertation/](docs/dissertation/) (final report, defense Q&A, claim guardrails, figures, tables)
 
-### Primary target
-
-- `risk_level`
-
-### Secondary target
-
-- `final_grade`
-
-### Derived metric
-
-- `passed`
-
-### Expected XAI role
-
-- explain why a student is high/medium/low risk,
-- identify the strongest contributing factors,
-- support intervention reasoning.
-
-### Important principle
-
-A Digital Twin is **not just a dashboard**.
-The system must evolve toward:
-
-- dynamic student state,
-- time-aware snapshots,
-- prediction,
-- explanation,
-- scenario analysis.
+Intentionally still missing: production backend workflows, polished product UI flows, validated scenario simulation, real institutional data integration.
 
 ---
 
-## Source of Truth Hierarchy
+## 3. Repo map
 
-When making changes, follow this order of authority:
+```
+apps/
+  api/        FastAPI backend. Domain-oriented layout.
+              src/main.py, src/api/router.py, src/domain/{students,twins,predictions,
+              explanations,interventions,dashboard,platform,research}, src/db (SQLite),
+              src/import_research_payload.py (rebuilds SQLite from frozen payload).
+  web/        Next.js 14 (App Router) teacher UI.
+              app/{dashboard,students,twins,predictions,research-demo}, components/, lib/.
+services/
+  ml/         Python ML package. src/{generator,features,training,explainability,
+              experiments,benchmarks,inference,validation,export,common}, configs/, tests/.
+packages/
+  contracts/  Canonical schema YAMLs (schema_versions/) + shared TS types (src/).
+  config/     Shared config primitives.
+docs/
+  data_model/    Authoritative data dictionary, targets, features, change log.
+  architecture/  Overview, decisions, future roadmap.
+  research/      Problem statement, research gap, deep research report.
+  experiments/   Per-experiment writeups + registry.md (canonical experiment index).
+  dissertation/  Defense package: final report, Q&A, claims, figures, tables.
+data/
+  raw/           Generated raw LMS-like CSVs.
+  processed/     Twin snapshots (CSV + Parquet).
+  artifacts/
+    experiments/ Versioned experiment outputs (do not overwrite).
+    research_demo/  Frozen payload that feeds SQLite app store.
+    reports/, eda/  Realism audits, EDA outputs.
+  application/   Generated SQLite store (rebuildable from frozen payload).
+scripts/      One-off scripts (e.g. generate_dissertation_assets.py).
+```
+
+---
+
+## 4. Source-of-truth hierarchy
+
+When code, contracts, and docs disagree, authority order is:
 
 1. `docs/data_model/*`
 2. `packages/contracts/schema_versions/*`
-3. code implementation
+3. code
 4. tests
-5. generated data artifacts
+5. generated artifacts under `data/`
 
-If code and docs disagree, **docs/contracts win** until explicitly updated.
-
----
-
-## Change Discipline
-
-### Rule 1 — Do not silently change the schema
-
-If you add, rename, remove, or reinterpret a field:
-
-- update schema contract files,
-- update data dictionary,
-- update target/feature docs,
-- update changelog,
-- then update code.
-
-### Rule 2 — Do not invent domain details
-
-If a field, rule, threshold, or workflow is not defined:
-
-- do not pretend it is finalized,
-- add a clear `TODO`,
-- use a minimal placeholder,
-- document the assumption.
-
-### Rule 3 — Prefer explicit placeholders over fake completeness
-
-It is better to leave a clean stub than to generate misleading “finished” logic.
-
-### Rule 4 — Do not overengineer early
-
-Before data contracts and dataset generation are stable:
-
-- avoid deep backend implementation,
-- avoid advanced UI work,
-- avoid premature DB-heavy complexity.
+Docs/contracts win until explicitly updated.
 
 ---
 
-## Versioning Rules
+## 5. How to run things
 
-Schema and data model changes must be versioned.
+Full guide: [RUN_SERVICES.md](RUN_SERVICES.md). Quick reference (PowerShell, Windows):
 
-### Minor change
+```powershell
+# ML — regenerate dataset
+cd services\ml
+python -m src.main --config configs/generator_v1_3_refined.yaml
 
-Use a minor version bump when:
+# ML — run an experiment
+python -m src.experiments.run_baselines --config configs/experiments/exp_001_baseline.yaml
 
-- adding optional fields,
-- expanding documentation,
-- adding non-breaking metadata.
+# API — rebuild SQLite from frozen payload, then serve
+cd apps\api
+uv sync
+uv run python -m src.import_research_payload
+uv run uvicorn src.main:app --reload --port 8000   # docs at /docs, API at /api
 
-### Major change
+# Web
+pnpm install
+pnpm dev:web                                       # http://localhost:3000
+```
 
-Use a major version bump when:
-
-- renaming fields,
-- changing field meaning,
-- changing field types,
-- removing fields,
-- changing target logic.
-
-Update:
-
-- `packages/contracts/schema_versions/`
-- `docs/data_model/05_change_log.md`
+Tests: `pytest` from `services/ml` or `apps/api`. Web tests under `apps/web/tests`.
 
 ---
 
-## Expected Monorepo Structure
+## 6. Hard rules for agents
 
-- `apps/web`  
-  Teacher-facing frontend
-
-- `apps/api`  
-  Backend API and domain access
-
-- `services/ml`  
-  Dataset generation, feature engineering, training, inference, explainability
-
-- `packages/contracts`  
-  Canonical schema contracts and shared data definitions
-
-- `docs/architecture`  
-  Architecture decisions and roadmap
-
-- `docs/data_model`  
-  Entities, dictionary, targets, features, changelog
-
-- `docs/research`  
-  Problem framing and research gap
-
-- `data/raw`  
-  Generated LMS-like raw datasets
-
-- `data/processed`  
-  Processed twin snapshots and derived data
-
-- `data/artifacts`  
-  Saved model artifacts and analysis outputs
+1. **Do not silently change the schema.** Add/rename/remove a field only after updating: schema YAML in `packages/contracts/schema_versions/`, the relevant `docs/data_model/*` file, and `docs/data_model/05_change_log.md`. Then update code. Bump major version on rename / type / meaning / removal / target-logic change; minor for additive optional fields.
+2. **Never use `risk_level` as a supervised ML target.** It is a teacher-facing heuristic label. Use `final_grade` (primary) or `passed` (secondary).
+3. **Preserve experiment artifacts.** A new experiment ID is required when changing dataset version, schema version, feature-set, target, split strategy, or model family in a way that changes interpretation. Do not overwrite `data/artifacts/experiments/<exp_id>/`.
+4. **No fake domain logic.** If a threshold, rule, or workflow is undefined, leave a `TODO(domain): ...` and a minimal placeholder rather than inventing finished logic.
+5. **Synthetic ≠ random.** Generated data must reflect plausible relationships (attendance ↔ activity ↔ submission ↔ performance ↔ outcome). Hidden generation parameters (`baseline_level`, `motivation_level`, `discipline_level`, `trajectory_type`) are allowed but must be marked generation-only.
+6. **Stay in scope.** Teacher-facing analytics + XAI. Don't build LMS features, content authoring, auth flows, or student-facing product surfaces.
+7. **Backend layout discipline.** Keep `routers / services / repositories / models / config` boundaries inside each `src/domain/<area>/` package. Don't blanket-CRUD; expose only meaningful domain endpoints.
+8. **UI restraint.** Don't fabricate charts on missing data — use explicit stubs/placeholders.
+9. **Implementation order matters:** schema contracts → data model docs → dataset generator → twin snapshots → baseline ML → XAI → API → UI → scenario simulation. Don't skip ahead unless asked.
 
 ---
 
-## Development Priorities
+## 7. Where to look for deeper context (only when needed)
 
-Always prefer this implementation order:
-
-1. repository architecture
-2. schema contracts
-3. data model docs
-4. synthetic dataset generator
-5. twin snapshot generation
-6. baseline ML pipeline
-7. explainability layer
-8. backend endpoints
-9. frontend views
-10. scenario simulation flow
-
-Do not skip ahead unless explicitly requested.
+- Project intent and non-goals → [README.md](README.md)
+- Data model authority → [docs/data_model/](docs/data_model/)
+- Architecture decisions → [docs/architecture/decisions.md](docs/architecture/decisions.md), [docs/architecture/overview.md](docs/architecture/overview.md)
+- Research framing → [docs/research/problem-statement.md](docs/research/problem-statement.md), [docs/research/research-gap.md](docs/research/research-gap.md)
+- Experiments index → [docs/experiments/registry.md](docs/experiments/registry.md), [docs/experiments/README.md](docs/experiments/README.md)
+- Dissertation package → [docs/dissertation/README.md](docs/dissertation/README.md)
+- Local startup → [RUN_SERVICES.md](RUN_SERVICES.md)
+- Schema YAMLs → [packages/contracts/schema_versions/](packages/contracts/schema_versions/)
+- ML service usage → [services/ml/README.md](services/ml/README.md)
+- API service usage → [apps/api/README.md](apps/api/README.md)
 
 ---
 
-## Dataset and Data Modeling Rules
-
-### General
-
-The project starts with a **synthetic but structurally realistic LMS-like dataset**.
-
-### Expected early scope
-
-- one course,
-- 10 weeks,
-- weekly topics,
-- assignments/quizzes,
-- attendance,
-- activity,
-- final result.
-
-### Data layers
-
-Keep data conceptually separated into:
-
-1. **raw LMS-like data**
-2. **processed student twin snapshots**
-3. **prediction / explanation outputs**
-
-### Do not collapse everything into one giant table
-
-Use normalized raw structures plus derived snapshot tables.
-
-### Student twin snapshots
-
-A key pattern is:
-
-- **1 row = 1 student × 1 week**
-
-This is central to the project.
-
----
-
-## ML / Analytics Rules
-
-### Early stage
-
-Use simple, explainable, defensible baselines first.
-
-Good early candidates:
-
-- Logistic Regression
-- Decision Tree
-- Random Forest
-- Gradient Boosting / XGBoost later
-
-Do not introduce unnecessary model complexity early.
-
-### Explainability
-
-XAI is not optional decoration.
-Explanations should support:
-
-- teacher interpretation,
-- factor analysis,
-- intervention reasoning.
-
-### Data generation
-
-Synthetic data must not be random noise.
-It should reflect plausible relationships between:
-
-- attendance,
-- activity,
-- submission discipline,
-- performance,
-- risk,
-- final outcome.
-
-### Hidden generation parameters are allowed
-
-For example:
-
-- `baseline_level`
-- `motivation_level`
-- `discipline_level`
-- `trajectory_type`
-
-But clearly mark them as **generation-only** if they are not part of the visible application domain.
-
----
-
-## Backend Rules
-
-### Architecture
-
-Prefer clean, domain-oriented structure.
-Use clear boundaries between:
-
-- routers
-- services
-- repositories
-- schemas/models
-- config
-
-### Persistence
-
-Future target DB is PostgreSQL.
-Before DB-heavy implementation is needed, file-based development is acceptable.
-
-### API scope
-
-Do not generate full CRUD blindly.
-Expose only meaningful domain endpoints.
-
-Examples of useful future domains:
-
-- students
-- twin snapshots
-- predictions
-- explanations
-- interventions
-
----
-
-## Frontend Rules
-
-### Main audience
-
-Teacher-first.
-
-### Early UI scope
-
-Keep UI restrained and functional:
-
-- dashboard shell,
-- student list,
-- student twin view,
-- predictions view,
-- explanations placeholder,
-- interventions placeholder.
-
-Do not spend time on visual polish before data and API stabilize.
-
-### Avoid fake charts
-
-If data is not ready, use explicit stubs or placeholders.
-Do not fabricate complex visuals just to fill screens.
-
----
-
-## Documentation Rules
-
-Every meaningful change should preserve documentation quality.
-
-At minimum, keep these files aligned:
-
-- `docs/data_model/00_scope.md`
-- `docs/data_model/01_entities.md`
-- `docs/data_model/02_data_dictionary.md`
-- `docs/data_model/03_targets_and_labels.md`
-- `docs/data_model/04_feature_definitions.md`
-- `docs/data_model/05_change_log.md`
-
-When changing architecture, also update:
-
-- `docs/architecture/overview.md`
-- `docs/architecture/decisions.md`
-- `docs/architecture/future-roadmap.md`
-
----
-
-## When Requirements Are Missing
-
-If requirements are underspecified:
-
-1. do not hallucinate a full solution,
-2. preserve current architecture,
-3. add minimal safe placeholders,
-4. document assumptions,
-5. leave actionable TODOs.
-
-Use this pattern:
-
-- `TODO(domain): clarify exact risk threshold strategy`
-- `TODO(data-model): finalize snapshot feature list after schema review`
-- `TODO(api): replace file-backed repository with PostgreSQL implementation`
-
----
-
-## Code Quality Expectations
-
-Prefer:
-
-- clarity over cleverness,
-- small coherent modules,
-- explicit names,
-- low surprise,
-- maintainable defaults.
-
-Avoid:
-
-- speculative abstractions,
-- unnecessary generic frameworks,
-- hidden coupling,
-- premature optimization,
-- unexplained magic constants.
-
----
-
-## Before You Commit Changes
-
-Check all of the following:
-
-- Does this change alter the data model?
-- If yes, were contracts/docs updated first?
-- Does this introduce fake domain logic?
-- Does this preserve teacher-oriented scope?
-- Does this move the project toward Digital Twin + XAI, not away from it?
-- Is this a scaffold, placeholder, or real implementation?
-- Is that made explicit in code/comments/docs?
-
----
-
-## Preferred Working Style for Agents
-
-When performing a task:
-
-1. inspect relevant docs/contracts first,
-2. make the smallest coherent change,
-3. keep structure clean,
-4. leave TODOs where the domain is intentionally unresolved,
-5. summarize:
-   - what changed,
-   - what assumptions were made,
-   - what remains unimplemented.
-
----
-
-## Non-Negotiable Principle
-
-This repository should evolve into a **credible research prototype**.
-
-Do not optimize for looking complete.
-Optimize for being:
-
-- structured,
-- honest,
-- extensible,
-- methodologically defensible.
-
-A smaller, cleaner, correctly scoped system is better than a fake “full platform”.
+## 8. Working style
+
+1. Read only the docs you need; don't preload the whole tree.
+2. Make the smallest coherent change.
+3. Update contracts/docs *before* code when touching the data model.
+4. Leave actionable `TODO(domain|data-model|api|ml|ui): ...` markers where the domain is intentionally unresolved.
+5. End with a short summary: what changed, what assumptions you made, what is still unimplemented.
+
+The goal is a credible, methodologically defensible research prototype — not a feature-rich lookalike.

@@ -9,7 +9,9 @@ from src.generator.synthetic import SyntheticDatasetGenerator
 
 
 def _build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Generate the synthetic Student Digital Twin dataset.")
+    parser = argparse.ArgumentParser(
+        description="Generate the synthetic Student Digital Twin dataset."
+    )
     parser.add_argument(
         "--config",
         default="configs/generator_v1.yaml",
@@ -17,10 +19,43 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--seed", type=int, default=None, help="Optional seed override.")
     parser.add_argument(
+        "--num-students",
+        type=int,
+        default=None,
+        help="Optional student count override.",
+    )
+    parser.add_argument(
+        "--num-weeks",
+        type=int,
+        default=None,
+        help="Optional course duration override.",
+    )
+    parser.add_argument(
+        "--num-groups",
+        type=int,
+        default=None,
+        help="Optional cohort/group count override.",
+    )
+    parser.add_argument(
+        "--assignments-per-week",
+        type=int,
+        default=None,
+        help="Optional assessed-items-per-week override.",
+    )
+    parser.add_argument(
+        "--sessions-per-week",
+        type=int,
+        default=None,
+        help="Optional class-sessions-per-week override.",
+    )
+    parser.add_argument(
         "--output-root",
         type=Path,
         default=None,
-        help="Optional output root; raw/processed/artifacts subdirectories will be created inside it.",
+        help=(
+            "Optional output root; raw/processed/artifacts subdirectories "
+            "will be created inside it."
+        ),
     )
     parser.add_argument(
         "--skip-parquet",
@@ -50,6 +85,11 @@ def main() -> None:
         args.config,
         seed_override=args.seed,
         output_root=args.output_root,
+        num_students_override=args.num_students,
+        num_weeks_override=args.num_weeks,
+        num_groups_override=args.num_groups,
+        assignments_per_week_override=args.assignments_per_week,
+        sessions_per_week_override=args.sessions_per_week,
     )
     generator = SyntheticDatasetGenerator(config)
     result = generator.run(config_path=resolved_config_path, skip_parquet=args.skip_parquet)
