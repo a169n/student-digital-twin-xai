@@ -299,14 +299,14 @@ def test_trend_and_index_columns_present():
 Run: `cd services/ml && python -m pytest tests/test_oulad_full_ablation.py::test_trend_and_index_columns_present -v`
 Expected: FAIL (`missing assessment_score_trend_to_date`).
 
-- [ ] **Step 3: Implement the columns in `oulad_adapter.py`** in the weekly-feature builder (the function that produces `out[...]` columns around L706-855; the worker fills exact code after reading it). Define, per student-week group, using only `week_number <= N` data:
-  - `assessment_score_trend_to_date` = (cumulative mean now) − (cumulative mean at the previous available week), 0 when undefined.
-  - `clicks_trend_to_date` = `current_week_clicks` − (prior-week clicks), 0 when undefined.
-  - `engagement_index_oulad` = mean of min-max-normalized `cumulative_clicks_to_date`, `assessment_submission_rate_due_to_date`, `(1 − late_submission_rate_to_date)`.
-  - `performance_index_oulad` = mean of normalized `cumulative_assessment_score_mean_to_date`, `cumulative_assessment_weighted_score_to_date`.
-  - `discipline_index_oulad` = mean of `assessment_submission_rate_due_to_date`, `(1 − late_submission_rate_to_date)`, `banked_assessment_rate_to_date`.
+- [ ] **Step 3: Implement the columns in `oulad_adapter.py` (LOCKED design, controller-decided 2026-06-07).** Add a new function `_add_trend_and_index_features(snapshots: pd.DataFrame) -> pd.DataFrame` and call it in `build_weekly_snapshots` on the line IMMEDIATELY BEFORE `snapshots = _finalize_snapshot_frame(snapshots)` (currently line 289). At that point the frame still contains ALL weeks (1..duration) for every student and all cumulative columns, so week-over-week diffs at `min_week` correctly reference the prior week before the `min_week` filter (lines 291-296) drops it. Sort by `KEY_COLUMNS + ["week_number"]`, group by `KEY_COLUMNS`, and compute (all components are already in [0,1] or are leakage-safe to-date diffs — do NOT use any global min/max or cross-row statistics):
+  - `assessment_score_trend_to_date = cumulative_assessment_score_mean_to_date − group.shift(1)` of the same column, `.fillna(0.0)`.
+  - `clicks_trend_to_date = current_week_clicks − group.shift(1)` of `current_week_clicks`, `.fillna(0.0)`.
+  - `performance_index_oulad = mean(clip(cumulative_assessment_score_mean_to_date/100, 0, 1), clip(cumulative_assessment_weighted_score_to_date/100, 0, 1))`.
+  - `discipline_index_oulad = mean(assessment_submission_rate_due_to_date, 1 − late_submission_rate_to_date, banked_assessment_rate_to_date)` (all already 0–1).
+  - `engagement_index_oulad = mean(assessment_submission_rate_due_to_date, has_vle_activity_to_date)` (a deliberately conservative, leakage-safe engagement composite using only bounded signals; documented as such).
 
-  All normalization is computed within the snapshot frame and is leakage-safe (monotone, per-row from to-date aggregates). Document each in a docstring comment mirroring the synthetic index definitions in `docs/research/deep-research-report.md` lines 27-30.
+  Add each new column to the `fill_zero` list in `_finalize_snapshot_frame` so missing values become 0.0. Document each formula in the function docstring, noting the deliberate avoidance of global statistics (leakage-safe) and the parallel to the synthetic index intent in `docs/research/deep-research-report.md` lines 27-30.
 
 - [ ] **Step 4: Run the test, confirm PASS**
 
@@ -486,11 +486,11 @@ git commit -m "feat(xai): allow explicit feature-column reference training"
 - Plain OULAD prediction is over-published. Novelty must rest on feature-group-value transfer, explanation stability, and the known-ground-truth probe — not on accuracy.
 - Scope creep across P2–P5. The OULAD-only core is a complete thesis; do not start KU Leuven from this plan.
 
-## Open questions (resolve before/within the relevant phase)
+## Open questions (resolved 2026-06-07)
 
-- **SHAP:** add a TreeExplainer path (lifting `shap.used=False`) for `exp_007`/`exp_008` accepting a new dependency, or stay with permutation+native to keep the dependency contract frozen? (Affects Tasks 11, 14.)
-- **Canonical reporting split for OULAD:** `student_group` (primary) or `temporal_forward` (stricter, better for early-warning)? Report both, but pick the headline.
-- **Second OULAD presentation** for cross-cohort stability (Task 13) in scope, or splits-only?
+- **SHAP:** RESOLVED — **No SHAP.** Keep permutation + native importance; do NOT add a SHAP dependency. `exp_008` keeps `shap_enabled: false`. The `shap.used=False` non-claim stays and is defended (not a gap). (Affects Tasks 11, 14.)
+- **Canonical reporting split for OULAD:** RESOLVED — **Report BOTH** `student_group` and `temporal_forward`, always with a **fixed-model** table; the **headline is `temporal_forward`** (stricter, better for early-warning). (Affects Tasks 7, 8, 11.)
+- **Second OULAD presentation** for cross-cohort stability (Task 13): still optional — decide within Phase 4 based on remaining time.
 
 ---
 
