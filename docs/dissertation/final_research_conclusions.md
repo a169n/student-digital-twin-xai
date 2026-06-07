@@ -50,6 +50,15 @@ robust under the stricter temporal-forward split, where the candidate is
 essentially level with the baseline. The dissertation should report both
 sides of this asymmetry.
 
+**Model-stability caveat.** The `-0.206` RMSE advantage of `B_lms_plus_mastery`
+is realized only for gradient boosting on the student-grouped split. When the
+model is held fixed across splits, the mastery candidate is approximately
+`+0.41` RMSE *worse* than `B_lms` on the temporal-forward split, and
+`B_lms_plus_indices` is the only block that improves on both splits (≈`-0.066`/
+`-0.068`). Any carry-forward statement about mastery must therefore be reported
+with a fixed-model table, not best-model-per-cell, to avoid a model-selection
+artifact.
+
 ## 3. The Mastery Block Was Validated With Caveats
 
 The mastery validation experiment is what allows the carry-forward
