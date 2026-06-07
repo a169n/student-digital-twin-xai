@@ -34,8 +34,7 @@ above `0.97` for several LMS aggregates). This is **not merely "signal clarity"*
 `services/ml/src/generator/final_results.py:74-84`) of the very behaviors the
 features re-aggregate. The target is therefore an algebraic function of the
 inputs (week-10 max absolute reconstruction error 0.008, correlation 1.000000),
-so the
-synthetic predictive scores cannot, even in principle, demonstrate learnable
+so the synthetic predictive scores cannot, even in principle, demonstrate learnable
 educational signal. This is why the primary empirical evidence in this work is
 the real OULAD dataset and the synthetic data is retained only as a controlled
 faithfulness probe (`exp_008`). This is documented in

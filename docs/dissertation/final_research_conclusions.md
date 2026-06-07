@@ -195,6 +195,13 @@ the present evidence does **not** support.
   recommendations follow from the present XAI phase. The intervention
   framing is part of the project's broader scope but is not yet validated
   against any of these experiments.
+- The conclusions do not claim that the synthetic predictive scores
+  (R²≈0.99, F1=1.000) reflect learnable signal. The synthetic `final_grade`
+  is a deterministic, noise-free function of the model's own features
+  (`services/ml/src/generator/final_results.py:74-84`; week-10 max absolute
+  reconstruction error 0.008), so those scores are algebraic artifacts. The
+  empirical claims rest on real OULAD data, where the same pipeline yields
+  F1 0.86-0.89, not 1.000.
 
 ## 8. Carry-Forward Statement for the Dissertation
 
