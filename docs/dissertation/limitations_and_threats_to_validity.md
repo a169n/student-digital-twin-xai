@@ -30,10 +30,11 @@ any institutional reality. For example, weekly aggregates reach
 near-perfect relationships with `final_grade` (Pearson r
 above `0.97` for several LMS aggregates). This is **not merely "signal clarity"**:
 `final_grade` is a deterministic, noise-free closed-form weighted mean
-(`0.55*assignment + 0.25*quiz + 0.10*attendance + 0.10*on_time`,
+(`0.55*assignment_avg + 0.25*quiz_avg + 0.10*attendance_rate*100 + 0.10*on_time_rate*100`,
 `services/ml/src/generator/final_results.py:74-84`) of the very behaviors the
 features re-aggregate. The target is therefore an algebraic function of the
-inputs (week-10 reconstruction error 0.008, correlation 1.000000), so the
+inputs (week-10 max absolute reconstruction error 0.008, correlation 1.000000),
+so the
 synthetic predictive scores cannot, even in principle, demonstrate learnable
 educational signal. This is why the primary empirical evidence in this work is
 the real OULAD dataset and the synthetic data is retained only as a controlled
