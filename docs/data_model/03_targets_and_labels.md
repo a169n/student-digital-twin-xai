@@ -54,7 +54,8 @@ full-course versions of the same behaviors that the weekly snapshot features
 re-aggregate cumulatively (`avg_assignment_score_to_date`,
 `avg_quiz_score_to_date`, `attendance_rate_to_date`,
 `on_time_submission_rate_to_date`). The only randomness anywhere upstream is a
-per-submission Gaussian (sd 0.06, `submissions.py:85`) that is **baked into the
+per-submission Gaussian (sd 0.06, `services/ml/src/generator/submissions.py:85`)
+that is **baked into the
 recorded scores and therefore shared by both the features and the grade**; it
 averages out across ~10 assignments. As a result, the synthetic supervised task
 is largely an algebraic identity: from week-10 features the grade is

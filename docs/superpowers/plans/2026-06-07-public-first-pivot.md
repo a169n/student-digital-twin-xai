@@ -69,7 +69,7 @@ Run: `Read docs/data_model/03_targets_and_labels.md` (full). Locate the section 
 Append this exact subsection immediately after the `final_grade` definition:
 
 ```markdown
-## Determinism and circularity of `final_grade` (synthetic dataset)
+### Determinism and circularity of `final_grade` (synthetic dataset)
 
 In the synthetic generator, `final_grade` is computed by a fixed closed-form
 formula (`services/ml/src/generator/final_results.py:74-84`):
