@@ -50,6 +50,20 @@ robust under the stricter temporal-forward split, where the candidate is
 essentially level with the baseline. The dissertation should report both
 sides of this asymmetry.
 
+**Model-stability caveat.** The figures above use a *best-model-per-cell*
+protocol, under which the candidate is essentially level with the baseline on
+the temporal-forward split; that framing flatters the candidate, because the
+`-0.206` RMSE advantage of `B_lms_plus_mastery` is realized only for gradient
+boosting on the student-grouped split. A preliminary fixed-model re-analysis —
+to be confirmed by the fixed-model ablation table produced in the public-data
+phase — indicates that, when the model is held fixed across splits, the mastery
+candidate is approximately `+0.41` RMSE *worse* than `B_lms` on the
+temporal-forward split, and that `B_lms_plus_indices` (see `exp_002`) is the
+only block improving on both splits (≈`-0.066` / ≈`-0.068`). These fixed-model
+figures are preliminary until that table exists. Any carry-forward statement
+about mastery must therefore be reported with a fixed-model table, not
+best-model-per-cell, to avoid a model-selection artifact.
+
 ## 3. The Mastery Block Was Validated With Caveats
 
 The mastery validation experiment is what allows the carry-forward
@@ -181,6 +195,13 @@ the present evidence does **not** support.
   recommendations follow from the present XAI phase. The intervention
   framing is part of the project's broader scope but is not yet validated
   against any of these experiments.
+- The conclusions do not claim that the synthetic predictive scores
+  (R²≈0.99, F1=1.000) reflect learnable signal. The synthetic `final_grade`
+  is a deterministic, noise-free function of the model's own features
+  (`services/ml/src/generator/final_results.py:74-84`; week-10 max absolute
+  reconstruction error 0.008), so those scores are algebraic artifacts. The
+  empirical claims rest on real OULAD data, where the same pipeline yields
+  F1 0.86-0.89, not 1.000.
 
 ## 8. Carry-Forward Statement for the Dissertation
 

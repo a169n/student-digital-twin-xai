@@ -80,3 +80,25 @@ teacher-oriented Student Digital Twin + XAI research prototype, identifies a
 lean mastery-centered Twin subset as the best internal candidate under the
 current synthetic setup, validates and explains it with caveats, and records a
 mixed OULAD benchmark that leaves external transfer unresolved.
+
+## Isn't your synthetic `final_grade` just a deterministic function of your own features, so the high accuracy is meaningless?
+
+Yes, and we state this explicitly. `final_grade` is a closed-form weighted mean
+of assignment, quiz, attendance, and on-time behavior with no noise term
+(`services/ml/src/generator/final_results.py:74-84`); week-10 reconstruction max
+absolute error is 0.008. That is precisely why we do not base any empirical
+learning claim on synthetic accuracy. Synthetic data is used only as a controlled
+faithfulness probe with known ground truth (`exp_008`). The empirical claims rest
+on real OULAD data, where the same pipeline yields F1 0.86-0.89 (not 1.000),
+which is itself direct evidence that the perfect synthetic scores were a
+generator artifact.
+
+## You claim mastery features help - but does that survive a fair comparison?
+
+It is split- and model-dependent. The `-0.206` win holds for gradient boosting
+on the student-grouped split only; a preliminary fixed-model re-analysis (to be
+confirmed by the fixed-model ablation table produced in the public-data phase)
+indicates mastery is approximately `+0.41` worse on the temporal-forward split,
+and that only `B_lms_plus_indices` improves on both splits. We report fixed-model
+tables for this reason and frame the
+real-data finding as a mixed/conditional result, not "the twin wins."

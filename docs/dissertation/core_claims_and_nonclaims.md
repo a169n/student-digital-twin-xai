@@ -1,5 +1,9 @@
 # Core Claims and Nonclaims
 
+> Terminology: throughout, "Digital Twin" denotes a **lean, time-aware weekly
+> state representation**. It does not denote a counterfactual/simulation engine;
+> no such capability is implemented in this prototype.
+
 ## Claims the Dissertation Can Make
 
 - The repository implements a research-oriented, teacher-facing educational
@@ -44,3 +48,10 @@
   performance.
 - It cannot claim that scenario simulation or intervention recommendation is
   validated by the current experiment line.
+- It cannot claim that synthetic predictive accuracy (R²≈0.99, F1=1.000) reflects
+  learnable signal; the synthetic target is a deterministic function of the
+  features and the scores are algebraic artifacts.
+- It cannot claim a what-if / counterfactual / simulation capability: none is
+  implemented (`services/ml/src/features/engineering.py` and
+  `services/ml/src/explainability/xai.py` are stubs). The system is a lean,
+  time-aware weekly state representation, not a simulation-capable digital twin.

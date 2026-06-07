@@ -286,6 +286,7 @@ def build_weekly_snapshots(
         how="left",
         validate="one_to_one",
     )
+    snapshots = _add_trend_and_index_features(snapshots)
     snapshots = _finalize_snapshot_frame(snapshots)
 
     if max_week is not None:
@@ -1070,6 +1071,58 @@ def _prepare_student_assessments(tables: OuladTables) -> pd.DataFrame:
     return submissions
 
 
+def _add_trend_and_index_features(snapshots: pd.DataFrame) -> pd.DataFrame:
+    """Add leakage-safe trend and composite-index analogue columns.
+
+    Trends are per-student week-over-week diffs of to-date columns (use only
+    data up to week N). Indices are means of already-bounded [0,1] signals; no
+    global/cross-row statistics are used, so no test-set information leaks. This
+    mirrors the synthetic index intent documented in
+    docs/research/deep-research-report.md (engagement/performance/discipline).
+
+    Missing component columns (NaN on partially-observed early weeks) are
+    treated as 0 via `.fillna(0.0)` before averaging, so each index always
+    uses a FIXED denominator equal to the number of components (2 or 3).
+    This is consistent with `_finalize_snapshot_frame`'s fill_zero treatment
+    of the same input columns and is a conservative, leakage-safe choice.
+    """
+    out = snapshots.sort_values(list(KEY_COLUMNS) + ["week_number"]).reset_index(drop=True)
+    group = out.groupby(list(KEY_COLUMNS), sort=False)
+
+    out["assessment_score_trend_to_date"] = (
+        out["cumulative_assessment_score_mean_to_date"]
+        - group["cumulative_assessment_score_mean_to_date"].shift(1)
+    ).fillna(0.0)
+    out["clicks_trend_to_date"] = (
+        out["current_week_clicks"] - group["current_week_clicks"].shift(1)
+    ).fillna(0.0)
+
+    perf_a = (out["cumulative_assessment_score_mean_to_date"] / 100.0).clip(0.0, 1.0)
+    perf_b = (out["cumulative_assessment_weighted_score_to_date"] / 100.0).clip(0.0, 1.0)
+    perf = pd.concat([perf_a, perf_b], axis=1).fillna(0.0)
+    out["performance_index_oulad"] = perf.mean(axis=1)
+
+    disc = pd.concat(
+        [
+            out["assessment_submission_rate_due_to_date"],
+            1.0 - out["late_submission_rate_to_date"],
+            out["banked_assessment_rate_to_date"],
+        ],
+        axis=1,
+    ).fillna(0.0)
+    out["discipline_index_oulad"] = disc.mean(axis=1)
+
+    eng = pd.concat(
+        [
+            out["assessment_submission_rate_due_to_date"],
+            out["has_vle_activity_to_date"].astype(float),
+        ],
+        axis=1,
+    ).fillna(0.0)
+    out["engagement_index_oulad"] = eng.mean(axis=1)
+    return out
+
+
 def _finalize_snapshot_frame(snapshots: pd.DataFrame) -> pd.DataFrame:
     fill_zero = [
         "cumulative_assessment_score_count_to_date",
@@ -1086,6 +1139,11 @@ def _finalize_snapshot_frame(snapshots: pd.DataFrame) -> pd.DataFrame:
         "current_week_activity_types",
         "cumulative_clicks_to_date",
         "has_vle_activity_to_date",
+        "assessment_score_trend_to_date",
+        "clicks_trend_to_date",
+        "engagement_index_oulad",
+        "performance_index_oulad",
+        "discipline_index_oulad",
     ]
     for category in ACTIVITY_CATEGORIES:
         fill_zero.extend(
