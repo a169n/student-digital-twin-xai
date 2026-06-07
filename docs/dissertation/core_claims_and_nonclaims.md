@@ -53,5 +53,5 @@
   features and the scores are algebraic artifacts.
 - It cannot claim a what-if / counterfactual / simulation capability: none is
   implemented (`services/ml/src/features/engineering.py` and
-  `services/ml/src/explainability/xai.py` are stubs). The system is a lean, time-aware weekly
-  state representation, not a simulating digital twin.
+  `services/ml/src/explainability/xai.py` are stubs). The system is a lean,
+  time-aware weekly state representation, not a simulation-capable digital twin.
