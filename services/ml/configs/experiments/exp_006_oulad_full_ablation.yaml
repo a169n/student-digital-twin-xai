@@ -21,13 +21,15 @@ documentation:
     feature block (trends, mastery, indices) should improve at least one
     metric over `B_lms_oulad` on the headline temporal-forward split. The
     full twin analogue `C_twin_oulad` should be at least non-inferior to
-    `B_lms_oulad`. Individual sub-blocks may cancel out or interact, so
-    the ablation may reveal diminishing returns or interference between
-    blocks.
+    `B_lms_oulad`. All feature sets are compared under a fixed model family
+    across both splits to guard against model-selection (model-flip)
+    artifacts. Individual sub-blocks may cancel out or interact, so the
+    ablation may reveal diminishing returns or interference between blocks.
   limitations:
     - >
-      This is an external public-benchmark stress test of representation logic,
-      not a comparison between synthetic and public dataset quality.
+      This experiment isolates the marginal contribution of each twin feature
+      block on a public dataset; it is not a comparison of synthetic versus
+      public dataset quality.
     - >
       The primary OULAD target is a derived weighted assessment score, not the
       exact same construct as the synthetic `final_grade`.
@@ -49,10 +51,11 @@ documentation:
   next_step: >
     Use the full-ablation results to identify which feature blocks transfer
     to OULAD and refine the dissertation external-validity discussion
-    accordingly. If no block improves over the LMS baseline on the
-    temporal-forward split, narrow the lean Twin claim to internal synthetic
-    validity. If one or more blocks help, carry the specific block claim
-    forward with a public-benchmark caveat.
+    accordingly. Identify which specific blocks (if any) transfer to OULAD
+    under the fixed-model comparison and carry only those block-level claims
+    forward with a public-benchmark caveat; if no block improves over the LMS
+    baseline on the temporal-forward split, report that the twin blocks do not
+    transfer and narrow the claim accordingly.
 
 oulad:
   raw_dir: "datasets/oulad"
