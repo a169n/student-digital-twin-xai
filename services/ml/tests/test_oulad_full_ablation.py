@@ -75,3 +75,28 @@ def test_indices_use_fixed_denominator_on_partial_nan():
     assert abs(float(out["discipline_index_oulad"].iloc[0]) - (1.0 / 3.0)) < 1e-9
     # engagement: [1.0, NaN->0] -> mean = 0.5 (NOT 1.0)
     assert abs(float(out["engagement_index_oulad"].iloc[0]) - 0.5) < 1e-9
+
+
+def test_exp006_config_has_full_nested_sets():
+    from src.experiments.run_public_benchmark_oulad import load_public_benchmark_config
+
+    config, _ = load_public_benchmark_config(
+        "configs/experiments/exp_006_oulad_full_ablation.yaml"
+    )
+    names = set(config.feature_sets)
+    assert {
+        "A_simple_oulad",
+        "B_lms_oulad",
+        "B_lms_plus_trends_oulad",
+        "B_lms_plus_mastery_oulad",
+        "B_lms_plus_indices_oulad",
+        "C_twin_oulad",
+    } <= names
+    assert config.feature_set_order[0] == "A_simple_oulad"
+    assert config.comparison.candidate_feature_set == "C_twin_oulad"
+    assert config.comparison.primary_split == "temporal_forward"
+    # C_twin_oulad must contain trend + index + mastery-extra columns, no duplicates
+    cols = config.feature_sets["C_twin_oulad"].columns
+    assert len(cols) == len(set(cols)), "C_twin_oulad has duplicate columns"
+    for c in ["assessment_score_trend_to_date", "engagement_index_oulad", "overall_mastery_proxy"]:
+        assert c in cols
