@@ -153,6 +153,7 @@ class ComparisonConfig(BaseModel):
     candidate_feature_set: str = "B_lms_plus_mastery_oulad"
     primary_split: SplitStrategy = "student_group"
     improvement_rmse_tolerance: float = 0.05
+    fixed_model: RegressionModelName = "gradient_boosting"
 
 
 class StudentGroupSplitConfig(BaseModel):
@@ -433,6 +434,12 @@ def build_benchmark_diagnostics(
         baseline_feature_set=config.comparison.baseline_feature_set,
         primary_split=config.comparison.primary_split,
     )
+    fixed_model_summary = _fixed_model_regression_by_feature_set(
+        table,
+        model=config.comparison.fixed_model,
+        baseline_feature_set=config.comparison.baseline_feature_set,
+        primary_split=config.comparison.primary_split,
+    )
     classification_summary = _best_classification_by_feature_set(table)
     interpretation = _interpret_transfer_result(regression_summary, config)
     return {
@@ -443,6 +450,8 @@ def build_benchmark_diagnostics(
         "row_counts": build_result.filtered_row_counts,
         "target_summary": build_result.target_summary,
         "regression_best_by_feature_set": regression_summary,
+        "regression_fixed_model_by_feature_set": fixed_model_summary,
+        "fixed_model": config.comparison.fixed_model,
         "classification_best_by_feature_set": classification_summary,
         "interpretation": interpretation,
     }
@@ -701,6 +710,31 @@ def render_experiment_markdown(
         ]
     )
     for record in diagnostics["regression_best_by_feature_set"]:
+        lines.append(
+            "| {split} | {fs} | {model} | {rmse:.3f} | {mae:.3f} | {r2:.3f} | {delta} |".format(
+                split=record["split_strategy"],
+                fs=record["feature_set"],
+                model=record["model"],
+                rmse=record["rmse"],
+                mae=record["mae"],
+                r2=record["r2"],
+                delta=_format_delta(record.get("delta_vs_baseline_rmse")),
+            )
+        )
+
+    lines.extend(
+        [
+            "",
+            f"## Fixed-model regression results (model = `{diagnostics['fixed_model']}`)",
+            "",
+            "Same model across all feature sets and both splits, to neutralize "
+            "best-model-per-cell (model-flip) artifacts. Headline split: temporal_forward.",
+            "",
+            "| split | feature set | model | RMSE | MAE | R^2 | delta vs baseline |",
+            "| --- | --- | --- | ---: | ---: | ---: | ---: |",
+        ]
+    )
+    for record in diagnostics["regression_fixed_model_by_feature_set"]:
         lines.append(
             "| {split} | {fs} | {model} | {rmse:.3f} | {mae:.3f} | {r2:.3f} | {delta} |".format(
                 split=record["split_strategy"],
@@ -1022,6 +1056,61 @@ def _best_regression_by_feature_set(
     if table.empty or "task" not in table.columns:
         return []
     regression = table.loc[table["task"] == "regression"].copy()
+    if regression.empty:
+        return []
+    regression = regression.rename(
+        columns={"metric_rmse": "rmse", "metric_mae": "mae", "metric_r2": "r2"}
+    )
+    records: list[dict[str, Any]] = []
+    for (split_strategy, feature_set), group in regression.groupby(
+        ["split_strategy", "feature_set"], sort=False
+    ):
+        best = group.sort_values(["rmse", "mae"], ascending=[True, True]).iloc[0]
+        records.append(
+            {
+                "split_strategy": split_strategy,
+                "feature_set": feature_set,
+                "model": best["model"],
+                "rmse": float(best["rmse"]),
+                "mae": float(best["mae"]),
+                "r2": float(best["r2"]),
+                "n_train_rows": int(best["n_train_rows"]),
+                "n_test_rows": int(best["n_test_rows"]),
+            }
+        )
+    baseline_by_split = {
+        record["split_strategy"]: record["rmse"]
+        for record in records
+        if record["feature_set"] == baseline_feature_set
+    }
+    for record in records:
+        baseline = baseline_by_split.get(record["split_strategy"])
+        record["delta_vs_baseline_rmse"] = (
+            None if baseline is None else float(record["rmse"] - baseline)
+        )
+    return sorted(
+        records,
+        key=lambda item: (
+            0 if item["split_strategy"] == primary_split else 1,
+            item["split_strategy"],
+            item["rmse"],
+        ),
+    )
+
+
+def _fixed_model_regression_by_feature_set(
+    table: pd.DataFrame,
+    *,
+    model: str,
+    baseline_feature_set: str,
+    primary_split: str,
+) -> list[dict[str, Any]]:
+    if table.empty or "task" not in table.columns:
+        return []
+    regression = table.loc[table["task"] == "regression"].copy()
+    if regression.empty:
+        return []
+    regression = regression.loc[regression["model"] == model].copy()
     if regression.empty:
         return []
     regression = regression.rename(

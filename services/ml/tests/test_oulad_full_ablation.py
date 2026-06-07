@@ -100,3 +100,31 @@ def test_exp006_config_has_full_nested_sets():
     assert len(cols) == len(set(cols)), "C_twin_oulad has duplicate columns"
     for c in ["assessment_score_trend_to_date", "engagement_index_oulad", "overall_mastery_proxy"]:
         assert c in cols
+
+
+def test_fixed_model_table_filters_one_model():
+    import pandas as pd
+    from src.experiments.run_public_benchmark_oulad import (
+        _fixed_model_regression_by_feature_set,
+    )
+
+    table = pd.DataFrame(
+        [
+            {"task": "regression", "split_strategy": "student_group", "feature_set": "B_lms_oulad", "model": "gradient_boosting", "metric_rmse": 12.6, "metric_mae": 7.9, "metric_r2": 0.85, "n_train_rows": 1, "n_test_rows": 1},
+            {"task": "regression", "split_strategy": "student_group", "feature_set": "B_lms_oulad", "model": "linear_regression", "metric_rmse": 15.0, "metric_mae": 9.0, "metric_r2": 0.70, "n_train_rows": 1, "n_test_rows": 1},
+            {"task": "regression", "split_strategy": "student_group", "feature_set": "C_twin_oulad", "model": "gradient_boosting", "metric_rmse": 12.0, "metric_mae": 7.5, "metric_r2": 0.86, "n_train_rows": 1, "n_test_rows": 1},
+            {"task": "regression", "split_strategy": "student_group", "feature_set": "C_twin_oulad", "model": "linear_regression", "metric_rmse": 14.0, "metric_mae": 8.5, "metric_r2": 0.75, "n_train_rows": 1, "n_test_rows": 1},
+        ]
+    )
+    rows = _fixed_model_regression_by_feature_set(
+        table,
+        model="gradient_boosting",
+        baseline_feature_set="B_lms_oulad",
+        primary_split="student_group",
+    )
+    # only gradient_boosting rows kept (one per feature set)
+    assert all(r["model"] == "gradient_boosting" for r in rows)
+    assert len(rows) == 2
+    # delta vs baseline computed against the gradient_boosting baseline RMSE (12.6)
+    candidate = next(r for r in rows if r["feature_set"] == "C_twin_oulad")
+    assert abs(candidate["delta_vs_baseline_rmse"] - (12.0 - 12.6)) < 1e-9
