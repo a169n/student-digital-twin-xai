@@ -27,10 +27,17 @@ real institutional records.
 
 Second, the dataset is structurally closer to its own assumptions than to
 any institutional reality. For example, weekly aggregates reach
-near-perfect monotonic relationships with `final_grade` (Pearson r above
-`0.97` for several LMS aggregates), which is rare in real cohorts and is
-itself a sign that the generator emphasizes signal clarity over realistic
-noise. This is documented in
+near-perfect relationships with `final_grade` (Pearson r
+above `0.97` for several LMS aggregates). This is **not merely "signal clarity"**:
+`final_grade` is a deterministic, noise-free closed-form weighted mean
+(`0.55*assignment + 0.25*quiz + 0.10*attendance + 0.10*on_time`,
+`services/ml/src/generator/final_results.py:74-84`) of the very behaviors the
+features re-aggregate. The target is therefore an algebraic function of the
+inputs (week-10 reconstruction error 0.008, correlation 1.000000), so the
+synthetic predictive scores cannot, even in principle, demonstrate learnable
+educational signal. This is why the primary empirical evidence in this work is
+the real OULAD dataset and the synthetic data is retained only as a controlled
+faithfulness probe (`exp_008`). This is documented in
 [docs/experiments/exp_003_mastery_validation.md](../experiments/exp_003_mastery_validation.md)
 through the LMS-baseline target-correlation table.
 
