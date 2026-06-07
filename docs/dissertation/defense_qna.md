@@ -89,14 +89,16 @@ of assignment, quiz, attendance, and on-time behavior with no noise term
 absolute error is 0.008. That is precisely why we do not base any empirical
 learning claim on synthetic accuracy. Synthetic data is used only as a controlled
 faithfulness probe with known ground truth (`exp_008`). The empirical claims rest
-on real OULAD data, where the same pipeline yields F1 0.86-0.89 (not 1.000) -
-itself direct evidence that the perfect synthetic scores were a generator
-artifact.
+on real OULAD data, where the same pipeline yields F1 0.86-0.89 (not 1.000),
+which is itself direct evidence that the perfect synthetic scores were a
+generator artifact.
 
 ## You claim mastery features help - but does that survive a fair comparison?
 
 It is split- and model-dependent. The `-0.206` win holds for gradient boosting
-on the student-grouped split only; at a fixed model on the temporal-forward split
-mastery is approximately `+0.41` worse, and only `B_lms_plus_indices` improves
-on both splits. We report fixed-model tables for this reason and frame the
+on the student-grouped split only; a preliminary fixed-model re-analysis (to be
+confirmed by the fixed-model ablation table produced in the public-data phase)
+indicates mastery is approximately `+0.41` worse on the temporal-forward split,
+and that only `B_lms_plus_indices` improves on both splits. We report fixed-model
+tables for this reason and frame the
 real-data finding as a mixed/conditional result, not "the twin wins."
