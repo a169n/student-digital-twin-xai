@@ -37,6 +37,37 @@ It represents the realized end-of-course numeric result stored in `final_results
 - It must not be used as an input feature when constructing weekly snapshots.
 - Downstream ML pipelines may join it onto weekly snapshots only after the snapshot table has been built in a temporally clean way.
 
+## Determinism and circularity of `final_grade` (synthetic dataset)
+
+In the synthetic generator, `final_grade` is computed by a fixed closed-form
+formula (`services/ml/src/generator/final_results.py:74-84`):
+
+    final_grade = clamp(
+        0.55 * assignment_avg
+      + 0.25 * quiz_avg
+      + 0.10 * attendance_rate * 100
+      + 0.10 * on_time_rate * 100,
+        0, 100)
+
+There is **no stochastic term** in this formula. The four inputs are the
+full-course versions of the same behaviors that the weekly snapshot features
+re-aggregate cumulatively (`avg_assignment_score_to_date`,
+`avg_quiz_score_to_date`, `attendance_rate_to_date`,
+`on_time_submission_rate_to_date`). The only randomness anywhere upstream is a
+per-submission Gaussian (sd 0.06, `submissions.py:85`) that is **baked into the
+recorded scores and therefore shared by both the features and the grade**; it
+averages out across ~10 assignments. As a result, the synthetic supervised task
+is largely an algebraic identity: from week-10 features the grade is
+reconstructible with max absolute error 0.008 and correlation 1.000000.
+
+**Consequence:** synthetic `R² ≈ 0.99`, `RMSE ≈ 1.9`, and `passed` `F1 = 1.000`
+are mathematical artifacts of the generator, not evidence of learnable signal.
+This is the explicit reason the synthetic dataset is used only as a controlled
+methods probe (see `exp_008`) and the primary empirical evidence is OULAD. Note
+the consistency point: `risk_level` is already excluded as a supervised target
+for exactly this circularity reason; the same reasoning applies to `final_grade`
+on synthetic data and must be stated rather than applied selectively.
+
 ### `passed`
 
 `passed` is the primary supervised-learning outcome for classification experiments.
