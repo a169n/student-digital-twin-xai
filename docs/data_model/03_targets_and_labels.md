@@ -37,7 +37,7 @@ It represents the realized end-of-course numeric result stored in `final_results
 - It must not be used as an input feature when constructing weekly snapshots.
 - Downstream ML pipelines may join it onto weekly snapshots only after the snapshot table has been built in a temporally clean way.
 
-## Determinism and circularity of `final_grade` (synthetic dataset)
+### Determinism and circularity of `final_grade` (synthetic dataset)
 
 In the synthetic generator, `final_grade` is computed by a fixed closed-form
 formula (`services/ml/src/generator/final_results.py:74-84`):
