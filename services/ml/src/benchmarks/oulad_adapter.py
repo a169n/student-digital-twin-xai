@@ -1079,6 +1079,12 @@ def _add_trend_and_index_features(snapshots: pd.DataFrame) -> pd.DataFrame:
     global/cross-row statistics are used, so no test-set information leaks. This
     mirrors the synthetic index intent documented in
     docs/research/deep-research-report.md (engagement/performance/discipline).
+
+    Missing component columns (NaN on partially-observed early weeks) are
+    treated as 0 via `.fillna(0.0)` before averaging, so each index always
+    uses a FIXED denominator equal to the number of components (2 or 3).
+    This is consistent with `_finalize_snapshot_frame`'s fill_zero treatment
+    of the same input columns and is a conservative, leakage-safe choice.
     """
     out = snapshots.sort_values(list(KEY_COLUMNS) + ["week_number"]).reset_index(drop=True)
     group = out.groupby(list(KEY_COLUMNS), sort=False)
@@ -1093,7 +1099,8 @@ def _add_trend_and_index_features(snapshots: pd.DataFrame) -> pd.DataFrame:
 
     perf_a = (out["cumulative_assessment_score_mean_to_date"] / 100.0).clip(0.0, 1.0)
     perf_b = (out["cumulative_assessment_weighted_score_to_date"] / 100.0).clip(0.0, 1.0)
-    out["performance_index_oulad"] = pd.concat([perf_a, perf_b], axis=1).mean(axis=1)
+    perf = pd.concat([perf_a, perf_b], axis=1).fillna(0.0)
+    out["performance_index_oulad"] = perf.mean(axis=1)
 
     disc = pd.concat(
         [
@@ -1102,7 +1109,7 @@ def _add_trend_and_index_features(snapshots: pd.DataFrame) -> pd.DataFrame:
             out["banked_assessment_rate_to_date"],
         ],
         axis=1,
-    )
+    ).fillna(0.0)
     out["discipline_index_oulad"] = disc.mean(axis=1)
 
     eng = pd.concat(
@@ -1111,7 +1118,7 @@ def _add_trend_and_index_features(snapshots: pd.DataFrame) -> pd.DataFrame:
             out["has_vle_activity_to_date"].astype(float),
         ],
         axis=1,
-    )
+    ).fillna(0.0)
     out["engagement_index_oulad"] = eng.mean(axis=1)
     return out
 
