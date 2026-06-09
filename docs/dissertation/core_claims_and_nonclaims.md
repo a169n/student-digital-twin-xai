@@ -52,6 +52,12 @@
 - The explanations are partly course-specific: cross-cohort importance-ranking
   agreement (DDD vs BBB, `exp_010`) is Kendall `tau` `0.32`-`0.61` (mean `0.52`),
   below the within-course cross-split agreement and below a stability threshold.
+- A second institution (KU Leuven, `exp_011`, engagement-only, classification of
+  `PASSED`) extends the external check: engagement predicts passing only modestly
+  (F1 `0.75`-`0.76`) and a richer engagement representation does not beat a
+  minimal one (fixed-model F1 delta `-0.015`/`+0.000`), so feature-richness again
+  fails to help robustly. The mastery ablation cannot be built on KU Leuven at
+  all (no intermediate assessments, no continuous grade).
 - A controlled synthetic faithfulness probe (`exp_008`) on known ground truth
   shows that, at the final course week, permutation importance recovers the
   generator's weight ORDERING (Kendall `tau` `1.0`), and illustrates how proxy
@@ -92,8 +98,12 @@
   time-aware weekly state representation, not a simulation-capable digital twin.
 - It cannot claim a single uniform real-data verdict. The OULAD evidence spans
   two module-presentations (`DDD 2013J`, `BBB 2013J`) and is heterogeneous —
-  neither a uniform null nor a uniform Twin benefit — and both courses are from
-  one institution, so external validity beyond OULAD is not established.
+  neither a uniform null nor a uniform Twin benefit.
+- It cannot claim a like-for-like institutional replication on KU Leuven. The
+  KU Leuven check is engagement-only and classifies `PASSED`; it cannot test
+  the mastery/Twin ablation and its task differs from OULAD, so its modest
+  numbers must not be compared head-to-head with OULAD's assessment-driven
+  results. Full external validity across institutions is not established.
 - It cannot claim that the explanations are regime-invariant or that
   importance reflects causal mechanism. The OULAD rankings reorder across
   splits, and the methods describe model behavior, not causation.

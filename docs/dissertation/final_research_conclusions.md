@@ -254,9 +254,51 @@ the course and the evaluation scenario. These remain model-behavior
 observations, not causal claims, and the evidence still spans only two courses
 from a single institution (OULAD).
 
+## 5e. A Second Institution (KU Leuven): Engagement-Only, Where Feature-Richness Again Does Not Help
+
+To extend external validity beyond OULAD, `exp_011` adds a second institution:
+the KU Leuven de-identified learning-analytics dataset (Tiukhova et al., 2026,
+CC-BY-4.0). The integration itself surfaces a structural finding. KU Leuven
+exposes raw clickstream, forum activity, and course structure, but **no
+intermediate scored assessments and no continuous grade** — only a binary
+`PASSED` outcome and categorical exam-session buckets. The project's central
+mastery/assessment ablation therefore **cannot be reproduced on KU Leuven at
+all**: the very question "does the mastery block help?" is not answerable here,
+because the data to construct it does not exist. This is itself a result about
+cross-institution heterogeneity — real LMS datasets differ not only in
+distributions but in which research questions they can support.
+
+What KU Leuven does support is an **engagement-only, classification-only**
+external check: do weekly clickstream/engagement features predict `PASSED`, and
+does a richer engagement representation beat a minimal one? On year 1819 (two
+courses pooled, `1495` students, weeks `2`–`15`, leakage-safe cumulative-to-date
+features under both splits), engagement predicts passing only **modestly** —
+best-model F1 `0.75`–`0.76`, ROC-AUC `0.65`–`0.72` — far below the
+assessment-driven OULAD numbers, as expected when no assessment signal is
+available (the two are different tasks and are not directly comparable). More
+to the point, the **richer** engagement set `B_engagement` is essentially level
+with the minimal `A_simple_engagement` (fixed-model F1 delta `-0.015` on the
+temporal-forward split, `+0.000` on the student-grouped split; a small ROC-AUC
+gain of `+0.009`/`+0.041`). Permutation importance shows the signal is carried
+by basic engagement volume — `cumulative_active_days_to_date` and
+`cumulative_clicks_to_date` dominate both splits (the former takes a `0.456`
+share on the temporal-forward split) — while forum participation and temporal
+position contribute little.
+
+The defensible cross-institution statement is therefore consistent with the
+OULAD finding and strengthens it: across three real cohorts spanning two
+institutions, **adding a richer engineered feature representation does not
+robustly beat a simpler baseline** — the engineered Twin blocks on OULAD and
+the richer engagement block on KU Leuven both fail to deliver a consistent gain.
+The honest limitation is that the cross-institution comparison is necessarily
+partial (KU Leuven cannot test mastery, and its engagement task is weaker and
+distinct from the OULAD assessment task), so this is evidence about the
+robustness of feature-richness claims, not a like-for-like institutional
+replication.
+
 ## 6. The Resulting Contribution Is a Methodology + an Honest Real-Data Finding
 
-The project's resulting contribution, on the basis of the ten
+The project's resulting contribution, on the basis of the eleven
 experiments, is best framed as a **teacher-oriented, lean Twin + XAI
 research prototype**. The contribution is methodological and structural,
 not a demonstration of full Digital Twin superiority and not an
@@ -293,6 +335,12 @@ institutional validation. Specifically, the project produces:
   temporal-forward by `-1.026` RMSE but not DDD) and that importance rankings
   are partly course-specific (cross-cohort Kendall `tau` `0.32`-`0.61`,
   mean `0.52`);
+- a second-institution external check on KU Leuven (`exp_011`,
+  engagement-only, classification-only `PASSED`), where the mastery ablation
+  cannot be reproduced at all, engagement predicts passing only modestly (F1
+  `0.75`-`0.76`), and a richer engagement representation does not beat a minimal
+  one (fixed-model F1 delta `-0.015`/`+0.000`) — reinforcing that
+  feature-richness does not robustly help across institutions;
 - a versioned experiment governance layer with frozen configurations,
   metadata, machine-readable artifacts, per-experiment writeups, and a
   cumulative registry.
@@ -309,7 +357,11 @@ hold on the student-grouped split, on the other Twin blocks, or on the other
 course. The honest empirical finding is therefore that **engineered Twin
 representation value is course- and split-dependent, not a robust improvement**:
 representation richness that looks valuable under synthetic conditions transfers
-to real data only narrowly and inconsistently.
+to real data only narrowly and inconsistently. A second institution (KU Leuven,
+`exp_011`) — where only an engagement representation can be built — points the
+same way: a richer engagement set does not beat a minimal one for predicting
+`PASSED`. Across three real cohorts and two institutions, the recurring result
+is that adding feature richness does not robustly help.
 
 The substantive contribution is consequently **methodological and
 cautionary**. The project (i) supplies a reproducible, leakage-aware protocol
@@ -344,10 +396,13 @@ the present evidence does **not** support.
   causal mechanism. They are directional model-behavior explanations.
 - The conclusions do not claim full external validity. The main development
   dataset is synthetic; the real-data evidence spans two OULAD
-  module-presentations (`DDD` `2013J`, `BBB` `2013J`) from a single
-  institution, across which the Twin-block value and the explanations are
-  heterogeneous. No independent institution has been used, so external
-  validity beyond OULAD is not established.
+  module-presentations (`DDD` `2013J`, `BBB` `2013J`) plus a second institution
+  (KU Leuven, `exp_011`). The OULAD evidence is heterogeneous across courses,
+  and the KU Leuven check is engagement-only and classification-only — it
+  cannot test mastery and its task differs from OULAD. So the cross-institution
+  evidence supports only the narrower claim that feature-richness does not
+  robustly help; it is not a like-for-like institutional replication of the
+  Twin ablation.
 - The conclusions do not claim that `passed` is a useful target for
   representation choice in the present setting; it is saturated.
 - The conclusions do not claim that the predictive advantage of the lean
@@ -395,9 +450,12 @@ the bounded conclusion of the current research phase:
 > an honest finding that engineered Twin value and its explanations are course-
 > and split-dependent rather than robust, and a cautionary demonstration that a
 > circular synthetic target can manufacture an apparent representation
-> advantage that fragments on genuine data. It is not a proof of Digital Twin
-> superiority, and its external evidence spans two OULAD courses from one
-> institution.
+> advantage that fragments on genuine data. A second institution (KU Leuven,
+> `exp_011`) — engagement-only, where the mastery ablation cannot be built —
+> reinforces the pattern: a richer engagement representation does not beat a
+> minimal one for predicting `PASSED`. It is not a proof of Digital Twin
+> superiority; its external evidence spans two OULAD courses and a partial,
+> engagement-only check on a second institution.
 
 This statement is consistent with every experiment artifact in the
 repository and overstates none of them.

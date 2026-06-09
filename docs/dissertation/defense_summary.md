@@ -32,6 +32,8 @@ The methodology proceeds through a fixed experiment sequence:
 - `exp_009_oulad_ablation_bbb2013j`: second-cohort ablation on OULAD BBB 2013J.
 - `exp_010_xai_on_oulad_bbb2013j`: second-cohort XAI on BBB 2013J, enabling a
   cross-cohort explanation-stability comparison with DDD.
+- `exp_011_kuleuven_engagement`: second-institution external check on the KU
+  Leuven dataset (engagement-only, classification of `PASSED`).
 
 ## Key Result
 
@@ -90,6 +92,16 @@ not generalize across splits, blocks, or courses. The accompanying explanations
 `0.55`–`0.79`) and partly course-specific across courses (`0.32`–`0.61`,
 mean `0.52`).
 
+A second institution (KU Leuven, `exp_011`, Tiukhova et al. 2026) extends the
+external check, with an important caveat: it has no intermediate assessments and
+no continuous grade, so the mastery ablation **cannot be built there** — the
+research question itself is institution-dependent. On its engagement-only
+classification of `PASSED`, engagement predicts passing only modestly (F1
+`0.75`–`0.76`, ROC-AUC `0.65`–`0.72`) and a richer engagement representation
+does not beat a minimal one (fixed-model F1 delta `-0.015`/`+0.000`; basic
+activity volume carries the signal). Across three real cohorts and two
+institutions, adding feature richness does not robustly help.
+
 ## Final Contribution
 
 The contribution is **methodological and cautionary**, not a performance
@@ -98,8 +110,11 @@ and explaining weekly student-state representations; (ii) a synthetic-to-real
 demonstration that a circular target can manufacture an apparent feature-group
 advantage that fragments on genuine OULAD data; (iii) an honest two-cohort
 finding that engineered Twin value is course- and split-dependent rather than
-robust; and (iv) within-course and cross-course explanation-stability analyses
+robust; (iv) within-course and cross-course explanation-stability analyses
 (`exp_007`, `exp_010`) showing importance rankings are regime-sensitive and
-partly course-specific. It does not prove Digital Twin superiority, full
+partly course-specific; and (v) a second-institution engagement-only check on
+KU Leuven (`exp_011`) where feature-richness again does not help and the mastery
+ablation cannot even be built. It does not prove Digital Twin superiority, full
 external validity, or causal intervention effects, and its external evidence
-spans two OULAD courses from one institution.
+spans two OULAD courses plus a partial, engagement-only check on a second
+institution.

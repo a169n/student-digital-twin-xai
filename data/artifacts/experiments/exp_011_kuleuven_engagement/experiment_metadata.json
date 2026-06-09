@@ -1,0 +1,392 @@
+{
+  "artifacts": {
+    "documentation": "docs/experiments/exp_011_kuleuven_engagement.md",
+    "engagement_importance_csv": "data/artifacts/experiments/exp_011_kuleuven_engagement/engagement_importance.csv",
+    "results_csv": "data/artifacts/experiments/exp_011_kuleuven_engagement/exp_011_kuleuven_engagement_results.csv",
+    "results_json": "data/artifacts/experiments/exp_011_kuleuven_engagement/exp_011_kuleuven_engagement_results.json",
+    "results_markdown": "data/artifacts/experiments/exp_011_kuleuven_engagement/exp_011_kuleuven_engagement_summary.md"
+  },
+  "config_path": "services/ml/configs/experiments/exp_011_kuleuven_engagement.yaml",
+  "created_at": "2026-06-09T19:12:18Z",
+  "dataset": {
+    "course_info_path": "datasets/ku_leuven/course_info.json",
+    "data_dir": "datasets/ku_leuven/dataset",
+    "dataset_config_name": "local KU Leuven dataset files; academic year 1819",
+    "dataset_version": "KU Leuven 2026",
+    "row_counts": {
+      "course_content": 624,
+      "forum_contribution": 1278,
+      "log_activity": 1527090,
+      "participation": 1499,
+      "snapshots": 19474,
+      "students": 1495
+    },
+    "source": "KU Leuven 2026 dataset (year 1819)"
+  },
+  "diagnostics": {
+    "classification_best_by_feature_set": [
+      {
+        "accuracy": 0.614176760879318,
+        "f1": 0.7609783212896053,
+        "feature_set": "A_simple_engagement",
+        "model": "logistic_regression",
+        "n_test_rows": 2229,
+        "n_train_rows": 7868,
+        "roc_auc": 0.7172876993901507,
+        "split_strategy": "temporal_forward"
+      },
+      {
+        "accuracy": 0.6500672947510094,
+        "f1": 0.7512755102040817,
+        "feature_set": "B_engagement",
+        "model": "random_forest",
+        "n_test_rows": 2229,
+        "n_train_rows": 7868,
+        "roc_auc": 0.6732354290179557,
+        "split_strategy": "temporal_forward"
+      },
+      {
+        "accuracy": 0.626905644829007,
+        "f1": 0.7629891375474415,
+        "feature_set": "A_simple_engagement",
+        "model": "logistic_regression",
+        "n_test_rows": 4854,
+        "n_train_rows": 14620,
+        "roc_auc": 0.6529297156746776,
+        "split_strategy": "student_group"
+      },
+      {
+        "accuracy": 0.6442109600329625,
+        "f1": 0.7551396568835956,
+        "feature_set": "B_engagement",
+        "model": "logistic_regression",
+        "n_test_rows": 4854,
+        "n_train_rows": 14620,
+        "roc_auc": 0.7031712515507342,
+        "split_strategy": "student_group"
+      }
+    ],
+    "classification_fixed_model_by_feature_set": [
+      {
+        "accuracy": 0.6249439210408255,
+        "delta_auc": 0.0,
+        "delta_f1": 0.0,
+        "f1": 0.7566938300349243,
+        "feature_set": "A_simple_engagement",
+        "model": "gradient_boosting",
+        "n_test_rows": 2229,
+        "n_train_rows": 7868,
+        "roc_auc": 0.6927149336640223,
+        "split_strategy": "temporal_forward"
+      },
+      {
+        "accuracy": 0.639300134589502,
+        "delta_auc": 0.0093,
+        "delta_f1": -0.0155,
+        "f1": 0.7411461687057308,
+        "feature_set": "B_engagement",
+        "model": "gradient_boosting",
+        "n_test_rows": 2229,
+        "n_train_rows": 7868,
+        "roc_auc": 0.7020117383253774,
+        "split_strategy": "temporal_forward"
+      },
+      {
+        "accuracy": 0.6378244746600742,
+        "delta_auc": 0.0,
+        "delta_f1": 0.0,
+        "f1": 0.7535744322960471,
+        "feature_set": "A_simple_engagement",
+        "model": "gradient_boosting",
+        "n_test_rows": 4854,
+        "n_train_rows": 14620,
+        "roc_auc": 0.6598409415481377,
+        "split_strategy": "student_group"
+      },
+      {
+        "accuracy": 0.6530696332921302,
+        "delta_auc": 0.0407,
+        "delta_f1": 0.0001,
+        "f1": 0.7536571094207138,
+        "feature_set": "B_engagement",
+        "model": "gradient_boosting",
+        "n_test_rows": 4854,
+        "n_train_rows": 14620,
+        "roc_auc": 0.7005197664522085,
+        "split_strategy": "student_group"
+      }
+    ],
+    "experiment_id": "exp_011_kuleuven_engagement",
+    "fixed_model": "gradient_boosting",
+    "interpretation": {
+      "interpretation": "Richer engagement features provide negligible additional F1 lift over the minimal baseline on KU Leuven. The dominant PASSED signal is already captured by cumulative clicks and active days; the additional features do not materially shift classification accuracy.",
+      "outcome": "engagement_richness_neutral",
+      "primary_delta_f1": -0.0155,
+      "short_conclusion": "`B_engagement` was approximately level with `A_simple_engagement` (delta F1 = -0.015)."
+    },
+    "permutation_importance": {
+      "student_group": {
+        "features": [
+          {
+            "feature": "cumulative_clicks_to_date",
+            "mean_importance": 0.036361,
+            "rank": 1,
+            "share_of_positive": 0.1749,
+            "std_importance": 0.004096
+          },
+          {
+            "feature": "cumulative_active_days_to_date",
+            "mean_importance": 0.033017,
+            "rank": 2,
+            "share_of_positive": 0.1588,
+            "std_importance": 0.004445
+          },
+          {
+            "feature": "cumulative_sessions_to_date",
+            "mean_importance": 0.030662,
+            "rank": 3,
+            "share_of_positive": 0.1475,
+            "std_importance": 0.002938
+          },
+          {
+            "feature": "current_week_clicks",
+            "mean_importance": 0.021953,
+            "rank": 4,
+            "share_of_positive": 0.1056,
+            "std_importance": 0.003255
+          },
+          {
+            "feature": "content_click_ratio_to_date",
+            "mean_importance": 0.021289,
+            "rank": 5,
+            "share_of_positive": 0.1024,
+            "std_importance": 0.003172
+          },
+          {
+            "feature": "avg_session_clicks_to_date",
+            "mean_importance": 0.015918,
+            "rank": 6,
+            "share_of_positive": 0.0766,
+            "std_importance": 0.002366
+          },
+          {
+            "feature": "days_since_course_start",
+            "mean_importance": 0.015609,
+            "rank": 7,
+            "share_of_positive": 0.0751,
+            "std_importance": 0.001603
+          },
+          {
+            "feature": "cumulative_content_clicks_to_date",
+            "mean_importance": 0.015387,
+            "rank": 8,
+            "share_of_positive": 0.074,
+            "std_importance": 0.00247
+          },
+          {
+            "feature": "week_number",
+            "mean_importance": 0.012287,
+            "rank": 9,
+            "share_of_positive": 0.0591,
+            "std_importance": 0.001358
+          },
+          {
+            "feature": "cumulative_forum_posts_to_date",
+            "mean_importance": 0.005415,
+            "rank": 10,
+            "share_of_positive": 0.026,
+            "std_importance": 0.001048
+          },
+          {
+            "feature": "has_activity_to_date",
+            "mean_importance": 0.0,
+            "rank": 11,
+            "share_of_positive": 0.0,
+            "std_importance": 0.0
+          }
+        ],
+        "model": "gradient_boosting",
+        "n_features": 11,
+        "n_repeats": 15,
+        "positive_importance_sum": 0.207899,
+        "scoring": "roc_auc",
+        "top1_share": 0.1749,
+        "top3_share": 0.4812
+      },
+      "temporal_forward": {
+        "features": [
+          {
+            "feature": "cumulative_active_days_to_date",
+            "mean_importance": 0.086694,
+            "rank": 1,
+            "share_of_positive": 0.4562,
+            "std_importance": 0.009136
+          },
+          {
+            "feature": "cumulative_clicks_to_date",
+            "mean_importance": 0.024689,
+            "rank": 2,
+            "share_of_positive": 0.1299,
+            "std_importance": 0.003644
+          },
+          {
+            "feature": "current_week_clicks",
+            "mean_importance": 0.019044,
+            "rank": 3,
+            "share_of_positive": 0.1002,
+            "std_importance": 0.002295
+          },
+          {
+            "feature": "content_click_ratio_to_date",
+            "mean_importance": 0.017549,
+            "rank": 4,
+            "share_of_positive": 0.0923,
+            "std_importance": 0.004377
+          },
+          {
+            "feature": "cumulative_sessions_to_date",
+            "mean_importance": 0.012406,
+            "rank": 5,
+            "share_of_positive": 0.0653,
+            "std_importance": 0.004497
+          },
+          {
+            "feature": "cumulative_forum_posts_to_date",
+            "mean_importance": 0.011081,
+            "rank": 6,
+            "share_of_positive": 0.0583,
+            "std_importance": 0.001815
+          },
+          {
+            "feature": "cumulative_content_clicks_to_date",
+            "mean_importance": 0.010828,
+            "rank": 7,
+            "share_of_positive": 0.057,
+            "std_importance": 0.003463
+          },
+          {
+            "feature": "avg_session_clicks_to_date",
+            "mean_importance": 0.007756,
+            "rank": 8,
+            "share_of_positive": 0.0408,
+            "std_importance": 0.003988
+          },
+          {
+            "feature": "week_number",
+            "mean_importance": 0.0,
+            "rank": 9,
+            "share_of_positive": 0.0,
+            "std_importance": 0.0
+          },
+          {
+            "feature": "days_since_course_start",
+            "mean_importance": 0.0,
+            "rank": 10,
+            "share_of_positive": 0.0,
+            "std_importance": 0.0
+          },
+          {
+            "feature": "has_activity_to_date",
+            "mean_importance": -0.00011,
+            "rank": 11,
+            "share_of_positive": 0.0,
+            "std_importance": 0.000155
+          }
+        ],
+        "model": "gradient_boosting",
+        "n_features": 11,
+        "n_repeats": 15,
+        "positive_importance_sum": 0.190047,
+        "scoring": "roc_auc",
+        "top1_share": 0.4562,
+        "top3_share": 0.6863
+      }
+    },
+    "primary_split": "temporal_forward",
+    "primary_target": "passed",
+    "row_counts": {
+      "course_content": 624,
+      "forum_contribution": 1278,
+      "log_activity": 1527090,
+      "participation": 1499,
+      "snapshots": 19474,
+      "students": 1495
+    },
+    "target_summary": {
+      "mean_cumulative_clicks_at_last_week": 397.3,
+      "n_failed": 549,
+      "n_passed": 946,
+      "n_snapshot_rows": 19474,
+      "n_students": 1495,
+      "passed_counts": {
+        "0": 549,
+        "1": 946
+      },
+      "passed_rate_student_level": 0.6328,
+      "week_max": 15,
+      "week_min": 2
+    }
+  },
+  "experiment_id": "exp_011_kuleuven_engagement",
+  "feature_sets": [
+    {
+      "columns": [
+        "cumulative_clicks_to_date",
+        "cumulative_active_days_to_date"
+      ],
+      "description": "Minimal KU Leuven engagement baseline: cumulative click volume and cumulative active days only. Has-activity indicator added for leakage-safe missingness handling.\n",
+      "indicator_columns": [
+        "has_activity_to_date"
+      ],
+      "name": "A_simple_engagement"
+    },
+    {
+      "columns": [
+        "cumulative_clicks_to_date",
+        "cumulative_active_days_to_date",
+        "cumulative_sessions_to_date",
+        "cumulative_content_clicks_to_date",
+        "current_week_clicks",
+        "avg_session_clicks_to_date",
+        "content_click_ratio_to_date",
+        "cumulative_forum_posts_to_date",
+        "days_since_course_start",
+        "week_number"
+      ],
+      "description": "Rich KU Leuven engagement feature set: full multi-dimensional click behaviour (total, sessions, active days, content-type, forum), session efficiency ratios, content focus ratios, temporal course progress, and the raw week counter. This is the candidate feature set that characterises WHICH engagement dimensions drive PASSED prediction.\n",
+      "indicator_columns": [
+        "has_activity_to_date"
+      ],
+      "name": "B_engagement"
+    }
+  ],
+  "models": {
+    "classification": [
+      "logistic_regression",
+      "random_forest",
+      "gradient_boosting"
+    ],
+    "regression": "NOT APPLICABLE \u2014 final_grade is a placeholder"
+  },
+  "output_directory": "data/artifacts/experiments/exp_011_kuleuven_engagement",
+  "parent_experiment": "exp_010_xai_on_oulad_bbb2013j",
+  "schema_version": "ku_leuven_engagement_v1",
+  "seed": 42,
+  "split_strategies": {
+    "student_group": {
+      "seed": 42,
+      "test_size": 0.25
+    },
+    "temporal_forward": {
+      "student_seed": 42,
+      "student_test_size": 0.25,
+      "train_weeks": 8
+    }
+  },
+  "status": "completed",
+  "targets": {
+    "note": "Classification only. final_grade is a placeholder = float(passed). Regression NOT applicable.",
+    "primary": "passed"
+  },
+  "title": "Third-institution engagement-only PASSED classification on KU Leuven (1819)"
+}

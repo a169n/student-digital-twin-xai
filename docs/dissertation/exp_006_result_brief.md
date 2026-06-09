@@ -83,9 +83,15 @@ the student-grouped split, and the trend/index blocks are null on both courses.
 Explanations are partly course-specific (cross-cohort importance Kendall `tau`
 `0.32`–`0.61`, mean `0.52`). The honest framing therefore strengthens from
 "single-cohort mixed-to-null" to "two-cohort heterogeneity": engineered Twin
-value is course- and split-dependent, not robust. The remaining external-validity
-limit is that both courses are from one institution (OULAD); an independent
-institutional dataset (e.g. KU Leuven 2026) would be the next step.
+value is course- and split-dependent, not robust. A second institution has
+since been added — KU Leuven (`exp_011`, Tiukhova et al. 2026) — but only as an
+engagement-only classification check: KU Leuven has no intermediate assessments
+or continuous grade, so the mastery ablation cannot be built there at all. On
+its `PASSED` task, a richer engagement representation again does not beat a
+minimal one (fixed-model F1 delta `-0.015`/`+0.000`). The remaining
+external-validity limit is that the comparison across institutions is partial
+(different task, no mastery on KU Leuven); a like-for-like institutional
+replication of the Twin ablation is still not available.
 
 ## Supervisor pitch (verbatim)
 
