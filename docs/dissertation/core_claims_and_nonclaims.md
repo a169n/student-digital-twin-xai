@@ -24,11 +24,21 @@
   perturbation explanations in `exp_004`.
 - The explanation methods describe model behavior and are useful for teacher
   interpretation under the current prototype scope.
-- The OULAD benchmark is a public external stress test that produced mixed
-  transfer evidence.
-- The final contribution is methodological and structural: a governed pipeline
-  for constructing, testing, validating, explaining, and stress-testing a lean
-  student-state representation.
+- On real OULAD data, the full nested A/B/C ablation (`exp_006`, module
+  `DDD 2013J`, fixed-model comparison) shows that no Twin feature block
+  delivers a consistent advantage over a strong LMS baseline (no block better
+  than `1.0` RMSE on either split; full `C_twin_oulad` within `±0.025`).
+- The OULAD classification target is genuinely predictive (best-model F1
+  `0.83`–`0.887`, never `1.000`), in direct contrast to the saturated
+  synthetic `passed` target — evidence that the synthetic mastery advantage
+  was an artifact of a circular target that did not transfer to real data.
+- The synthetic-to-OULAD contrast is itself a cautionary methodological
+  result: a circular target can manufacture an apparent feature-group
+  advantage that disappears on genuine institutional data.
+- The final contribution is methodological and cautionary: a governed,
+  leakage-aware pipeline for constructing, ablating, explaining, and
+  externally testing a lean student-state representation, plus an honest
+  mixed-to-null real-data finding.
 
 ## Claims the Dissertation Cannot Make
 
@@ -55,3 +65,6 @@
   implemented (`services/ml/src/features/engineering.py` and
   `services/ml/src/explainability/xai.py` are stubs). The system is a lean,
   time-aware weekly state representation, not a simulation-capable digital twin.
+- It cannot claim that the real-data null is robust across cohorts. The OULAD
+  evidence is one module-presentation (`DDD 2013J`); replication on a second
+  cohort is required before the null can be called general.

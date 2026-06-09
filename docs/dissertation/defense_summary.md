@@ -21,7 +21,9 @@ The methodology proceeds through a fixed experiment sequence:
 - `exp_003_mastery_validation`: validate the selected mastery block.
 - `exp_004_xai_on_lean_twin`: explain the validated lean Twin candidate.
 - `exp_005_public_benchmark_oulad`: stress-test the representation logic on
-  OULAD.
+  OULAD (two-set transfer test).
+- `exp_006_oulad_full_ablation`: full nested A/B/C ablation on real OULAD with
+  fixed-model reporting — the decisive external evidence.
 
 ## Key Result
 
@@ -30,7 +32,11 @@ did not improve over `B_lms` and deteriorated under the forward split. The
 best internal candidate was the lean `B_lms_plus_mastery` subset, which
 improved primary-split RMSE from `2.101` to `1.894` and improved several early
 weekly snapshots. This candidate was validated with a redundancy caveat because
-`overall_mastery` is very close to cumulative LMS score behavior.
+`overall_mastery` is very close to cumulative LMS score behavior. **This
+synthetic improvement must be read with the circularity caveat below: the
+synthetic `final_grade` is a deterministic function of the model's own
+features, so the gain is an artifact, and it did not transfer to real OULAD
+data (see the external benchmark result).**
 
 ## Explainability Result
 
@@ -41,18 +47,30 @@ not collapse onto a single mastery feature. The top global feature was
 ranked second with share `0.178`. The method is explicitly model-behavior
 explanation, not causal explanation and not SHAP.
 
-## External Benchmark Result
+## External Benchmark Result (Decisive)
 
-OULAD complicated the internal finding. On the primary grouped OULAD split,
-`B_lms_plus_mastery_oulad` was slightly worse than `B_lms_oulad`
-(`12.724` versus `12.658` RMSE). On the secondary temporal-forward split, it
-was better (`9.161` versus `9.566` RMSE). This means external transfer remains
-unresolved.
+The full nested ablation on real OULAD (`exp_006`, module `DDD 2013J`,
+`67830` snapshots, `1938` students) is the decisive external evidence, and it
+is a **mixed-to-null result**. Under a fixed-model (gradient boosting)
+comparison, no Twin feature block beats the strong `B_lms_oulad` baseline by
+more than `1.0` RMSE on either split. The largest gain is the mastery analogue
+on the temporal-forward split (`9.561` → `9.180`, delta `-0.381`), but it is
+`+0.061` worse on the student-grouped split; the full `C_twin_oulad` is within
+`±0.025` RMSE of the baseline on both splits. Critically, the OULAD
+classification target is genuinely predictive — best-model F1 `0.83`–`0.887`,
+never `1.000` — which directly contrasts the synthetic `passed` saturation at
+F1 `1.000` and confirms that the synthetic "mastery advantage" was an artifact
+of a circular target that did not transfer to real data.
 
 ## Final Contribution
 
-The contribution is a disciplined lean Twin + XAI research prototype and
-experiment governance package. It demonstrates how to construct, test,
-validate, explain, and externally stress-test a teacher-oriented student-state
-representation. It does not prove full Digital Twin superiority, full external
-validity, or causal intervention effects.
+The contribution is **methodological and cautionary**, not a performance
+claim: (i) a reproducible, leakage-aware protocol for constructing, ablating,
+and explaining weekly student-state representations; (ii) a synthetic-to-real
+demonstration that a circular target can manufacture an apparent feature-group
+advantage that vanishes on genuine OULAD data; and (iii) an honest
+mixed-to-null real-data finding, with explanation-stability / importance-
+transfer analysis as the planned positive result on top of it. It does not
+prove Digital Twin superiority, full external validity, or causal intervention
+effects, and its external evidence rests on one OULAD module-presentation
+pending replication on a second cohort.
