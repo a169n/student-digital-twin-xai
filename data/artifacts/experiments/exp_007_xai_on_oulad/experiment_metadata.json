@@ -1,0 +1,279 @@
+{
+  "artifacts": {
+    "documentation": "docs/experiments/exp_007_xai_on_oulad.md",
+    "global_feature_importance_csv": "data/artifacts/experiments/exp_007_xai_on_oulad/global_feature_importance.csv",
+    "processed_snapshots_csv": "data/artifacts/experiments/exp_007_xai_on_oulad/oulad_weekly_snapshots.csv",
+    "results_json": "data/artifacts/experiments/exp_007_xai_on_oulad/exp_007_xai_on_oulad_results.json",
+    "summary_markdown": "data/artifacts/experiments/exp_007_xai_on_oulad/exp_007_xai_on_oulad_summary.md"
+  },
+  "config_path": "services/ml/configs/experiments/exp_007_xai_on_oulad.yaml",
+  "created_at": "2026-06-09T13:34:27Z",
+  "dataset": {
+    "course_filter": {
+      "code_module": "DDD",
+      "code_presentation": "2013J"
+    },
+    "course_filter_rationale": "Same module-presentation as exp_005 and exp_006 for direct comparability. DDD 2013J has a sufficiently large cohort, dated TMA assessments, and observed exam score rows, making weekly assessment-state construction defensible.\n",
+    "dataset_config_name": "local OULAD CSV files; DDD 2013J benchmark subset",
+    "dataset_version": "OULAD",
+    "processed_snapshots_path": "data/artifacts/experiments/exp_007_xai_on_oulad/oulad_weekly_snapshots.csv",
+    "raw_files": {
+      "assessments": "datasets/oulad/assessments.csv",
+      "courses": "datasets/oulad/courses.csv",
+      "student_assessment": "datasets/oulad/studentAssessment.csv",
+      "student_info": "datasets/oulad/studentInfo.csv",
+      "student_registration": "datasets/oulad/studentRegistration.csv",
+      "student_vle": "datasets/oulad/studentVle.csv",
+      "vle": "datasets/oulad/vle.csv"
+    },
+    "raw_row_counts": {
+      "assessments": 206,
+      "courses": 22,
+      "student_assessment": 173912,
+      "student_info": 32593,
+      "student_registration": 32593,
+      "student_vle": 10655280,
+      "vle": 6364
+    },
+    "source": "Open University Learning Analytics Dataset (OULAD)"
+  },
+  "experiment_id": "exp_007_xai_on_oulad",
+  "feature_sets": [
+    {
+      "columns": [
+        "week_number",
+        "course_week_progress",
+        "is_registered_by_week",
+        "is_unregistered_by_week",
+        "days_since_registration_start",
+        "cumulative_assessment_score_mean_to_date",
+        "cumulative_assessment_score_count_to_date",
+        "cumulative_assessment_weighted_score_to_date",
+        "cumulative_submitted_weight_to_date",
+        "assessment_submission_rate_due_to_date",
+        "late_submission_rate_to_date",
+        "banked_assessment_rate_to_date",
+        "current_week_clicks",
+        "cumulative_clicks_to_date",
+        "current_week_activity_types",
+        "cumulative_assessment_clicks_to_date",
+        "cumulative_content_clicks_to_date",
+        "cumulative_social_clicks_to_date",
+        "cumulative_other_clicks_to_date"
+      ],
+      "description": "Strong OULAD LMS-style baseline analogue using cumulative assessment performance, submission discipline, VLE activity intensity and category signals, course-week progression, and registration state.\n",
+      "indicator_columns": [
+        "has_assessment_score_to_date",
+        "has_weighted_score_to_date",
+        "has_vle_activity_to_date"
+      ],
+      "name": "B_lms_oulad"
+    },
+    {
+      "columns": [
+        "week_number",
+        "course_week_progress",
+        "is_registered_by_week",
+        "is_unregistered_by_week",
+        "days_since_registration_start",
+        "cumulative_assessment_score_mean_to_date",
+        "cumulative_assessment_score_count_to_date",
+        "cumulative_assessment_weighted_score_to_date",
+        "cumulative_submitted_weight_to_date",
+        "assessment_submission_rate_due_to_date",
+        "late_submission_rate_to_date",
+        "banked_assessment_rate_to_date",
+        "current_week_clicks",
+        "cumulative_clicks_to_date",
+        "current_week_activity_types",
+        "cumulative_assessment_clicks_to_date",
+        "cumulative_content_clicks_to_date",
+        "cumulative_social_clicks_to_date",
+        "cumulative_other_clicks_to_date",
+        "overall_mastery_proxy",
+        "current_assessment_cluster_mastery",
+        "tma_mastery_to_date",
+        "cma_mastery_to_date",
+        "exam_mastery_to_date",
+        "mastery_assessment_coverage_to_date"
+      ],
+      "description": "OULAD LMS baseline analogue plus a lean mastery-like block derived from dated assessment structure: due-to-date weighted mastery, current assessment-cluster mastery, assessment-type mastery aggregates, and assessment-coverage context.\n",
+      "indicator_columns": [
+        "has_assessment_score_to_date",
+        "has_weighted_score_to_date",
+        "has_vle_activity_to_date",
+        "has_current_assessment_cluster",
+        "has_due_assessment_to_date"
+      ],
+      "name": "B_lms_plus_mastery_oulad"
+    },
+    {
+      "columns": [
+        "week_number",
+        "course_week_progress",
+        "is_registered_by_week",
+        "is_unregistered_by_week",
+        "days_since_registration_start",
+        "cumulative_assessment_score_mean_to_date",
+        "cumulative_assessment_score_count_to_date",
+        "cumulative_assessment_weighted_score_to_date",
+        "cumulative_submitted_weight_to_date",
+        "assessment_submission_rate_due_to_date",
+        "late_submission_rate_to_date",
+        "banked_assessment_rate_to_date",
+        "current_week_clicks",
+        "cumulative_clicks_to_date",
+        "current_week_activity_types",
+        "cumulative_assessment_clicks_to_date",
+        "cumulative_content_clicks_to_date",
+        "cumulative_social_clicks_to_date",
+        "cumulative_other_clicks_to_date",
+        "assessment_score_trend_to_date",
+        "clicks_trend_to_date",
+        "overall_mastery_proxy",
+        "current_assessment_cluster_mastery",
+        "tma_mastery_to_date",
+        "cma_mastery_to_date",
+        "exam_mastery_to_date",
+        "mastery_assessment_coverage_to_date",
+        "engagement_index_oulad",
+        "performance_index_oulad",
+        "discipline_index_oulad"
+      ],
+      "description": "Full OULAD twin analogue: LMS baseline + trends + mastery block + composite indices.",
+      "indicator_columns": [
+        "has_assessment_score_to_date",
+        "has_weighted_score_to_date",
+        "has_vle_activity_to_date",
+        "has_current_assessment_cluster",
+        "has_due_assessment_to_date"
+      ],
+      "name": "C_twin_oulad"
+    }
+  ],
+  "model": "gradient_boosting",
+  "output_directory": "data/artifacts/experiments/exp_007_xai_on_oulad",
+  "parent_experiment": "exp_006_oulad_full_ablation",
+  "records_summary": [
+    {
+      "concentration": {
+        "features_with_positive_importance": 17,
+        "herfindahl_index": 0.2130459639877289,
+        "top1_share": 0.3806842532457873,
+        "top3_share": 0.6695782716620418,
+        "top_feature": "assessment_submission_rate_due_to_date"
+      },
+      "feature_set": "B_lms_oulad",
+      "metrics": {
+        "mae": 7.89073661050925,
+        "r2": 0.8554299623319495,
+        "rmse": 12.659759449216358
+      },
+      "split_strategy": "student_group"
+    },
+    {
+      "concentration": {
+        "features_with_positive_importance": 15,
+        "herfindahl_index": 0.19609457768968142,
+        "top1_share": 0.2783099956908651,
+        "top3_share": 0.6953663457421242,
+        "top_feature": "assessment_submission_rate_due_to_date"
+      },
+      "feature_set": "B_lms_oulad",
+      "metrics": {
+        "mae": 6.376544429034185,
+        "r2": 0.917542387610861,
+        "rmse": 9.56096402858039
+      },
+      "split_strategy": "temporal_forward"
+    },
+    {
+      "concentration": {
+        "features_with_positive_importance": 23,
+        "herfindahl_index": 0.22168293451994406,
+        "top1_share": 0.39927356239037953,
+        "top3_share": 0.6754021521850564,
+        "top_feature": "overall_mastery_proxy"
+      },
+      "feature_set": "B_lms_plus_mastery_oulad",
+      "metrics": {
+        "mae": 7.893283417394774,
+        "r2": 0.8540323569018293,
+        "rmse": 12.720805266373128
+      },
+      "split_strategy": "student_group"
+    },
+    {
+      "concentration": {
+        "features_with_positive_importance": 17,
+        "herfindahl_index": 0.18980498332632167,
+        "top1_share": 0.3398225596576132,
+        "top3_share": 0.6626706538453608,
+        "top_feature": "overall_mastery_proxy"
+      },
+      "feature_set": "B_lms_plus_mastery_oulad",
+      "metrics": {
+        "mae": 6.0816521274284545,
+        "r2": 0.9239752985235349,
+        "rmse": 9.180443630253873
+      },
+      "split_strategy": "temporal_forward"
+    },
+    {
+      "concentration": {
+        "features_with_positive_importance": 23,
+        "herfindahl_index": 0.2402330914735977,
+        "top1_share": 0.42749757526256016,
+        "top3_share": 0.7067965211544952,
+        "top_feature": "overall_mastery_proxy"
+      },
+      "feature_set": "C_twin_oulad",
+      "metrics": {
+        "mae": 7.81439418076658,
+        "r2": 0.8558677014764021,
+        "rmse": 12.64057887215131
+      },
+      "split_strategy": "student_group"
+    },
+    {
+      "concentration": {
+        "features_with_positive_importance": 18,
+        "herfindahl_index": 0.16621709837293905,
+        "top1_share": 0.2279253622012164,
+        "top3_share": 0.63288790085466,
+        "top_feature": "overall_mastery_proxy"
+      },
+      "feature_set": "C_twin_oulad",
+      "metrics": {
+        "mae": 6.392935327156321,
+        "r2": 0.917135354435678,
+        "rmse": 9.584532736886704
+      },
+      "split_strategy": "temporal_forward"
+    }
+  ],
+  "schema_version": "external_oulad_adapter_v1",
+  "seed": 42,
+  "split_strategies": {
+    "headline": "temporal_forward",
+    "student_group": {
+      "seed": 42,
+      "test_size": 0.25
+    },
+    "temporal_forward": {
+      "student_seed": 42,
+      "student_test_size": 0.25,
+      "train_weeks": 20
+    }
+  },
+  "status": "completed",
+  "title": "OULAD model-behavior XAI: feature importance and concentration (DDD 2013J)",
+  "xai_method": {
+    "local_perturbation": true,
+    "model_native_importance": true,
+    "note": "Model-behavior explanations only; no causal claims; no structural-coefficient interpretation.",
+    "permutation_importance": true,
+    "permutation_repeats": 15,
+    "shap": false
+  }
+}
