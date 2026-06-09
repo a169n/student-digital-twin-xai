@@ -28,6 +28,8 @@ services/ml/.tmp_test_runs/
 *.parquet
 *.csv
 !data/artifacts/experiments/exp_*/*.csv
+# Large external dataset archive (downloaded locally, never committed)
+datasets/ku_leuven/dataset.zip
 *.pkl
 *.joblib
 *.onnx
