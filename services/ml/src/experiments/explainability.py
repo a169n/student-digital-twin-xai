@@ -61,6 +61,77 @@ class TrainedRegressionModel:
     dropped_columns: tuple[str, ...] = ()
 
 
+def _assemble_trained_model(
+    working_frame: pd.DataFrame,
+    matrix: Any,
+    *,
+    train_mask: np.ndarray,
+    test_mask: np.ndarray,
+    feature_set_name: str,
+    model_name: str,
+    seed: int,
+    drop_columns: tuple[str, ...],
+    split_metadata: dict[str, Any],
+) -> TrainedRegressionModel:
+    """Shared core: select rows, impute, train, evaluate, and return a TrainedRegressionModel.
+
+    Both ``train_regression_reference`` and ``train_regression_reference_for_matrix``
+    delegate to this function after computing their respective masks and matrix.
+    The ``working_frame`` must be a reset-indexed copy of the original frame.
+    """
+
+    train_matrix = select_rows(matrix, train_mask)
+    test_matrix = select_rows(matrix, test_mask)
+    if train_matrix.features.empty or test_matrix.features.empty:
+        raise ValueError("Cannot train XAI reference model on an empty split")
+
+    imputer = fit_imputer_on_training(train_matrix.features)
+    x_train = imputer.transform(train_matrix.features)
+    x_test = imputer.transform(test_matrix.features)
+
+    dropped = drop_columns
+    if dropped:
+        keep_columns = [column for column in x_train.columns if column not in set(dropped)]
+        if not keep_columns:
+            raise ValueError("drop_columns removed every feature from the model matrix")
+        x_train = x_train.loc[:, keep_columns]
+        x_test = x_test.loc[:, keep_columns]
+
+    estimator = build_regression_model(model_name, seed=seed)
+    y_train = train_matrix.regression_target.to_numpy()
+    y_test = test_matrix.regression_target.to_numpy()
+    estimator.fit(x_train, y_train)
+    predictions = estimator.predict(x_test)
+    metrics = compute_regression_metrics(y_test, predictions)
+
+    train_source_indices = np.flatnonzero(train_mask)
+    test_source_indices = np.flatnonzero(test_mask)
+    train_frame = working_frame.loc[train_source_indices].reset_index(drop=True)
+    test_frame = working_frame.loc[test_source_indices].reset_index(drop=True)
+
+    return TrainedRegressionModel(
+        feature_set_name=feature_set_name,
+        model_name=model_name,
+        estimator=estimator,
+        imputer=imputer,
+        feature_columns=tuple(x_train.columns),
+        train_mask=train_mask,
+        test_mask=test_mask,
+        x_train=x_train.reset_index(drop=True),
+        x_test=x_test.reset_index(drop=True),
+        y_train=y_train,
+        y_test=y_test,
+        predictions=np.asarray(predictions, dtype=float),
+        train_frame=train_frame,
+        test_frame=test_frame,
+        train_source_indices=train_source_indices,
+        test_source_indices=test_source_indices,
+        metrics={key: float(value) for key, value in metrics.items()},
+        split_metadata=split_metadata,
+        dropped_columns=dropped,
+    )
+
+
 def train_regression_reference(
     frame: pd.DataFrame,
     *,
@@ -99,55 +170,75 @@ def train_regression_reference(
     train_mask[train_indices] = True
     test_mask[test_indices] = True
 
-    train_matrix = select_rows(matrix, train_mask)
-    test_matrix = select_rows(matrix, test_mask)
-    if train_matrix.features.empty or test_matrix.features.empty:
-        raise ValueError("Cannot train XAI reference model on an empty split")
-
-    imputer = fit_imputer_on_training(train_matrix.features)
-    x_train = imputer.transform(train_matrix.features)
-    x_test = imputer.transform(test_matrix.features)
-
-    dropped = tuple(drop_columns or ())
-    if dropped:
-        keep_columns = [column for column in x_train.columns if column not in set(dropped)]
-        if not keep_columns:
-            raise ValueError("drop_columns removed every feature from the model matrix")
-        x_train = x_train.loc[:, keep_columns]
-        x_test = x_test.loc[:, keep_columns]
-
-    estimator = build_regression_model(model_name, seed=seed)
-    y_train = train_matrix.regression_target.to_numpy()
-    y_test = test_matrix.regression_target.to_numpy()
-    estimator.fit(x_train, y_train)
-    predictions = estimator.predict(x_test)
-    metrics = compute_regression_metrics(y_test, predictions)
-
-    train_source_indices = np.flatnonzero(train_mask)
-    test_source_indices = np.flatnonzero(test_mask)
-    train_frame = working_frame.loc[train_source_indices].reset_index(drop=True)
-    test_frame = working_frame.loc[test_source_indices].reset_index(drop=True)
-
-    return TrainedRegressionModel(
-        feature_set_name=feature_set_name,
-        model_name=model_name,
-        estimator=estimator,
-        imputer=imputer,
-        feature_columns=tuple(x_train.columns),
+    return _assemble_trained_model(
+        working_frame,
+        matrix,
         train_mask=train_mask,
         test_mask=test_mask,
-        x_train=x_train.reset_index(drop=True),
-        x_test=x_test.reset_index(drop=True),
-        y_train=y_train,
-        y_test=y_test,
-        predictions=np.asarray(predictions, dtype=float),
-        train_frame=train_frame,
-        test_frame=test_frame,
-        train_source_indices=train_source_indices,
-        test_source_indices=test_source_indices,
-        metrics={key: float(value) for key, value in metrics.items()},
+        feature_set_name=feature_set_name,
+        model_name=model_name,
+        seed=seed,
+        drop_columns=tuple(drop_columns or ()),
         split_metadata=split.metadata,
-        dropped_columns=dropped,
+    )
+
+
+def train_regression_reference_for_matrix(
+    frame: pd.DataFrame,
+    *,
+    feature_set: Any,
+    train_mask: np.ndarray,
+    test_mask: np.ndarray,
+    model_name: str,
+    seed: int,
+    drop_columns: Sequence[str] | None = None,
+    split_metadata: dict[str, Any] | None = None,
+) -> TrainedRegressionModel:
+    """Train a regression reference model with an explicit feature set and split masks.
+
+    Unlike :func:`train_regression_reference`, this function accepts any duck-typed
+    feature set object (not just those in the synthetic registry) and any boolean
+    row masks for the train/test split.  This is the entry-point for OULAD and
+    other real-dataset runners that build their own splits externally.
+
+    Parameters
+    ----------
+    frame:
+        Raw modeling frame; must carry ``student_id``, ``week_number``,
+        ``final_grade``, and ``passed`` columns.
+    feature_set:
+        Any object with ``.name``, ``.columns``, and ``.indicator_columns``
+        attributes (mirrors ``BenchmarkFeatureSet`` and ``FeatureSet`` shapes).
+    train_mask:
+        Boolean array of length ``len(frame)`` marking training rows.
+    test_mask:
+        Boolean array of length ``len(frame)`` marking test rows.
+    model_name:
+        Key passed to :func:`build_regression_model`.
+    seed:
+        Random seed for the estimator.
+    drop_columns:
+        Optional columns to exclude from the model matrix after imputation.
+    split_metadata:
+        Arbitrary metadata dict stored on the returned object (e.g. split
+        strategy name, temporal cutoff week).  Defaults to ``{}``.
+    """
+
+    working_frame = frame.reset_index(drop=True).copy()
+    matrix = build_modeling_matrix(working_frame, feature_set)
+    train_mask_bool = np.asarray(train_mask, dtype=bool)
+    test_mask_bool = np.asarray(test_mask, dtype=bool)
+
+    return _assemble_trained_model(
+        working_frame,
+        matrix,
+        train_mask=train_mask_bool,
+        test_mask=test_mask_bool,
+        feature_set_name=feature_set.name,
+        model_name=model_name,
+        seed=seed,
+        drop_columns=tuple(drop_columns or ()),
+        split_metadata=split_metadata or {},
     )
 
 
@@ -156,6 +247,7 @@ def build_global_explanation(
     *,
     permutation_repeats: int,
     seed: int,
+    split_strategy: str = "student_group",
 ) -> dict[str, Any]:
     """Build a global feature-ranking table for one fitted model."""
 
@@ -214,7 +306,7 @@ def build_global_explanation(
         "feature_set": run.feature_set_name,
         "model": run.model_name,
         "metrics": run.metrics,
-        "split_strategy": "student_group",
+        "split_strategy": split_strategy,
         "split_metadata": run.split_metadata,
         "n_train_rows": int(run.x_train.shape[0]),
         "n_test_rows": int(run.x_test.shape[0]),
