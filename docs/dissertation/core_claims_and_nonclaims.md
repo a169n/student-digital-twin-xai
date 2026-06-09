@@ -35,10 +35,18 @@
 - The synthetic-to-OULAD contrast is itself a cautionary methodological
   result: a circular target can manufacture an apparent feature-group
   advantage that disappears on genuine institutional data.
+- On real OULAD (`exp_007`), the model-behavior explanations lean on
+  assessment-discipline and the co-circular `overall_mastery_proxy`; the
+  genuinely exogenous signals (`is_unregistered_by_week`, VLE clickstream) are
+  present and interpretable but carry modest weight.
+- The OULAD importance rankings are regime-sensitive: Kendall `tau` between the
+  student-grouped and temporal-forward splits is `0.55`-`0.79` (none reaching
+  `0.90`), so which features the model relies on, and in what order, depends on
+  the evaluation scenario (extends Tiukhova et al., 2024).
 - The final contribution is methodological and cautionary: a governed,
   leakage-aware pipeline for constructing, ablating, explaining, and
   externally testing a lean student-state representation, plus an honest
-  mixed-to-null real-data finding.
+  mixed-to-null real-data finding and a regime-sensitive explanation result.
 
 ## Claims the Dissertation Cannot Make
 
@@ -68,3 +76,6 @@
 - It cannot claim that the real-data null is robust across cohorts. The OULAD
   evidence is one module-presentation (`DDD 2013J`); replication on a second
   cohort is required before the null can be called general.
+- It cannot claim that the explanations are regime-invariant or that
+  importance reflects causal mechanism. The OULAD rankings reorder across
+  splits, and the methods describe model behavior, not causation.

@@ -1,0 +1,50 @@
+{
+  "artifacts": {
+    "documentation": "docs/experiments/exp_008_faithfulness_probe.md",
+    "results_json": "data/artifacts/experiments/exp_008_faithfulness_probe/exp_008_faithfulness_probe_results.json",
+    "summary_markdown": "data/artifacts/experiments/exp_008_faithfulness_probe/exp_008_faithfulness_probe_summary.md"
+  },
+  "config_path": "services/ml/configs/experiments/exp_008_faithfulness_probe.yaml",
+  "created_at": "2026-06-09T14:11:00Z",
+  "dataset": {
+    "dataset_config_name": "generator_v1_3_refined.yaml",
+    "dataset_version": "v1_3_refined",
+    "final_results_path": "C:\\Users\\a1byn\\Desktop\\dev\\aitu\\student-digital-twin-xai\\data\\raw\\final_results.csv",
+    "snapshots_path": "C:\\Users\\a1byn\\Desktop\\dev\\aitu\\student-digital-twin-xai\\data\\processed\\student_twin_snapshots.csv"
+  },
+  "experiment_id": "exp_008_faithfulness_probe",
+  "final_week": 10,
+  "n_final_week_rows": 114,
+  "oracle_kendall_tau": 1.0,
+  "output_directory": "data/artifacts/experiments/exp_008_faithfulness_probe",
+  "parent_experiment": "exp_007_xai_on_oulad",
+  "probe": {
+    "final_week": null,
+    "model": "gradient_boosting",
+    "oracle_features": [
+      "avg_assignment_score_to_date",
+      "avg_quiz_score_to_date",
+      "attendance_rate_to_date",
+      "on_time_submission_rate_to_date"
+    ],
+    "oracle_weights": {
+      "attendance_rate_to_date": 0.1,
+      "avg_assignment_score_to_date": 0.55,
+      "avg_quiz_score_to_date": 0.25,
+      "on_time_submission_rate_to_date": 0.1
+    },
+    "permutation_repeats": 15,
+    "proxy_feature_set": "B_lms",
+    "redundancy_pairs": [
+      [
+        "overall_mastery",
+        "avg_assignment_score_to_date"
+      ]
+    ],
+    "seed": 42,
+    "shap_enabled": false
+  },
+  "schema_version": "1.2",
+  "status": "completed",
+  "title": "Controlled XAI faithfulness probe on synthetic generator oracle"
+}

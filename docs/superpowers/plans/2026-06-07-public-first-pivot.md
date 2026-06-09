@@ -452,10 +452,10 @@ git commit -m "feat(xai): allow explicit feature-column reference training"
 - [ ] **Step 1:** Write `services/ml/tests/test_stability.py` with known fixtures: two identical rankings → Kendall τ = 1.0, Jaccard top-k = 1.0; one reversed → τ = -1.0. Run → FAIL.
 - [ ] **Step 2:** Implement `services/ml/src/experiments/stability.py` with `kendall_tau(rank_a, rank_b)`, `jaccard_topk(features_a, features_b, k)`, and `stability_report(importance_tables: dict[str, list[dict]])` returning pairwise agreement across regimes. Use `scipy.stats.kendalltau` if scipy is present, else a self-contained implementation (check `pyproject.toml` first; prefer no new dependency). Run → PASS. Commit.
 
-### Task 13: Apply stability across split regimes (and a 2nd presentation if cheap)
+### Task 13: Apply stability across split regimes (revised — read existing exp_007, no slow re-run)
 
-- [ ] **Step 1:** Add a stability step to `run_xai_on_oulad.py` that compares importance rankings across `student_group` vs `temporal_forward`. Optionally re-run the adapter with a second `code_presentation` (e.g. `DDD 2014J`) and compare cross-cohort.
-- [ ] **Step 2:** Write the stability table into the `exp_007` summary as the headline-candidate contribution (extends Tiukhova et al. 2024). Apply the Phase-4 kill criterion: if τ > ~0.9 everywhere, demote stability to a confirmation paragraph. Commit.
+- [ ] **Step 1:** Write a small analysis (function/script `analyze_xai_stability.py` or a function reusing the runner module) that READS the existing `data/artifacts/experiments/exp_007_xai_on_oulad/exp_007_xai_on_oulad_results.json` (which already holds per-feature-set, per-split importance rows) and, for each feature set, compares the importance ranking on `student_group` vs `temporal_forward` using `stability.kendall_tau` (tau-b over the shared features) and `stability.jaccard_topk` (top-5). Do NOT re-run the slow XAI.
+- [ ] **Step 2:** Write `data/artifacts/experiments/exp_007_xai_on_oulad/explanation_stability.md` (+ `.json`) with the per-feature-set cross-split τ and Jaccard@5, and a short interpretation. Apply the Phase-4 kill criterion: if τ > ~0.9 for every feature set, the rankings are highly stable → stability is a confirmation paragraph, not a standalone contribution; if τ is mixed/low, instability across split regimes is itself a reportable finding (rankings depend on the evaluation scenario). The optional cross-cohort 2nd `code_presentation` (e.g. `DDD 2014J`) is deferred. Leave changes uncommitted for the user.
 
 ---
 

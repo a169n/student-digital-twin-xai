@@ -1,0 +1,27 @@
+{
+  "top_k": 5,
+  "stable_tau_threshold": 0.9,
+  "per_feature_set": [
+    {
+      "feature_set": "B_lms_oulad",
+      "kendall_tau": 0.7922077922077922,
+      "jaccard_topk": 0.6666666666666666,
+      "n_features": 22
+    },
+    {
+      "feature_set": "B_lms_plus_mastery_oulad",
+      "kendall_tau": 0.6814516129032259,
+      "jaccard_topk": 1.0,
+      "n_features": 32
+    },
+    {
+      "feature_set": "C_twin_oulad",
+      "kendall_tau": 0.5495495495495495,
+      "jaccard_topk": 1.0,
+      "n_features": 37
+    }
+  ],
+  "mean_kendall_tau": 0.6744029848868559,
+  "all_stable": false,
+  "verdict": "regime_sensitive_finding: Feature-importance rankings differ meaningfully between student_group and temporal_forward evaluation splits (at least one Kendall tau < 0.90).  This is itself a reportable result: which features the model 'relies on' depends on the evaluation scenario (split strategy).  Combined with exp_006's mixed-to-null predictive finding, regime-sensitive explanations further caution against interpreting these importances as stable causal signals \u2014 they reflect model behavior under a specific evaluation regime, not an invariant mechanism."
+}

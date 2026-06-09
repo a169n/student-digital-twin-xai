@@ -177,6 +177,47 @@ rests on one OULAD module-presentation; replication on a second cohort
 natural next step to establish that the null is robust rather than
 course-specific.
 
+## 5c. OULAD Explanations Are Interpretable but Regime-Sensitive
+
+`exp_007_xai_on_oulad` applies the same model-behavior explanation methods
+used on the synthetic data (held-out permutation importance, model-native
+importance, and one-feature local perturbation; no SHAP) to the real OULAD
+model, for `B_lms_oulad`, `B_lms_plus_mastery_oulad`, and `C_twin_oulad` under
+both splits. Two findings follow.
+
+First, the explanations lean on features that are themselves close to the
+target. The dominant feature is `assessment_submission_rate_due_to_date` for
+the LMS baseline (importance share `0.28`-`0.38`) and, once mastery is
+included, the co-circular `overall_mastery_proxy` (share `0.23`-`0.43`), which
+aggregates weighted assessment scores that partly feed the target. The
+genuinely exogenous signals — the registration-state flag
+`is_unregistered_by_week` (consistently ranked second to fourth, share
+`0.13`-`0.20`) and the VLE clickstream features (share `0.02`-`0.06`) — are
+present and interpretable but carry modest weight. The honest reading is that
+even the explanation partly rests on within-system accounting features rather
+than independent behavioral causes, which reinforces rather than offsets the
+cautionary message of Section 5b. The defensible teacher-facing statement is
+narrow: registration state and engagement activity are the interpretable
+exogenous handles, but their contribution to the model is limited.
+
+Second, the explanations are **regime-sensitive**. Comparing the global
+importance ranking on the student-grouped split with the temporal-forward
+split (`exp_007` stability analysis, Kendall rank correlation over the shared
+features), agreement is moderate and below a high-stability threshold for
+every feature set: `tau = 0.79` for `B_lms_oulad`, `0.68` for
+`B_lms_plus_mastery_oulad`, and `0.55` for `C_twin_oulad` (mean `0.67`, none
+reaching `0.90`). Top-5 membership can nonetheless be stable — Jaccard overlap
+is `1.00` for the two mastery/twin sets and `0.67` for the LMS baseline —
+meaning the same few features dominate across regimes while their relative
+priority reorders, and the widest feature set (`C_twin_oulad`) is the least
+order-stable. The defensible statement is that *which* features the model
+appears to rely on, and in what order, depends on the evaluation scenario.
+This extends explanation-stability analysis (Tiukhova et al., 2024) to the
+public-benchmark transfer setting and dovetails with the predictive
+mixed-to-null result of Section 5b: not only does the Twin representation fail
+to win on accuracy, its explanation is not regime-invariant either. These are
+model-behavior observations, not causal claims.
+
 ## 6. The Resulting Contribution Is a Methodology + an Honest Real-Data Finding
 
 The project's resulting contribution, on the basis of the six
@@ -201,6 +242,9 @@ institutional validation. Specifically, the project produces:
 - a public OULAD benchmark adapter and a full nested A/B/C ablation on real
   data (`exp_006`) with documented feature mapping, fixed-model reporting,
   and an honest mixed-to-null transfer result;
+- a real-data model-behavior explanation phase on OULAD (`exp_007`) plus an
+  explanation-stability analysis showing the importance rankings are
+  regime-sensitive (Kendall `tau` `0.55`-`0.79` across splits);
 - a versioned experiment governance layer with frozen configurations,
   metadata, machine-readable artifacts, per-experiment writeups, and a
   cumulative registry.
@@ -221,9 +265,12 @@ for constructing, ablating, and explaining weekly student-state
 representations; (ii) demonstrates, through the synthetic-to-OULAD contrast,
 how a circular target can manufacture an apparent feature-group advantage that
 disappears on genuine data — a concrete cautionary case for the Digital-Twin-
-in-education literature; and (iii) sets up an explanation-stability and
-importance-transfer analysis (forthcoming) as the positive methodological
-result that sits on top of the honest predictive null. The project is thus
+in-education literature; and (iii) contributes an explanation-stability
+analysis (`exp_007`) showing that, on real data, the model's importance
+rankings are regime-sensitive (mean Kendall `tau` `0.67`, none reaching
+`0.90`) — so the explanation's "why" is not invariant to the evaluation
+scenario, a positive methodological result that sits on top of the honest
+predictive null. The project is thus
 positioned as a research prototype that demonstrates **how to study** — and
 how to avoid fooling oneself about — Digital Twin + XAI for academic risk
 analytics, rather than as a proof that any Twin formulation is superior.

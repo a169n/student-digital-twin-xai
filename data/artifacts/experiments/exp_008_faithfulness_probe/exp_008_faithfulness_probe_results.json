@@ -1,0 +1,96 @@
+{
+  "experiment_id": "exp_008_faithfulness_probe",
+  "final_week": 10,
+  "method_notes": {
+    "comparison_method": "Kendall tau on importance rank order vs oracle weight order",
+    "importance_method": "sklearn permutation importance (neg_root_mean_squared_error)",
+    "shap_used": false,
+    "split": "student_group"
+  },
+  "n_final_week_rows": 114,
+  "n_students": 114,
+  "oracle_probe": {
+    "importance_order": [
+      "avg_assignment_score_to_date",
+      "avg_quiz_score_to_date",
+      "attendance_rate_to_date",
+      "on_time_submission_rate_to_date"
+    ],
+    "kendall_tau": 1.0,
+    "model_metrics": {
+      "mae": 0.682379183171182,
+      "r2": 0.9979527529298691,
+      "rmse": 0.9389445626518311
+    },
+    "n_test": 28,
+    "n_train": 86,
+    "note": "Ties at oracle_weight=0.10 (attendance_rate/on_time) make exact tail ordering ambiguous. Permutation importance reflects weight x feature-spread, not weight alone; partial recovery is expected and is the methodological point.",
+    "oracle_order": [
+      "avg_assignment_score_to_date",
+      "avg_quiz_score_to_date",
+      "attendance_rate_to_date",
+      "on_time_submission_rate_to_date"
+    ],
+    "per_feature": [
+      {
+        "feature": "avg_assignment_score_to_date",
+        "importance_rank": 1,
+        "importance_share": 0.6307834360295753,
+        "mean_rmse_increase": 17.079404690878288,
+        "oracle_rank": 1,
+        "oracle_weight": 0.55
+      },
+      {
+        "feature": "avg_quiz_score_to_date",
+        "importance_rank": 2,
+        "importance_share": 0.28822685902186956,
+        "mean_rmse_increase": 7.8041731707495625,
+        "oracle_rank": 2,
+        "oracle_weight": 0.25
+      },
+      {
+        "feature": "attendance_rate_to_date",
+        "importance_rank": 3,
+        "importance_share": 0.04221134090347147,
+        "mean_rmse_increase": 1.1429351702272832,
+        "oracle_rank": 3,
+        "oracle_weight": 0.1
+      },
+      {
+        "feature": "on_time_submission_rate_to_date",
+        "importance_rank": 4,
+        "importance_share": 0.03877836404508361,
+        "mean_rmse_increase": 1.0499821887287693,
+        "oracle_rank": 4,
+        "oracle_weight": 0.1
+      }
+    ]
+  },
+  "proxy_probe": {
+    "feature_set": "B_lms",
+    "framing": "activity_score_to_date enters base_score at +0.04 (submissions.py:83) as a latent-driven proxy under correlation. Importance attributed to it reflects proxy-correlation importance, not a direct formula coefficient.",
+    "model_metrics": {
+      "mae": 0.8780821504824854,
+      "r2": 0.9976674040868698,
+      "rmse": 1.002246567114593
+    },
+    "proxy_feature": "activity_score_to_date",
+    "proxy_importance_rank": 4,
+    "proxy_importance_share": 0.10826174483122418,
+    "proxy_mean_rmse_increase": 2.7752749930522485,
+    "top_features": [
+      "avg_assignment_score_to_date",
+      "avg_quiz_score_to_date",
+      "time_spent_to_date",
+      "activity_score_to_date",
+      "on_time_submission_rate_to_date"
+    ]
+  },
+  "redundancy": [
+    {
+      "feature_a": "overall_mastery",
+      "feature_b": "avg_assignment_score_to_date",
+      "pearson_r": 0.994416416302256
+    }
+  ]
+}

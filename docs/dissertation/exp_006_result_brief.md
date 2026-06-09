@@ -63,8 +63,10 @@ function of the features.
   explaining weekly student-state representations.
 - A **synthetic-vs-real cautionary demonstration** of circular-target artifacts.
 - An **honest mixed-to-null real-data finding** on OULAD.
-- (Planned) **explanation-stability and importance-transfer** analysis as the
-  positive methodological result on top of the predictive null.
+- **explanation-stability** analysis (`exp_007`, done): on real OULAD the
+  importance rankings are regime-sensitive across splits (Kendall `tau`
+  `0.55`-`0.79`, mean `0.67`, none `>= 0.90`) — the positive methodological
+  result on top of the predictive null, extending Tiukhova et al. (2024).
 
 It does **not** claim Digital Twin predictive superiority, full external
 validity, or causal/intervention effects.

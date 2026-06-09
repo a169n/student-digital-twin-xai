@@ -24,6 +24,8 @@ The methodology proceeds through a fixed experiment sequence:
   OULAD (two-set transfer test).
 - `exp_006_oulad_full_ablation`: full nested A/B/C ablation on real OULAD with
   fixed-model reporting — the decisive external evidence.
+- `exp_007_xai_on_oulad`: real-data model-behavior explanation + an
+  explanation-stability analysis across splits.
 
 ## Key Result
 
@@ -40,12 +42,23 @@ data (see the external benchmark result).**
 
 ## Explainability Result
 
-The XAI phase used permutation importance and local median-replacement
-perturbations. It found that the lean Twin remained teacher-meaningful and did
-not collapse onto a single mastery feature. The top global feature was
-`activity_score_to_date` with importance share `0.648`; `overall_mastery`
-ranked second with share `0.178`. The method is explicitly model-behavior
-explanation, not causal explanation and not SHAP.
+The synthetic XAI phase (`exp_004`) used permutation importance and local
+median-replacement perturbations. It found the lean Twin teacher-meaningful and
+not collapsed onto a single mastery feature (top feature `activity_score_to_date`
+share `0.648`; `overall_mastery` second at `0.178`). Model-behavior explanation,
+not causal, not SHAP.
+
+On real OULAD (`exp_007`) the same methods show the model leans on
+assessment-discipline (`assessment_submission_rate_due_to_date`) and, once
+included, the co-circular `overall_mastery_proxy`; the cleanest exogenous
+signals (`is_unregistered_by_week`, VLE clickstream) are present but carry
+modest weight. The explanation-stability analysis is itself a finding: the
+importance rankings are **regime-sensitive** — Kendall `tau` between the
+student-grouped and temporal-forward splits is `0.79` / `0.68` / `0.55` for the
+three feature sets (mean `0.67`, none reaching `0.90`). Top-5 membership can be
+stable (Jaccard `1.0` for the mastery/twin sets) while the order reorders. So
+the model's "why" is not invariant to the evaluation scenario, extending
+explanation-stability work (Tiukhova et al., 2024) to the transfer setting.
 
 ## External Benchmark Result (Decisive)
 
@@ -69,8 +82,9 @@ claim: (i) a reproducible, leakage-aware protocol for constructing, ablating,
 and explaining weekly student-state representations; (ii) a synthetic-to-real
 demonstration that a circular target can manufacture an apparent feature-group
 advantage that vanishes on genuine OULAD data; and (iii) an honest
-mixed-to-null real-data finding, with explanation-stability / importance-
-transfer analysis as the planned positive result on top of it. It does not
+mixed-to-null real-data finding, with the explanation-stability analysis
+(`exp_007`, regime-sensitive importance rankings) as the documented positive
+result on top of it. It does not
 prove Digital Twin superiority, full external validity, or causal intervention
 effects, and its external evidence rests on one OULAD module-presentation
 pending replication on a second cohort.
