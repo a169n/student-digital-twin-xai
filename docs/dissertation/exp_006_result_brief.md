@@ -62,7 +62,8 @@ function of the features.
 - A reproducible, **leakage-aware methodology** for constructing, ablating, and
   explaining weekly student-state representations.
 - A **synthetic-vs-real cautionary demonstration** of circular-target artifacts.
-- An **honest mixed-to-null real-data finding** on OULAD.
+- An **honest two-cohort heterogeneous real-data finding** on OULAD (DDD null;
+  BBB mastery helps only on the forward-time split; trend/index null on both).
 - **explanation-stability** analysis (`exp_007`, done): on real OULAD the
   importance rankings are regime-sensitive across splits (Kendall `tau`
   `0.55`-`0.79`, mean `0.67`, none `>= 0.90`) — the positive methodological
@@ -71,27 +72,34 @@ function of the features.
 It does **not** claim Digital Twin predictive superiority, full external
 validity, or causal/intervention effects.
 
-## Honest risk and the recommended next step
+## Second-cohort result (BBB 2013J) — the single-cohort risk is now addressed
 
-The dominant weakness is that the external evidence rests on **one OULAD
-module-presentation**. A reviewer will ask whether the null is robust or
-course-specific. The strongest mitigation is **replication on a second cohort**
-(a further OULAD presentation via the same adapter, or an independent dataset
-such as the KU Leuven 2026 release). The mixed-to-null result therefore *raises*
-the value of a second real cohort from optional to recommended: "null replicates
-across cohorts" turns the main weakness into a strength.
+The original dominant weakness — external evidence on **one** OULAD module — has
+been addressed by a second cohort, BBB 2013J (`exp_009` ablation, `exp_010`
+XAI). The result is **heterogeneous, not a clean replication of the DDD null**:
+on BBB the mastery block *does* beat the LMS baseline on the temporal-forward
+split by `-1.026` RMSE (vs `-0.381`, below threshold, on DDD), but it is null on
+the student-grouped split, and the trend/index blocks are null on both courses.
+Explanations are partly course-specific (cross-cohort importance Kendall `tau`
+`0.32`–`0.61`, mean `0.52`). The honest framing therefore strengthens from
+"single-cohort mixed-to-null" to "two-cohort heterogeneity": engineered Twin
+value is course- and split-dependent, not robust. The remaining external-validity
+limit is that both courses are from one institution (OULAD); an independent
+institutional dataset (e.g. KU Leuven 2026) would be the next step.
 
 ## Supervisor pitch (verbatim)
 
-> On real OULAD data the Digital Twin feature blocks do not beat a strong LMS
-> baseline (best-model F1 0.83–0.89; regression deltas within noise; mastery
-> helps only on the forward-time split by ~4%). This contradicts the synthetic
-> result, which we have shown was inflated by a circular target. I propose
-> reframing the contribution as (1) a leakage-aware methodology, (2) a
-> synthetic-vs-real cautionary demonstration, and (3) an explanation-stability /
-> transfer analysis. My question: is one OULAD module sufficient, or should we
-> add a second cohort (a further OULAD presentation or KU Leuven) to show the
-> null is robust rather than course-specific?
+> On two real OULAD courses the Digital Twin feature blocks do not robustly beat
+> a strong LMS baseline: on DDD 2013J no block wins; on BBB 2013J the mastery
+> block wins only on the forward-time split (`-1.026` RMSE) and nowhere else.
+> The synthetic "win" we showed was inflated by a circular target. The
+> explanations are regime-sensitive within a course and partly course-specific
+> across courses. I propose framing the contribution as (1) a leakage-aware
+> methodology, (2) a synthetic-vs-real cautionary demonstration, and (3) a
+> within- and cross-cohort explanation-stability analysis, with the honest
+> finding being heterogeneity rather than a uniform verdict. My question: is the
+> two-OULAD-course evidence sufficient, or should we add an independent
+> institution (e.g. KU Leuven) for external validity beyond OULAD?
 
 ## Artifacts
 

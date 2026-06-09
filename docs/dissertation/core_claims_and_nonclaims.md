@@ -43,10 +43,27 @@
   student-grouped and temporal-forward splits is `0.55`-`0.79` (none reaching
   `0.90`), so which features the model relies on, and in what order, depends on
   the evaluation scenario (extends Tiukhova et al., 2024).
+- The real-data finding spans two OULAD courses and is **heterogeneous**: on
+  `BBB 2013J` (`exp_009`) the mastery block beats the LMS baseline on the
+  temporal-forward split by `-1.026` RMSE, whereas on `DDD 2013J` (`exp_006`) no
+  block does; on the student-grouped split both courses are null and the
+  trend/index blocks are null on both. Engineered Twin value is therefore
+  course- and split-dependent, not robust.
+- The explanations are partly course-specific: cross-cohort importance-ranking
+  agreement (DDD vs BBB, `exp_010`) is Kendall `tau` `0.32`-`0.61` (mean `0.52`),
+  below the within-course cross-split agreement and below a stability threshold.
+- A controlled synthetic faithfulness probe (`exp_008`) on known ground truth
+  shows that, at the final course week, permutation importance recovers the
+  generator's weight ORDERING (Kendall `tau` `1.0`), and illustrates how proxy
+  correlation (`activity_score_to_date` importance `0.108`) and redundancy
+  (`overall_mastery` vs `avg_assignment_score_to_date`, `r` `0.994`) shape
+  importance. This is a methods instrument on a target we authored, not
+  evidence about real learning.
 - The final contribution is methodological and cautionary: a governed,
   leakage-aware pipeline for constructing, ablating, explaining, and
   externally testing a lean student-state representation, plus an honest
-  mixed-to-null real-data finding and a regime-sensitive explanation result.
+  two-cohort heterogeneous real-data finding and within- and cross-course
+  explanation-stability results.
 
 ## Claims the Dissertation Cannot Make
 
@@ -73,9 +90,10 @@
   implemented (`services/ml/src/features/engineering.py` and
   `services/ml/src/explainability/xai.py` are stubs). The system is a lean,
   time-aware weekly state representation, not a simulation-capable digital twin.
-- It cannot claim that the real-data null is robust across cohorts. The OULAD
-  evidence is one module-presentation (`DDD 2013J`); replication on a second
-  cohort is required before the null can be called general.
+- It cannot claim a single uniform real-data verdict. The OULAD evidence spans
+  two module-presentations (`DDD 2013J`, `BBB 2013J`) and is heterogeneous —
+  neither a uniform null nor a uniform Twin benefit — and both courses are from
+  one institution, so external validity beyond OULAD is not established.
 - It cannot claim that the explanations are regime-invariant or that
   importance reflects causal mechanism. The OULAD rankings reorder across
   splits, and the methods describe model behavior, not causation.

@@ -170,12 +170,9 @@ The defensible statement is therefore stronger and cleaner than the
 engineered Digital Twin feature blocks do **not** deliver a consistent
 predictive advantage over a competent LMS-analytics baseline, and the
 apparent synthetic advantage of the mastery block did not robustly transfer.
-This is an honest negative-to-mixed result, and it is the decisive external
-evidence of the project. Its single most important limitation is that it
-rests on one OULAD module-presentation; replication on a second cohort
-(a further OULAD presentation or an independent institutional dataset) is the
-natural next step to establish that the null is robust rather than
-course-specific.
+This is an honest negative-to-mixed result on the DDD 2013J cohort. It is one
+of two OULAD courses examined; Section 5d reports a second cohort (BBB 2013J)
+that qualifies it, showing the result is not uniform across courses.
 
 ## 5c. OULAD Explanations Are Interpretable but Regime-Sensitive
 
@@ -218,9 +215,48 @@ mixed-to-null result of Section 5b: not only does the Twin representation fail
 to win on accuracy, its explanation is not regime-invariant either. These are
 model-behavior observations, not causal claims.
 
+## 5d. A Second Cohort (BBB 2013J) Shows Heterogeneous Transfer and Course-Specific Explanations
+
+To test whether the DDD 2013J result is course-specific or robust, `exp_009`
+repeats the full nested ablation and `exp_010` repeats the model-behavior XAI on
+a second OULAD module-presentation, BBB 2013J (`2237` students, `80532` weekly
+snapshots, with a richer dated-assessment structure than DDD). Two findings
+follow.
+
+Predictively, the Twin-block value is **heterogeneous, not uniformly null**.
+Under the fixed-model comparison on BBB 2013J, the mastery block improves the
+temporal-forward split by `-1.026` RMSE (`5.284` versus `6.311`) — crossing the
+one-point threshold that no block crossed on DDD — and the full `C_twin_oulad`
+improves it by `-0.765`. On the student-grouped split, however, every block
+stays within `0.087` RMSE of the baseline (null, as on DDD), and the trend and
+composite-index blocks are null on both splits of both courses. Classification
+remains genuinely predictive (F1 `0.87`-`0.93`, never `1.000`). The honest
+reading is that the DDD null was **partly course-specific**: on a course with
+richer assessment structure the mastery block delivers a meaningful gain under
+forward-time evaluation, but the advantage does not generalize to the
+student-grouped split, to the other Twin blocks, or to the other course. The
+defensible cross-course statement is therefore one of heterogeneity — neither
+uniform null nor uniform benefit.
+
+Explanatorily, the importance topology is qualitatively **shared** across the
+two courses — `overall_mastery_proxy`, assessment-submission discipline, and
+the `is_unregistered_by_week` withdrawal flag dominate on both — but the
+rankings are **not stable**. The cross-cohort agreement of the importance
+rankings (Kendall `tau` of DDD versus BBB, per feature set and split) is
+`0.32`-`0.61` (mean `0.52`), lower than the within-cohort cross-split agreement
+of Section 5c (`0.55`-`0.79`, mean `0.67`), and no cell reaches a high-stability
+threshold; top-5 membership overlaps only partially (Jaccard `0.43`-`1.00`). So
+the model's "why" is not only regime-sensitive within a course but also partly
+course-specific across courses. This cross-cohort extension of the
+explanation-stability analysis tightens the cautionary message: both the
+feature-group predictive value and the explanations that accompany it depend on
+the course and the evaluation scenario. These remain model-behavior
+observations, not causal claims, and the evidence still spans only two courses
+from a single institution (OULAD).
+
 ## 6. The Resulting Contribution Is a Methodology + an Honest Real-Data Finding
 
-The project's resulting contribution, on the basis of the six
+The project's resulting contribution, on the basis of the ten
 experiments, is best framed as a **teacher-oriented, lean Twin + XAI
 research prototype**. The contribution is methodological and structural,
 not a demonstration of full Digital Twin superiority and not an
@@ -245,6 +281,18 @@ institutional validation. Specifically, the project produces:
 - a real-data model-behavior explanation phase on OULAD (`exp_007`) plus an
   explanation-stability analysis showing the importance rankings are
   regime-sensitive (Kendall `tau` `0.55`-`0.79` across splits);
+- a controlled synthetic faithfulness probe (`exp_008`) on known ground truth:
+  at the final course week, importance recovers the generator's weight ordering
+  (Kendall `tau` `1.0`), while illustrating how proxy correlation and redundancy
+  shape importance (`activity_score_to_date` share `0.108` as a latent-driven
+  proxy; `overall_mastery` redundant with `avg_assignment_score_to_date` at
+  Pearson `r` `0.994`) — a methods appendix, not primary evidence;
+- a second-cohort replication on OULAD BBB 2013J (`exp_009` ablation, `exp_010`
+  XAI) plus a cross-cohort explanation-stability analysis, showing that
+  Twin-block value is heterogeneous across courses (mastery improves BBB
+  temporal-forward by `-1.026` RMSE but not DDD) and that importance rankings
+  are partly course-specific (cross-cohort Kendall `tau` `0.32`-`0.61`,
+  mean `0.52`);
 - a versioned experiment governance layer with frozen configurations,
   metadata, machine-readable artifacts, per-experiment writeups, and a
   cumulative registry.
@@ -253,24 +301,29 @@ Within these scaffolds, the substantive empirical contribution is **not** a
 demonstration that the Twin representation predicts better. On the synthetic
 data, `B_lms_plus_mastery` appeared to outperform the LMS baseline, but that
 apparent gain is an artifact of a deterministic, circular target (Section 1).
-On the real, non-circular OULAD task (`exp_006`), the engineered Twin feature
-blocks do not deliver a consistent advantage over a competent LMS baseline.
-The honest empirical finding is therefore a **mixed-to-null transfer result**:
-representation richness that looks valuable under synthetic conditions does
-not survive contact with real institutional data.
+On real, non-circular OULAD data the picture is **heterogeneous across
+courses**: on DDD 2013J (`exp_006`) no Twin block delivers a consistent
+advantage over a competent LMS baseline, whereas on BBB 2013J (`exp_009`) the
+mastery block does improve the forward-time split — but the advantage does not
+hold on the student-grouped split, on the other Twin blocks, or on the other
+course. The honest empirical finding is therefore that **engineered Twin
+representation value is course- and split-dependent, not a robust improvement**:
+representation richness that looks valuable under synthetic conditions transfers
+to real data only narrowly and inconsistently.
 
 The substantive contribution is consequently **methodological and
 cautionary**. The project (i) supplies a reproducible, leakage-aware protocol
 for constructing, ablating, and explaining weekly student-state
 representations; (ii) demonstrates, through the synthetic-to-OULAD contrast,
 how a circular target can manufacture an apparent feature-group advantage that
-disappears on genuine data — a concrete cautionary case for the Digital-Twin-
-in-education literature; and (iii) contributes an explanation-stability
-analysis (`exp_007`) showing that, on real data, the model's importance
-rankings are regime-sensitive (mean Kendall `tau` `0.67`, none reaching
-`0.90`) — so the explanation's "why" is not invariant to the evaluation
-scenario, a positive methodological result that sits on top of the honest
-predictive null. The project is thus
+disappears or fragments on genuine data — a concrete cautionary case for the
+Digital-Twin-in-education literature; and (iii) contributes an
+explanation-stability analysis (`exp_007`, `exp_010`) showing that, on real
+data, the model's importance rankings are regime-sensitive within a course
+(mean Kendall `tau` `0.67`) and partly course-specific across courses (mean
+`0.52`), none reaching `0.90` — so the explanation's "why" is not invariant to
+the evaluation scenario or the course, a positive methodological result that
+sits on top of the honest predictive finding. The project is thus
 positioned as a research prototype that demonstrates **how to study** — and
 how to avoid fooling oneself about — Digital Twin + XAI for academic risk
 analytics, rather than as a proof that any Twin formulation is superior.
@@ -281,17 +334,20 @@ For dissertation rigor, it is important to be explicit about the claims
 the present evidence does **not** support.
 
 - The conclusions do not claim that any Digital Twin representation
-  outperforms a competent LMS analytics baseline. A lean mastery subset
-  appeared to do so **only in the synthetic environment**, where the target
-  is circular; on the real, non-circular OULAD task (`exp_006`) no Twin
-  feature block delivered a consistent advantage over the LMS baseline.
+  outperforms a competent LMS analytics baseline in a course- and
+  split-independent way. A lean mastery subset appeared to win **in the
+  synthetic environment** (circular target) and did improve one split of one
+  real course (BBB 2013J, `exp_009`), but not the other split, the other Twin
+  blocks, or the other course (DDD 2013J, `exp_006`). The defensible claim is
+  heterogeneity, not a robust advantage.
 - The conclusions do not claim that the explanation methods used recover
   causal mechanism. They are directional model-behavior explanations.
 - The conclusions do not claim full external validity. The main development
-  dataset is synthetic; OULAD provides a single module-presentation
-  (`DDD` `2013J`) on which the Twin advantage did not replicate, and no
-  second cohort or institutional dataset has yet confirmed that the null is
-  robust rather than course-specific.
+  dataset is synthetic; the real-data evidence spans two OULAD
+  module-presentations (`DDD` `2013J`, `BBB` `2013J`) from a single
+  institution, across which the Twin-block value and the explanations are
+  heterogeneous. No independent institution has been used, so external
+  validity beyond OULAD is not established.
 - The conclusions do not claim that `passed` is a useful target for
   representation choice in the present setting; it is saturated.
 - The conclusions do not claim that the predictive advantage of the lean
@@ -308,7 +364,8 @@ the present evidence does **not** support.
   (`services/ml/src/generator/final_results.py:74-84`; week-10 max absolute
   reconstruction error 0.008), so those scores are algebraic artifacts. The
   empirical claims rest on real OULAD data, where the same pipeline yields
-  best-model F1 0.83-0.887 across feature sets, not 1.000.
+  best-model F1 0.83-0.887 on DDD 2013J and 0.87-0.93 on BBB 2013J, never
+  1.000.
 
 ## 8. Carry-Forward Statement for the Dissertation
 
@@ -323,20 +380,24 @@ the bounded conclusion of the current research phase:
 > synthetic target. When the identical leakage-aware pipeline was applied to
 > real, non-circular OULAD data — first as a two-set transfer test
 > (`exp_005`) and then as a full nested A/B/C ablation with fixed-model
-> reporting (`exp_006`, `67830` weekly snapshots, `1938` students) — the
-> engineered Digital Twin feature blocks did not deliver a consistent
-> advantage over the LMS baseline on either the student-grouped or the
-> temporal-forward split (no block better than `1.0` RMSE; the full
-> `C_twin_oulad` within `±0.025`), while the OULAD classification target was
-> genuinely predictive (best-model F1 `0.83`–`0.887`, never `1.000`). The
-> contribution is therefore a reproducible, leakage-aware methodology for
-> constructing, ablating, and explaining weekly student-state
-> representations, together with an honest mixed-to-null real-data finding and
-> a cautionary demonstration that synthetic-data artifacts can manufacture an
-> apparent representation advantage that does not survive on genuine
-> institutional data. It is not a proof of Digital Twin superiority, and its
-> external evidence currently rests on a single OULAD module-presentation
-> pending replication on a second cohort.
+> reporting across two cohorts — the result is **heterogeneous**. On DDD 2013J
+> (`exp_006`, `67830` snapshots, `1938` students) no Twin block beat the LMS
+> baseline by more than `1.0` RMSE on either split; on BBB 2013J (`exp_009`,
+> `80532` snapshots, `2237` students) the mastery block improved the
+> temporal-forward split by `-1.026` RMSE but not the student-grouped split,
+> and the trend and index blocks were null on both courses. The OULAD
+> classification target was genuinely predictive throughout (best-model F1
+> `0.83`–`0.93`, never `1.000`). The accompanying explanations (`exp_007`,
+> `exp_010`) are regime-sensitive within a course (Kendall `tau` `0.55`–`0.79`)
+> and partly course-specific across courses (`0.32`–`0.61`). The contribution
+> is therefore a reproducible, leakage-aware methodology for constructing,
+> ablating, and explaining weekly student-state representations, together with
+> an honest finding that engineered Twin value and its explanations are course-
+> and split-dependent rather than robust, and a cautionary demonstration that a
+> circular synthetic target can manufacture an apparent representation
+> advantage that fragments on genuine data. It is not a proof of Digital Twin
+> superiority, and its external evidence spans two OULAD courses from one
+> institution.
 
 This statement is consistent with every experiment artifact in the
 repository and overstates none of them.

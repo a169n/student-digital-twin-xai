@@ -1,0 +1,53 @@
+{
+  "cohort_a": "DDD_2013J",
+  "cohort_b": "BBB_2013J",
+  "top_k": 5,
+  "stable_tau_threshold": 0.9,
+  "per_cell": [
+    {
+      "feature_set": "B_lms_oulad",
+      "split": "student_group",
+      "kendall_tau": 0.5411255411255411,
+      "jaccard_topk": 0.6666666666666666,
+      "n_features": 22
+    },
+    {
+      "feature_set": "B_lms_oulad",
+      "split": "temporal_forward",
+      "kendall_tau": 0.6103896103896104,
+      "jaccard_topk": 0.42857142857142855,
+      "n_features": 22
+    },
+    {
+      "feature_set": "B_lms_plus_mastery_oulad",
+      "split": "student_group",
+      "kendall_tau": 0.6129032258064516,
+      "jaccard_topk": 0.6666666666666666,
+      "n_features": 32
+    },
+    {
+      "feature_set": "B_lms_plus_mastery_oulad",
+      "split": "temporal_forward",
+      "kendall_tau": 0.5645161290322581,
+      "jaccard_topk": 1.0,
+      "n_features": 32
+    },
+    {
+      "feature_set": "C_twin_oulad",
+      "split": "student_group",
+      "kendall_tau": 0.46546546546546547,
+      "jaccard_topk": 1.0,
+      "n_features": 37
+    },
+    {
+      "feature_set": "C_twin_oulad",
+      "split": "temporal_forward",
+      "kendall_tau": 0.32132132132132135,
+      "jaccard_topk": 0.6666666666666666,
+      "n_features": 37
+    }
+  ],
+  "mean_kendall_tau": 0.519286882190108,
+  "all_stable": false,
+  "verdict": "explanations_partly_course_specific"
+}

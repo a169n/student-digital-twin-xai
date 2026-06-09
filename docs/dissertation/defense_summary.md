@@ -26,6 +26,12 @@ The methodology proceeds through a fixed experiment sequence:
   fixed-model reporting — the decisive external evidence.
 - `exp_007_xai_on_oulad`: real-data model-behavior explanation + an
   explanation-stability analysis across splits.
+- `exp_008_faithfulness_probe`: controlled synthetic probe on known ground
+  truth (importance recovers the weight ordering; proxy/redundancy illustration)
+  — a methods appendix.
+- `exp_009_oulad_ablation_bbb2013j`: second-cohort ablation on OULAD BBB 2013J.
+- `exp_010_xai_on_oulad_bbb2013j`: second-cohort XAI on BBB 2013J, enabling a
+  cross-cohort explanation-stability comparison with DDD.
 
 ## Key Result
 
@@ -60,20 +66,29 @@ stable (Jaccard `1.0` for the mastery/twin sets) while the order reorders. So
 the model's "why" is not invariant to the evaluation scenario, extending
 explanation-stability work (Tiukhova et al., 2024) to the transfer setting.
 
-## External Benchmark Result (Decisive)
+## External Benchmark Result (Decisive, Two Cohorts)
 
-The full nested ablation on real OULAD (`exp_006`, module `DDD 2013J`,
-`67830` snapshots, `1938` students) is the decisive external evidence, and it
-is a **mixed-to-null result**. Under a fixed-model (gradient boosting)
-comparison, no Twin feature block beats the strong `B_lms_oulad` baseline by
-more than `1.0` RMSE on either split. The largest gain is the mastery analogue
-on the temporal-forward split (`9.561` → `9.180`, delta `-0.381`), but it is
-`+0.061` worse on the student-grouped split; the full `C_twin_oulad` is within
-`±0.025` RMSE of the baseline on both splits. Critically, the OULAD
-classification target is genuinely predictive — best-model F1 `0.83`–`0.887`,
-never `1.000` — which directly contrasts the synthetic `passed` saturation at
-F1 `1.000` and confirms that the synthetic "mastery advantage" was an artifact
-of a circular target that did not transfer to real data.
+The full nested ablation runs on two real OULAD courses, and the result is
+**heterogeneous, not uniform**. On `DDD 2013J` (`exp_006`, `67830` snapshots,
+`1938` students), under a fixed-model (gradient boosting) comparison, no Twin
+block beats the strong `B_lms_oulad` baseline by more than `1.0` RMSE on either
+split (the largest gain is mastery on temporal-forward, `9.561` → `9.180`,
+delta `-0.381`, but `+0.061` worse on the student-grouped split). On
+`BBB 2013J` (`exp_009`, `80532` snapshots, `2237` students, richer assessment
+structure), the mastery block **does** beat the baseline on temporal-forward by
+`-1.026` RMSE (`6.311` → `5.284`) and `C_twin_oulad` by `-0.765`, but on the
+student-grouped split every block stays within `0.087` (null, as on DDD), and
+the trend/index blocks are null on both courses. Critically, the OULAD
+classification target is genuinely predictive throughout — best-model F1
+`0.83`–`0.93`, never `1.000` — which directly contrasts the synthetic `passed`
+saturation at F1 `1.000` and confirms that the synthetic "mastery advantage"
+was an artifact of a circular target. The honest cross-course statement is that
+engineered Twin value is **course- and split-dependent**: it can help when the
+assessment structure is rich and the evaluation is forward-in-time, but it does
+not generalize across splits, blocks, or courses. The accompanying explanations
+(`exp_007`, `exp_010`) are regime-sensitive within a course (Kendall `tau`
+`0.55`–`0.79`) and partly course-specific across courses (`0.32`–`0.61`,
+mean `0.52`).
 
 ## Final Contribution
 
@@ -81,10 +96,10 @@ The contribution is **methodological and cautionary**, not a performance
 claim: (i) a reproducible, leakage-aware protocol for constructing, ablating,
 and explaining weekly student-state representations; (ii) a synthetic-to-real
 demonstration that a circular target can manufacture an apparent feature-group
-advantage that vanishes on genuine OULAD data; and (iii) an honest
-mixed-to-null real-data finding, with the explanation-stability analysis
-(`exp_007`, regime-sensitive importance rankings) as the documented positive
-result on top of it. It does not
-prove Digital Twin superiority, full external validity, or causal intervention
-effects, and its external evidence rests on one OULAD module-presentation
-pending replication on a second cohort.
+advantage that fragments on genuine OULAD data; (iii) an honest two-cohort
+finding that engineered Twin value is course- and split-dependent rather than
+robust; and (iv) within-course and cross-course explanation-stability analyses
+(`exp_007`, `exp_010`) showing importance rankings are regime-sensitive and
+partly course-specific. It does not prove Digital Twin superiority, full
+external validity, or causal intervention effects, and its external evidence
+spans two OULAD courses from one institution.
