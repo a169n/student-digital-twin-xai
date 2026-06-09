@@ -1,0 +1,154 @@
+{"1819": 
+    {"Global economics":
+        {"course_start": [2019, 2, 11],
+        "course_finish":[2019, 6, 28],
+        "exam_weeks": [
+                        "Week 22 of 2019",
+                        "Week 23 of 2019",
+                        "Week 24 of 2019",
+                        "Week 25 of 2019", 
+                        "Week 26 of 2019"
+                    ],
+        "semester_weeks": [
+                        "Week 7 of 2019",
+                        "Week 8 of 2019",
+                        "Week 9 of 2019",
+                        "Week 10 of 2019",
+                        "Week 11 of 2019",
+                        "Week 12 of 2019",
+                        "Week 13 of 2019",
+                        "Week 14 of 2019",
+                        "Week 15 of 2019",
+                        "Week 16 of 2019",
+                        "Week 17 of 2019",
+                        "Week 18 of 2019",
+                        "Week 19 of 2019",
+                        "Week 20 of 2019",
+                        "Week 21 of 2019"
+                        ]
+                    },
+    "Accountancy":
+        {
+        "course_start": [2018, 9, 24],
+        "course_finish":[2019, 1, 11],
+        "exam_weeks": ["Week 52 of 2018","Week 1 of 2019", "Week 2 of 2019"],
+        "semester_weeks": [
+                        "Week 39 of 2018",
+                        "Week 40 of 2018",
+                        "Week 41 of 2018",
+                        "Week 42 of 2018",
+                        "Week 43 of 2018",
+                        "Week 44 of 2018",
+                        "Week 45 of 2018",
+                        "Week 46 of 2018",
+                        "Week 47 of 2018",
+                        "Week 48 of 2018",
+                        "Week 49 of 2018",
+                        "Week 50 of 2018",
+                        "Week 51 of 2018"
+                        ]    
+        }
+    },
+"1920":
+    {"Global economics":
+        {"course_start": [2020, 2, 10],
+        "course_finish":[2020, 6, 28],
+        "exam_weeks": [
+                        "Week 22 of 2020",
+                        "Week 23 of 2020",
+                        "Week 24 of 2020",
+                        "Week 25 of 2020", 
+                        "Week 26 of 2020"],
+        "semester_weeks": [
+                        "Week 7 of 2020",
+                        "Week 8 of 2020",
+                        "Week 9 of 2020",
+                        "Week 10 of 2020",
+                        "Week 11 of 2020",
+                        "Week 12 of 2020",
+                        "Week 13 of 2020",
+                        "Week 14 of 2020",
+                        "Week 15 of 2020",
+                        "Week 16 of 2020",
+                        "Week 17 of 2020",
+                        "Week 18 of 2020",
+                        "Week 19 of 2020",
+                        "Week 20 of 2020", 
+                        "Week 21 of 2020"]
+                    },
+    "Accountancy":
+        {
+        "course_start": [2019, 9, 23],
+        "course_finish": [2020, 1, 10],
+        "exam_weeks": [
+                        "Week 52 of 2019",
+                        "Week 1 of 2020", 
+                        "Week 2 of 2020"],
+        "semester_weeks":  [
+                        "Week 39 of 2019",
+                        "Week 40 of 2019",
+                        "Week 41 of 2019",
+                        "Week 42 of 2019",
+                        "Week 43 of 2019",
+                        "Week 44 of 2019",
+                        "Week 45 of 2019",
+                        "Week 46 of 2019",
+                        "Week 47 of 2019",
+                        "Week 48 of 2019",
+                        "Week 49 of 2019",
+                        "Week 50 of 2019",
+                        "Week 51 of 2019"]
+        }
+    },
+"2021":
+    {"Global economics":
+        {"course_start": [2021, 2, 8],
+        "course_finish": [2021, 6, 25],
+        "exam_weeks": [
+                        "Week 21 of 2021",
+                        "Week 22 of 2021",
+                        "Week 23 of 2021",
+                        "Week 24 of 2021",
+                        "Week 25 of 2021"],
+        "semester_weeks": [
+                        "Week 6 of 2021",
+                        "Week 7 of 2021",
+                        "Week 8 of 2021",
+                        "Week 9 of 2021",
+                        "Week 10 of 2021",
+                        "Week 11 of 2021",
+                        "Week 12 of 2021",
+                        "Week 13 of 2021",
+                        "Week 14 of 2021",
+                        "Week 15 of 2021",
+                        "Week 16 of 2021",
+                        "Week 17 of 2021",
+                        "Week 18 of 2021",
+                        "Week 19 of 2021",
+                        "Week 20 of 2021"] 
+                    },
+    "Accountancy":
+        {
+        "course_start": [2020, 9, 21],
+        "course_finish": [2021, 1, 6],
+        "exam_weeks": [
+                        "Week 52 of 2020",
+                        "Week 53 of 2020",
+                        "Week 1 of 2021"],
+        "semester_weeks": [
+                        "Week 39 of 2020",
+                        "Week 40 of 2020",
+                        "Week 41 of 2020",
+                        "Week 42 of 2020",
+                        "Week 43 of 2020",
+                        "Week 44 of 2020",
+                        "Week 45 of 2020",
+                        "Week 46 of 2020",
+                        "Week 47 of 2020",
+                        "Week 48 of 2020",
+                        "Week 49 of 2020",
+                        "Week 50 of 2020",
+                        "Week 51 of 2020"] 
+        }
+    }                              
+}
