@@ -337,56 +337,433 @@ and `0.884`, respectively.
 
 ### 5.4 Research consequence
 
-The OULAD benchmark complicates rather than confirms the synthetic
+**(This `exp_005` two-set reading is superseded by the full ablations in §6
+(`exp_006`, mixed-to-null on DDD) and §8 (`exp_009`, heterogeneous on BBB); it is
+recorded here only as the historical first-look result.)** At the `exp_005` stage,
+the OULAD benchmark complicated rather than confirmed the synthetic
 carry-forward claim. The lean mastery analogue is slightly worse on the
 primary grouped split but better on the secondary temporal-forward split.
-This mixed result suggests that mastery-transfer behavior is
+This mixed result suggested that mastery-transfer behavior is
 context-sensitive. The earlier synthetic experiments remain internally valid
-for the controlled generator environment, but the OULAD benchmark prevents a
-stronger claim that the lean mastery advantage has been externally validated.
+for the controlled generator environment, but the two-set OULAD probe prevented a
+stronger claim that the lean mastery advantage had been externally validated.
 
-The correct dissertation conclusion is therefore bounded: OULAD provides a
-public-dataset stress test that keeps the lean Twin hypothesis plausible but
+The bounded `exp_005` conclusion was therefore that OULAD provides a
+public-dataset stress test that kept the lean Twin hypothesis plausible but
 unresolved externally. It is not evidence that the synthetic dataset is better
-than OULAD, and it is not full institutional validation.
+than OULAD, and it is not full institutional validation. The full nested
+ablations below replace this with the firmer DDD-null / BBB-partial verdict.
 
-## 6. Trajectory From Full Twin to Lean Twin
+## 6. exp_006_oulad_full_ablation — Full OULAD Ablation (DDD 2013J)
 
-The first four experiments form a single methodological arc. `exp_001_baseline`
-poses the open question of whether the full Twin representation improves on
-the LMS baseline, and finds that it does not under the present setup.
-`exp_002_twin_ablation` decomposes the Twin layer into blocks and identifies
-mastery as the only single-block extension that substantively improves on
-`B_lms` on the primary split, while confirming that the full Twin
-representation remains unjustified. `exp_003_mastery_validation` audits the
-mastery block against target-correlation, redundancy, drop-column, and
-per-week criteria and validates the carry-forward with an explicit
-redundancy caveat. `exp_004_xai_on_lean_twin` explains the validated lean
-candidate using documented permutation and local perturbation methods and
-finds that the explanations are teacher-meaningful and do not collapse onto
-a single feature.
+### 6.1 What it was designed to test
 
-The progression is therefore not from a successful full Twin to a refined
-full Twin. It is from an unjustified full Twin to a **validated lean Twin
-representation**: `B_lms` augmented by the mastery block. The direction of
-the project, accordingly, is not to defend full Twin superiority but to
-present a smaller, structurally credible Twin that delivers measurable
-predictive value over a stronger LMS baseline while remaining interpretable.
+`exp_006_oulad_full_ablation` extends the OULAD benchmark from the two-set
+transfer test of `exp_005` to the full nested A/B/C ablation on real data. The
+question is whether the structured ablation that identified a lean Twin
+candidate on the synthetic data reproduces on a real, non-circular dataset:
+does any Twin feature block deliver a consistent predictive advantage over a
+competent LMS-analytics baseline once the deterministic synthetic target is
+removed?
 
-`exp_005_public_benchmark_oulad` extends this arc by testing whether the
-representation logic transfers to a public benchmark. The result is mixed:
-primary grouped performance does not improve, while secondary temporal-forward
-performance does. That means the lean Twin candidate remains defensible as an
-internally validated representation, but external transfer remains an open
-empirical question.
+### 6.2 Setup
 
-For final dissertation packaging, this internal-versus-external distinction is
-the controlling interpretation. The first four experiments support a bounded
-internal conclusion about `B_lms_plus_mastery`; the fifth experiment adds a
-public stress test that complicates transfer and prevents a stronger
-external-validity claim.
+The experiment runs on OULAD module-presentation `DDD` `2013J`: `67,830`
+weekly snapshots across `1,938` students, built with the identical
+leakage-aware pipeline used on the synthetic data. Six feature-set analogues
+are compared — `A_simple_oulad`, `B_lms_oulad`, the per-block extensions, and
+`C_twin_oulad` — under both the student-grouped and temporal-forward splits.
+Crucially, this phase introduces **fixed-model gradient-boosting reporting**
+to neutralize the best-model-per-cell model-flip artifact flagged in
+`exp_002`/`exp_005`: the same model is held fixed across splits so that
+feature-block deltas are not confounded with model selection.
 
-## 7. Why XAI Was Introduced Only After Lean Validation
+### 6.3 Key result
+
+The result is a **mixed-to-null** finding. Under the fixed-model comparison,
+no Twin feature block improves over the strong `B_lms_oulad` baseline by more
+than `1.0` RMSE on either split. The largest single gain is the mastery
+analogue on the temporal-forward split (RMSE `9.561` to `9.180`, delta
+`-0.381`, roughly a four percent reduction), but the same block is `+0.061`
+worse on the student-grouped split. The composite-index block improves the
+temporal-forward split modestly (`-0.218`) and is essentially flat on the
+grouped split (`+0.008`). The full `C_twin_oulad` analogue is within `±0.025`
+RMSE of the baseline on both splits — non-inferior, but not distinctly better.
+The minimal `A_simple_oulad` baseline is clearly worse (`+1.207` grouped,
+`+4.105` temporal-forward), confirming that the LMS behavioral layer carries
+the predictive signal and that the Twin engineering adds little on top of it.
+
+The OULAD task is genuinely predictive, not algebraic: best-model
+classification F1 ranges from `0.83` to `0.887` across feature sets and splits
+and never reaches `1.000`. This is the direct empirical contrast with the
+synthetic environment, where `passed` saturates at F1 `1.000` precisely
+because the synthetic `final_grade` is a deterministic, noise-free function of
+the same behaviors the features re-aggregate (week-10 reconstruction error
+`0.008`, correlation `1.000000`). The synthetic R²≈0.99 and F1=1.000 are
+therefore algebraic artifacts, not learnable signal; the real OULAD numbers
+are the actual evidence.
+
+### 6.4 Research consequence
+
+The full ablation supersedes the softer `exp_005` "complicates" language with
+a stronger, cleaner statement: on a real, non-circular dataset, the engineered
+Digital Twin feature blocks do **not** deliver a consistent predictive
+advantage over a competent LMS-analytics baseline, and the apparent synthetic
+advantage of the mastery block did not robustly transfer. This is an honest
+negative-to-mixed result on the DDD 2013J cohort. It is one of two OULAD
+courses examined; `exp_009` (§9) reports a second cohort, BBB 2013J, that
+qualifies it and shows the result is not uniform across courses.
+
+## 7. exp_007_xai_on_oulad — OULAD XAI and Regime-Sensitivity (DDD 2013J)
+
+### 7.1 What it was designed to test
+
+`exp_007_xai_on_oulad` applies the model-behavior explanation layer to the
+real OULAD model. It asks two questions: which features the OULAD model
+appears to rely on, and whether the resulting importance rankings are stable
+across evaluation regimes (student-grouped versus temporal-forward).
+
+### 7.2 Setup
+
+The same explanation methods used on the synthetic data are applied here:
+held-out permutation importance, model-native importance, and one-feature
+local perturbation; no SHAP. Explanations are produced for `B_lms_oulad`,
+`B_lms_plus_mastery_oulad`, and `C_twin_oulad` under both splits. Regime
+stability is quantified by the Kendall rank correlation (`tau`) of the global
+importance ranking between the two splits, together with Jaccard overlap of
+the top-5 feature sets.
+
+### 7.3 Key result
+
+The explanations lean on features that are themselves close to the target. The
+dominant feature is `assessment_submission_rate_due_to_date` for the LMS
+baseline (importance share `0.28`-`0.38`) and, once mastery is included, the
+co-circular `overall_mastery_proxy` (share `0.23`-`0.43`), which aggregates
+weighted assessment scores that partly feed the target. The genuinely
+exogenous signals — the registration-state flag `is_unregistered_by_week`
+(consistently ranked second to fourth, share `0.13`-`0.20`) and the VLE
+clickstream features (share `0.02`-`0.06`) — are present and interpretable but
+carry modest weight.
+
+The explanations are **regime-sensitive**. Comparing the global importance
+ranking across the two splits, agreement is moderate and below a
+high-stability threshold for every feature set: `tau = 0.79` for `B_lms_oulad`,
+`0.68` for `B_lms_plus_mastery_oulad`, and `0.55` for `C_twin_oulad` (mean
+`0.67`, none reaching `0.90`). Top-5 membership can nonetheless be stable —
+Jaccard overlap is `1.00` for the two mastery/twin sets and `0.67` for the LMS
+baseline — meaning the same few features dominate across regimes while their
+relative priority reorders, and the widest feature set (`C_twin_oulad`) is the
+least order-stable.
+
+### 7.4 Research consequence
+
+*Which* features the model appears to rely on, and in what order, depends on
+the evaluation scenario. This extends explanation-stability analysis to the
+public-benchmark transfer setting and dovetails with the predictive
+mixed-to-null result of §6: not only does the Twin representation fail to win
+on accuracy, its explanation is not regime-invariant either. These are
+model-behavior observations, not causal claims. The natural next question is
+whether the regime-sensitivity and the predictive heterogeneity are
+course-specific, which motivates the second-cohort replication in §9–§10.
+
+## 8. exp_008 — Synthetic Faithfulness Probe (Methods Appendix)
+
+### 8.1 What it was designed to test
+
+`exp_008` is a controlled faithfulness probe, not a headline result. It asks
+whether the model-behavior explanation machinery recovers a *known* ground
+truth when one exists. Because the synthetic generator defines `final_grade`
+as a closed-form weighted mean of behaviors, the final course week provides an
+oracle ordering of feature importance against which the explanation method can
+be checked.
+
+### 8.2 Setup
+
+At the final course week, the generator's weight ordering is treated as the
+oracle. Permutation importance is compared against this oracle by Kendall
+`tau`. The probe also inspects how proxy correlation and redundancy distort
+importance away from the underlying latent drivers.
+
+### 8.3 Key result
+
+At the final week, the importance ranking recovers the generator's weight
+ordering exactly: Kendall `tau = 1.0`. The probe simultaneously illustrates
+the distortions: `activity_score_to_date` takes an importance share of `0.108`
+as a latent-driven proxy rather than a direct cause, and `overall_mastery` is
+redundant with `avg_assignment_score_to_date` at Pearson `r = 0.994`. The
+probe therefore confirms that the method is faithful to ground truth when
+ground truth is known, while documenting how proxy structure and redundancy
+shape the importance picture.
+
+### 8.4 Research consequence
+
+This is a **methods appendix**, not primary evidence. It validates the
+explanation method's faithfulness on a controlled oracle and characterizes the
+proxy/redundancy effects that complicate interpretation on real data. It does
+not add to the predictive claims, which rest on the real OULAD and KU Leuven
+cohorts; the synthetic oracle exists only because the synthetic target is
+deterministic and circular.
+
+## 9. exp_009_oulad_full_ablation_bbb — Second-Cohort Ablation (BBB 2013J)
+
+### 9.1 What it was designed to test
+
+`exp_009` repeats the full nested ablation on a second OULAD
+module-presentation, BBB 2013J, to test whether the DDD 2013J mixed-to-null
+result is course-specific or robust across courses.
+
+### 9.2 Setup
+
+BBB 2013J comprises `2,237` students and `80,532` weekly snapshots, with a
+richer dated-assessment structure than DDD. The feature sets, splits,
+leakage-aware pipeline, and fixed-model gradient-boosting reporting are
+identical to `exp_006`, so the two cohorts are directly comparable.
+
+### 9.3 Key result
+
+The Twin-block value is **heterogeneous, not uniformly null**. Under the
+fixed-model comparison on BBB 2013J, the mastery block improves the
+temporal-forward split by `-1.026` RMSE (`5.284` versus `6.311`) — crossing
+the one-point threshold that no block crossed on DDD — and the full
+`C_twin_oulad` improves it by `-0.765`. On the student-grouped split, however,
+every block stays within `0.087` RMSE of the baseline (null, as on DDD), and
+the trend and composite-index blocks are null on both splits of both courses.
+Classification remains genuinely predictive (F1 `0.87`-`0.93`, never `1.000`).
+
+### 9.4 Research consequence
+
+The DDD null was **partly course-specific**: on a course with richer
+assessment structure the mastery block delivers a meaningful gain under
+forward-time evaluation, but the advantage does not generalize to the
+student-grouped split, to the other Twin blocks, or to the other course. The
+defensible cross-course statement is therefore one of heterogeneity — neither
+uniform null nor uniform benefit. This motivates a cross-cohort
+explanation-stability analysis (§10) to see whether the model's "why" is also
+course-dependent.
+
+## 10. exp_010_xai_on_oulad_bbb — BBB XAI and Cross-Cohort Stability
+
+### 10.1 What it was designed to test
+
+`exp_010` repeats the model-behavior XAI on BBB 2013J and adds a cross-cohort
+explanation-stability comparison: are the importance rankings shared between
+the two OULAD courses, or are they course-specific?
+
+### 10.2 Setup
+
+The same permutation/native/local methods (no SHAP) are applied to the BBB
+2013J model under both splits. Cross-cohort stability is quantified by the
+Kendall `tau` of the importance rankings of DDD versus BBB, per feature set and
+split, together with top-5 Jaccard overlap.
+
+### 10.3 Key result
+
+The importance topology is qualitatively **shared** across the two courses —
+`overall_mastery_proxy`, assessment-submission discipline, and the
+`is_unregistered_by_week` withdrawal flag dominate on both — but the rankings
+are **not stable**. The cross-cohort agreement (Kendall `tau` of DDD versus
+BBB) is `0.32`-`0.61` (mean `0.52`), lower than the within-cohort cross-split
+agreement of §7 (`0.55`-`0.79`, mean `0.67`), and no cell reaches a
+high-stability threshold; top-5 membership overlaps only partially (Jaccard
+`0.43`-`1.00`).
+
+### 10.4 Research consequence
+
+The model's "why" is not only regime-sensitive within a course but also partly
+course-specific across courses. This cross-cohort extension of the
+explanation-stability analysis tightens the cautionary message: both the
+feature-group predictive value and the explanations that accompany it depend on
+the course and the evaluation scenario. These remain model-behavior
+observations, not causal claims, and the evidence still spans only two courses
+from a single institution (OULAD), which motivates a second-institution check
+in §11.
+
+## 11. exp_011 — Second Institution (KU Leuven), Engagement-Only
+
+### 11.1 What it was designed to test
+
+`exp_011` adds a second institution, the KU Leuven de-identified
+learning-analytics dataset, to extend external validity beyond OULAD. It asks
+whether the project's representation-richness question survives a change of
+institution, and whether weekly engagement features predict `PASSED`.
+
+### 11.2 Setup
+
+The integration itself surfaces a structural finding: KU Leuven exposes raw
+clickstream, forum activity, and course structure, but **no intermediate
+scored assessments and no continuous grade** — only a binary `PASSED` outcome
+and categorical exam-session buckets. The mastery/assessment ablation
+therefore **cannot be reproduced on KU Leuven at all**; the question "does the
+mastery block help?" is unanswerable here because the data to construct it does
+not exist. This is itself a cross-institution heterogeneity result. What KU
+Leuven supports is an **engagement-only, classification-only** check on year
+1819 (two courses pooled, `1,495` students, weeks `2`–`15`, leakage-safe
+cumulative-to-date features under both splits): does a richer engagement
+representation (`B_engagement`) beat a minimal one (`A_simple_engagement`)?
+
+### 11.3 Key result
+
+Engagement predicts passing only **modestly** — best-model F1 `0.75`-`0.76`,
+ROC-AUC `0.65`-`0.72` — far below the assessment-driven OULAD numbers, as
+expected when no assessment signal is available (the two are different tasks
+and not directly comparable). The **richer** engagement set `B_engagement` is
+essentially level with the minimal `A_simple_engagement`: fixed-model F1 delta
+`-0.015` on the temporal-forward split and `+0.000` on the student-grouped
+split, with a small ROC-AUC gain of `+0.009`/`+0.041`. Permutation importance
+shows the signal is carried by basic engagement volume —
+`cumulative_active_days_to_date` and `cumulative_clicks_to_date` dominate both
+splits (the former takes a `0.456` share on the temporal-forward split) —
+while forum participation and temporal position contribute little.
+
+### 11.4 Research consequence
+
+The cross-institution statement is consistent with the OULAD finding and
+strengthens it: across three real cohorts spanning two institutions, adding a
+richer engineered feature representation does not robustly beat a simpler
+baseline. The honest limitation is that the cross-institution comparison is
+necessarily partial (KU Leuven cannot test mastery, and its engagement task is
+weaker and distinct from the OULAD assessment task), so this is evidence about
+the robustness of feature-richness claims, not a like-for-like institutional
+replication. This motivates a single matched three-institution synthesis (§12).
+
+## 12. exp_012 — Cross-Institution Engagement Robustness (Three Institutions)
+
+### 12.1 What it was designed to test
+
+`exp_012` consolidates the cross-institution evidence into a single **matched**
+comparison: an engagement-only, classification-only `PASSED` comparison across
+OULAD DDD 2013J, OULAD BBB 2013J, and KU Leuven 1819 at once, under an
+identical two-feature design. The matched constraint is imposed by KU Leuven's
+lack of assessment-score data: the mastery/Twin blocks are excluded by
+construction so the three institutions are directly comparable. It asks whether
+a richer engagement representation consistently beats a minimal two-feature
+baseline, and whether the importance drivers of `PASSED` transfer across
+institutions.
+
+### 12.2 Setup
+
+The minimal baseline is `A_simple_engagement` (cumulative clicks + cumulative
+active days); the richer set is `B_engagement`. Part A reports the fixed-model
+(gradient boosting) `B − A` F1 delta on both splits across all three cohorts.
+Part B aligns permutation-importance rankings onto seven shared engagement
+concepts and compares them pairwise across institutions by Kendall `tau`. The
+full synthesis is in `docs/experiments/exp_012_oulad_engagement.md`.
+
+### 12.3 Key result
+
+Part A is **neutral-to-modest with a split asymmetry**. The richer engagement
+set never decisively wins or loses on F1. The positive deltas concentrate on
+the `student_group` split — DDD `+0.072`, BBB `+0.039`, KU `+0.000` — while the
+stricter, early-warning-relevant `temporal_forward` split is essentially flat
+to slightly negative: DDD `-0.0003`, KU `-0.015`, and only modestly positive on
+BBB (`+0.026`). The full `temporal_forward` spread is therefore `-0.016` to
+`+0.026`. ROC-AUC rises slightly more consistently (all six cells positive,
+`+0.009` to `+0.041`). The honest reading is the opposite of an accuracy win:
+**a two-feature engagement baseline is hard to beat**, and the dominant
+`PASSED` signal is already captured by cumulative clicks plus active days.
+
+Part B is **partial transfer**. Aligning the seven shared engagement concepts
+and comparing pairwise yields a mean Kendall `tau` of `0.56` (student_group
+mean `0.49`, temporal_forward mean `0.62`), well below the `0.90` "stable
+everywhere" bar; the most stable pair is KU↔BBB (`tau = 0.714`) and the least
+is KU↔DDD on student_group (`tau = 0.238`). The verdict is
+`drivers_partly_institution_specific`: `cumulative_active_days_to_date` and
+`cumulative_clicks_to_date` recur as the top drivers across all three
+institutions and both splits (with the `#1` driver flipping between active-days
+and clicks by cohort and split), but the relative ordering of the mid- and
+lower-ranked concepts only partially transfers.
+
+### 12.4 Research consequence
+
+The result is a **robustness result, not an accuracy claim**: across three
+independent institutions, a minimal two-feature engagement baseline is hard to
+beat, and richer engagement features add neutral-to-modest F1 — positive mostly
+on the `student_group` split and approximately zero on the stricter
+`temporal_forward` early-warning split. The importance drivers transfer only
+partially (mean `tau` ≈ `0.56`): broad drivers recur, but the full ordering is
+partly institution-specific. This is a statement about gradient-boosting model
+behavior, not causal evidence, and it closes the cross-institution arc
+consistent with the project's broader honest, mixed-result posture: adding
+feature richness does not robustly improve prediction.
+
+## 13. Trajectory: From Circular Synthetic Artifact to Honest Real-Data Finding
+
+The synthetic experiments (`exp_001`–`exp_004`) form a clean internal
+methodological arc. `exp_001_baseline` finds that the full Twin representation
+does not reliably beat the LMS baseline; `exp_002_twin_ablation` identifies
+mastery as the only single-block extension that substantively improves
+`B_lms` on the primary split; `exp_003_mastery_validation` audits and
+carries forward the mastery block with an explicit redundancy caveat; and
+`exp_004_xai_on_lean_twin` explains the lean candidate and finds the
+explanations teacher-meaningful and not collapsed onto a single feature. The
+crucial reframing, however, is that this apparent "mastery win" is an
+**artifact of a circular target**: the synthetic `final_grade` is a
+deterministic, noise-free weighted mean of the same behaviors the features
+re-aggregate (week-10 reconstruction error `0.008`, correlation `1.000000`),
+so the synthetic R²≈0.99 and `passed` F1=1.000 are algebraic artifacts, not
+learnable signal. The synthetic arc is therefore best read as a controlled,
+cautionary demonstration of how a circular target can manufacture an apparent
+representation advantage — not as evidence that any Twin formulation predicts
+better.
+
+When the identical leakage-aware pipeline is applied to real, non-circular
+data, that apparent advantage **does not robustly transfer**. On OULAD — which
+must be read as **two distinct cohorts**, not one undifferentiated benchmark —
+the picture is heterogeneous. On DDD 2013J (`exp_006`) the full ablation is
+mixed-to-null: no Twin block beats the LMS baseline by more than `1.0` RMSE on
+either split, and the minimal `A_simple_oulad` is clearly worse, showing the
+LMS layer already carries the signal. On BBB 2013J (`exp_009`), a course with
+richer assessment structure, the mastery block does improve the
+temporal-forward split by `-1.026` RMSE — but the gain does not hold on the
+student-grouped split, on the other Twin blocks, or on the other course. The
+honest empirical finding is that engineered Twin value is **course- and
+split-dependent, not a robust improvement**. Throughout, the OULAD
+classification target is genuinely predictive (best-model F1 `0.83`–`0.93`,
+never `1.000`), which is exactly what makes the real-data result trustworthy
+where the synthetic one is not.
+
+The explanation layer follows the same trajectory from "interpretable" to
+"interpretable but unstable". On DDD (`exp_007`) the importance rankings are
+**regime-sensitive** across splits (Kendall `tau` `0.55`–`0.79`, mean `0.67`,
+none reaching `0.90`); on BBB versus DDD (`exp_010`) they are also partly
+**course-specific** (cross-cohort `tau` `0.32`–`0.61`, mean `0.52`). The
+controlled faithfulness probe (`exp_008`) confirms the method recovers a known
+oracle ordering exactly (`tau = 1.0`) when ground truth exists, which is what
+licenses these stability statements as method-faithful observations rather than
+noise.
+
+Extending beyond OULAD, the second institution (KU Leuven, `exp_011`) cannot
+even support the mastery ablation — its very absence of scored assessments is a
+cross-institution heterogeneity finding — and on the engagement-only task a
+richer engagement representation does not beat a minimal one (fixed-model F1
+delta `-0.015`/`+0.000`). The matched three-institution synthesis (`exp_012`)
+confirms the pattern decisively: across DDD, BBB, and KU Leuven, a two-feature
+engagement baseline (clicks + active-days) is hard to beat (richer features add
+neutral-to-modest F1, ≈0 on the stricter temporal-forward split), and the
+importance drivers transfer only partially (mean Kendall `tau` `0.56`,
+`drivers_partly_institution_specific`). Across three real cohorts and two
+institutions, the recurring result is that **adding feature richness does not
+robustly help**.
+
+The project's contribution, accordingly, is **methodological and cautionary,
+not a demonstration of accuracy, Digital Twin superiority, or simulation**. The
+"Digital Twin" here is a lean, time-aware weekly student-state representation,
+not a simulation or counterfactual engine. The substantive contributions are:
+(i) a reproducible, leakage-aware protocol for constructing, ablating, and
+explaining weekly student-state representations, reported with fixed-model
+comparisons to neutralize model-selection artifacts; (ii) an
+explanation-stability analysis showing that, on real data, importance rankings
+are regime-sensitive within a course and partly course-specific across courses;
+(iii) a cautionary synthetic-circularity demonstration of how a deterministic
+target can manufacture an apparent feature-group advantage that fragments on
+genuine data; and (iv) an honest mixed/negative real-data finding across two
+OULAD cohorts and a second institution. The arc therefore does not end on an
+"unresolved/complicates" verdict: it ends on a clear, defensible statement that
+engineered feature richness does not robustly improve prediction on real data,
+and that the value of both the representation and its explanations is course-
+and regime-dependent.
+
+## 14. Why XAI Was Introduced Only After Lean Validation
 
 The explanation phase was deliberately deferred until a representation had
 been identified that could be explained meaningfully. Producing explanations
@@ -407,7 +784,16 @@ experiment's configuration:
 
 The dissertation narrative inherits this same dependency chain.
 
-`exp_005_public_benchmark_oulad` is not an additional synthetic validation
-step in that chain. It is the external benchmark appended after the XAI phase
-to test whether the representation logic remains plausible outside the
-generator-controlled setting.
+`exp_005`–`exp_012` are not additional synthetic validation steps in that
+chain. They are the external phase appended after the synthetic XAI work to
+test whether the representation logic remains plausible outside the
+generator-controlled setting: a two-set OULAD transfer test (`exp_005`),
+full nested ablations and model-behavior XAI on two OULAD cohorts (`exp_006`/
+`exp_007` on DDD 2013J, `exp_009`/`exp_010` on BBB 2013J), a controlled
+faithfulness probe (`exp_008`), and an engagement-only check on a second
+institution consolidated into a matched three-institution synthesis
+(`exp_011`/`exp_012`). The dependency chain therefore runs synthetic
+lean-Twin validation → real-data ablation → real-data explanation-stability →
+cross-institution engagement robustness, and the controlling interpretation
+is the honest, course- and regime-dependent finding stated in §13, not the
+synthetic carry-forward.

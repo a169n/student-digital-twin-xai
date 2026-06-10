@@ -58,20 +58,27 @@ causal explanations.
 
 ## What did the OULAD benchmark show?
 
-OULAD showed mixed transfer evidence. On the primary student-grouped split,
-the mastery analogue was slightly worse than the OULAD LMS baseline
-(`+0.066` RMSE). On the secondary temporal-forward split, it improved RMSE by
-`-0.406`. This complicates the synthetic carry-forward claim. It does not
-confirm full external validity, and it does not invalidate the controlled
-synthetic finding.
+The early two-set OULAD probe (`exp_005`) showed mixed transfer evidence: on the
+primary student-grouped split the mastery analogue was slightly worse than the
+OULAD LMS baseline (`+0.066` RMSE), while on the secondary temporal-forward split
+it improved RMSE by `-0.406`. That `exp_005` "complicates" reading is **superseded**
+by the full nested ablations: on DDD 2013J (`exp_006`) the verdict is mixed-to-null
+(no Twin block beats `B_lms_oulad` by more than `1.0` RMSE on either split), and on
+BBB 2013J (`exp_009`) it is heterogeneous (mastery crosses the threshold on the
+temporal-forward split, `-1.026` RMSE, but is null on the student-grouped split).
+The current OULAD verdict is therefore heterogeneous-DDD-null/BBB-partial, not
+"complicates": engineered Twin value is course- and split-dependent. It does not
+confirm full external validity, and it does not invalidate the controlled synthetic
+finding.
 
 ## What are the current limitations?
 
 The main limitations are synthetic-data dependence, no local institutional
 validation, saturation of the synthetic `passed` target, redundancy of
-`overall_mastery`, non-causal XAI methods, absence of SHAP, and mixed OULAD
-transfer evidence. Intervention and scenario analysis remain future work and
-should not be presented as validated outcomes of the current experiment line.
+`overall_mastery`, non-causal XAI methods, absence of SHAP, and heterogeneous
+OULAD transfer evidence (DDD-null, BBB-partial). Intervention and scenario
+analysis remain future work and should not be presented as validated outcomes of
+the current experiment line.
 
 ## What is the most defensible final claim?
 
@@ -79,7 +86,10 @@ The defensible claim is that the repository implements a disciplined
 teacher-oriented Student Digital Twin + XAI research prototype, identifies a
 lean mastery-centered Twin subset as the best internal candidate under the
 current synthetic setup, validates and explains it with caveats, and records a
-mixed OULAD benchmark that leaves external transfer unresolved.
+heterogeneous real-data result across three institutions — DDD-null and
+BBB-partial under the full ablation, with importance drivers that transfer only
+partially (mean Kendall `tau` ≈ `0.56`). The honest external verdict is that
+feature-richness does not robustly help, not that transfer is "unresolved".
 
 ## Isn't your synthetic `final_grade` just a deterministic function of your own features, so the high accuracy is meaningless?
 
@@ -95,10 +105,82 @@ generator artifact.
 
 ## You claim mastery features help - but does that survive a fair comparison?
 
-It is split- and model-dependent. The `-0.206` win holds for gradient boosting
-on the student-grouped split only; a preliminary fixed-model re-analysis (to be
-confirmed by the fixed-model ablation table produced in the public-data phase)
-indicates mastery is approximately `+0.41` worse on the temporal-forward split,
-and that only `B_lms_plus_indices` improves on both splits. We report fixed-model
-tables for this reason and frame the
-real-data finding as a mixed/conditional result, not "the twin wins."
+It is split- and model-dependent. The `-0.206` synthetic win holds for gradient
+boosting on the student-grouped split only. The fixed-model ablation tables from
+the public-data phase confirm the real-data picture is mixed/conditional, not
+"the twin wins": on DDD 2013J (`exp_006`) no Twin block beats `B_lms_oulad` by
+more than `1.0` RMSE on either split (mixed-to-null), and on BBB 2013J (`exp_009`)
+mastery helps only on the temporal-forward split (`-1.026` RMSE) and is null on
+the student-grouped split. We report fixed-model tables for exactly this reason
+and frame the real-data finding as a heterogeneous, split-dependent result, not
+"the twin wins."
+
+## Isn't your synthetic accuracy meaningless given the circular target?
+
+Yes, and that is exactly the point of the chapter, not a flaw we are hiding.
+Synthetic `final_grade` is a deterministic, noise-free closed-form weighted mean
+of the same behaviors the features re-aggregate
+(`services/ml/src/generator/final_results.py:74-84`), with week-10 reconstruction
+error `0.008` and correlation `1.000000`. So the synthetic `R²≈0.99` and `passed`
+F1 `1.000` are algebraic artifacts, not learnable signal, and no empirical
+learning claim rests on them. The evidence is the real OULAD data, where the same
+pipeline yields classification F1 `0.83`–`0.93` and never `1.000`. That gap — a
+perfect synthetic score collapsing to a genuinely predictive but imperfect real
+score — is itself the demonstration that the synthetic "mastery advantage" was
+manufactured by the circular target. We use the synthetic case only as a
+controlled faithfulness probe with known ground truth (`exp_008`), not as a
+performance result.
+
+## Does the Twin actually help on real data?
+
+It is heterogeneous, not uniform — that is the honest two-cohort finding, and we
+deliberately treat OULAD as two distinct ablations rather than one. On DDD 2013J
+(`exp_006`, `67830` snapshots, `1938` students), under a fixed-model gradient
+boosting comparison, no Twin block beats the strong `B_lms_oulad` baseline by more
+than `1.0` RMSE on either split: the best move is mastery on temporal-forward
+(`9.561` → `9.180`, `-0.381`) but `+0.061` worse on the student-grouped split —
+essentially null. On BBB 2013J (`exp_009`, `80532` snapshots, `2237` students,
+richer dated-assessment structure), the mastery block does cross that threshold on
+temporal-forward, `-1.026` RMSE (`6.311` → `5.284`), with `C_twin_oulad` at
+`-0.765`; but on the student-grouped split every block stays within `0.087`
+(null, as on DDD), and the trend and index blocks are null on both splits of both
+courses. So engineered Twin value is course- and split-dependent: it can help when
+the assessment structure is rich and the evaluation is forward-in-time, but it
+does not generalize across splits, blocks, or courses. This is model-behavior on
+two OULAD cohorts, not a causal or universal claim.
+
+## Are the explanations stable across evaluation conditions?
+
+No — they are regime-sensitive, and we report that as a finding rather than
+suppress it. Within a single course (`exp_007` on DDD), the permutation-importance
+rankings differ between the student-grouped and temporal-forward splits: Kendall
+`tau` is `0.79` / `0.68` / `0.55` for `B_lms_oulad` /
+`B_lms_plus_mastery_oulad` / `C_twin_oulad` (mean `0.67`, none reaching `0.90`),
+even though top-5 membership can stay stable (Jaccard up to `1.0`) while the order
+reorders. Across courses (`exp_010`, DDD vs BBB) the rankings are even less stable
+— cross-cohort Kendall `tau` `0.32`–`0.61` (mean `0.52`), below the within-cohort
+`0.55`–`0.79` — though the topology is shared (`overall_mastery_proxy`,
+submission discipline, and `is_unregistered_by_week` dominate both courses). The
+model's "why" is therefore not invariant to the evaluation scenario or the course;
+this extends explanation-stability work (Tiukhova et al., 2024) to the transfer
+setting and is a directional model-behavior result, not a causal one.
+
+## Does anything hold beyond a single institution?
+
+We checked a second institution and then a matched three-institution comparison,
+and the consistent answer is that adding feature richness does not robustly help.
+KU Leuven (`exp_011`, Tiukhova et al. 2026; `1495` students) has no scored
+assessments and no continuous grade, so the mastery ablation literally cannot be
+built there — the research question itself is institution-dependent. On its
+engagement-only classification of `PASSED`, engagement predicts passing only
+modestly (F1 `0.75`–`0.76`, ROC-AUC `0.65`–`0.72`), and a richer engagement
+representation does not beat a minimal two-feature one (fixed-model F1 delta
+`-0.015` temporal / `+0.000` grouped). `exp_012` then folds DDD, BBB, and KU
+Leuven into one matched, engagement-only `PASSED` comparison: a two-feature
+baseline (cumulative clicks + cumulative active-days) is hard to beat (`B − A` F1
+positive only on the student_group split — DDD `+0.072`, BBB `+0.039`, KU `+0.000`
+— and flat-to-negative on temporal-forward), and the importance drivers transfer
+only partially (mean Kendall `tau` ≈ `0.56`, verdict
+`drivers_partly_institution_specific`, most stable KU↔BBB `0.71`, least KU↔DDD
+`0.24`). This is a robustness statement about gradient-boosting behavior, not an
+accuracy win or a like-for-like institutional replication.

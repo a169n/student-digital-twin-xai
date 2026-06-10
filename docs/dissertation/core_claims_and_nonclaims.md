@@ -58,6 +58,15 @@
   minimal one (fixed-model F1 delta `-0.015`/`+0.000`), so feature-richness again
   fails to help robustly. The mastery ablation cannot be built on KU Leuven at
   all (no intermediate assessments, no continuous grade).
+- Across three matched institutions (OULAD `DDD 2013J`, `BBB 2013J`, KU Leuven
+  `1819`, `exp_012`, engagement-only classification of `PASSED`), a minimal
+  two-feature engagement baseline (`cumulative_clicks_to_date` +
+  `cumulative_active_days_to_date`) is hard to beat: the fixed-model `B − A` F1
+  delta spans only `-0.016` to `+0.026` across the six cohort/split cells. Its
+  importance drivers transfer only partially — mean Kendall `tau` `0.56` over
+  seven shared concepts (verdict `drivers_partly_institution_specific`) — so
+  clicks and active days recur as top drivers while the mid/lower ordering is
+  institution-specific. This is a robustness finding, not an accuracy gain.
 - A controlled synthetic faithfulness probe (`exp_008`) on known ground truth
   shows that, at the final course week, permutation importance recovers the
   generator's weight ORDERING (Kendall `tau` `1.0`), and illustrates how proxy
@@ -104,6 +113,12 @@
   the mastery/Twin ablation and its task differs from OULAD, so its modest
   numbers must not be compared head-to-head with OULAD's assessment-driven
   results. Full external validity across institutions is not established.
+- It cannot claim that the three-institution engagement result (`exp_012`) is an
+  accuracy win, a causal finding, or a like-for-like institutional replication.
+  The comparison is engagement-only and classification-only (KU Leuven cannot
+  test mastery); the near-flat `B − A` deltas and the partial driver transfer
+  (mean Kendall `tau` `0.56`) describe model behavior and robustness, not a
+  performance advantage or a causal mechanism.
 - It cannot claim that the explanations are regime-invariant or that
   importance reflects causal mechanism. The OULAD rankings reorder across
   splits, and the methods describe model behavior, not causation.

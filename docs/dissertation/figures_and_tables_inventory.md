@@ -69,7 +69,95 @@ Source: [docs/experiments/exp_005_public_benchmark_oulad.md](../experiments/exp_
 - Secondary classification table for `passed_observed`.
 - Interpretation section recording the mixed transfer result.
 
-### 1.6 Cross-experiment progression
+### 1.6 OULAD DDD full ablation (exp_006_oulad_full_ablation)
+
+Source: [docs/experiments/exp_006_oulad_full_ablation.md](../experiments/exp_006_oulad_full_ablation.md)
+
+- Full nested A/B/C ablation summary on real OULAD `DDD` `2013J`
+  (67830 snapshots, 1938 students), ranked by RMSE for both the
+  student-grouped and temporal-forward splits.
+- The fixed-model re-analysis table in the summary that neutralizes the
+  model-flip artifact (mastery temporal Δ −0.381, grouped +0.061; index
+  block temporal −0.218; `C_twin_oulad` within ±0.025; `A_simple_oulad`
+  clearly worse).
+- The `passed` classification table (F1 0.83–0.887, never 1.000),
+  establishing the mixed-to-null real-data result that supersedes the
+  exp_005 "complicates" framing.
+
+### 1.7 OULAD DDD XAI and regime-sensitivity (exp_007_xai_on_oulad)
+
+Source: [docs/experiments/exp_007_xai_on_oulad.md](../experiments/exp_007_xai_on_oulad.md)
+
+- Global permutation-plus-native importance table per feature set
+  (`assessment_submission_rate_due_to_date` 0.28–0.38,
+  `overall_mastery_proxy` 0.23–0.43, `is_unregistered_by_week` 0.13–0.20,
+  VLE clickstream 0.02–0.06).
+- Importance-concentration summary and the cross-split explanation
+  stability table (Kendall τ `B_lms_oulad` 0.79,
+  `B_lms_plus_mastery_oulad` 0.68, `C_twin_oulad` 0.55; Jaccard top-5
+  1.00/1.00/0.67), establishing regime-sensitivity (none ≥ 0.90).
+
+### 1.8 Synthetic faithfulness probe (exp_008_faithfulness_probe)
+
+Source: [docs/experiments/exp_008_faithfulness_probe.md](../experiments/exp_008_faithfulness_probe.md)
+
+- Methods-appendix probe table: final-week oracle-ordering Kendall
+  τ = 1.0, `activity_score_to_date` share 0.108,
+  `overall_mastery`↔`avg_assignment_score_to_date` Pearson r 0.994.
+  This is a controlled faithfulness check, not a headline result.
+
+### 1.9 OULAD BBB full ablation (exp_009_oulad_ablation_bbb2013j)
+
+Source: [docs/experiments/exp_009_oulad_ablation_bbb2013j.md](../experiments/exp_009_oulad_ablation_bbb2013j.md)
+
+- Full nested A/B/C ablation summary on real OULAD `BBB` `2013J`
+  (2237 students, 80532 snapshots), ranked by RMSE for both splits.
+- The fixed-model re-analysis table showing the heterogeneous result:
+  mastery temporal-forward Δ −1.026 RMSE (5.284 vs 6.311), crossing the
+  1.0 threshold DDD never did; `C_twin_oulad` temporal Δ −0.765;
+  student-grouped every block within 0.087 (null, as DDD); trend and
+  index null on both splits.
+- The `passed` classification table (F1 0.87–0.93, never 1.000).
+
+### 1.10 OULAD BBB XAI and cross-cohort stability (exp_010_xai_on_oulad_bbb2013j)
+
+Source: [docs/experiments/exp_010_xai_on_oulad_bbb2013j.md](../experiments/exp_010_xai_on_oulad_bbb2013j.md)
+
+- Global importance table for the BBB cohort and the importance-
+  concentration summary.
+- Cross-cohort stability table (DDD vs BBB Kendall τ 0.32–0.61, mean
+  0.52, lower than within-cohort 0.55–0.79; Jaccard top-5 0.43–1.00),
+  showing shared topology but unstable rankings across courses.
+
+### 1.11 KU Leuven engagement-only PASSED (exp_011_kuleuven_engagement)
+
+Source: [docs/experiments/exp_011_kuleuven_engagement.md](../experiments/exp_011_kuleuven_engagement.md)
+
+- Engagement-only classification summary on KU Leuven 1819 (1495
+  students, 2 courses pooled, weeks 2–15): `A_simple_engagement` vs
+  `B_engagement`, fixed-model F1 0.75–0.76, ROC-AUC 0.65–0.72, with the
+  richer-versus-minimal deltas (F1 Δ −0.015 temporal / +0.000 grouped).
+- Engagement importance table (`cumulative_active_days_to_date` and
+  `cumulative_clicks_to_date` dominate; active-days 0.456 share
+  temporal). Mastery ablation cannot be built here — itself a cross-
+  institution heterogeneity finding.
+
+### 1.12 Cross-institution engagement synthesis (exp_012)
+
+Source: [docs/experiments/exp_012_oulad_engagement.md](../experiments/exp_012_oulad_engagement.md),
+with per-cohort writeups
+[docs/experiments/exp_012_oulad_engagement_ddd2013j.md](../experiments/exp_012_oulad_engagement_ddd2013j.md)
+and [docs/experiments/exp_012_oulad_engagement_bbb2013j.md](../experiments/exp_012_oulad_engagement_bbb2013j.md)
+
+- Part A matched 3-institution fixed-model `B − A` F1 table
+  (student_group DDD +0.072 / BBB +0.039 / KU +0.000; temporal_forward
+  spread −0.016 to +0.026; ROC-AUC all six cells positive).
+- Part B importance-rank stability table over 7 shared concepts (mean
+  Kendall τ 0.56; most stable KU↔BBB τ 0.714, least KU↔DDD student_group
+  τ 0.238; verdict `drivers_partly_institution_specific`). A robustness
+  result, not an accuracy claim.
+
+### 1.13 Cross-experiment progression
 
 Source: [experiment_progression_summary.md](experiment_progression_summary.md)
 and [docs/experiments/exp_001_vs_exp_002_comparison.md](../experiments/exp_001_vs_exp_002_comparison.md)
@@ -129,7 +217,81 @@ appendix material when the dissertation needs to refer to exact numbers.
 - `data/artifacts/experiments/exp_005_public_benchmark_oulad/public_vs_synthetic_interpretation.md`
 - `data/artifacts/experiments/exp_005_public_benchmark_oulad/experiment_metadata.json`
 
-### 2.6 Schema, data model, and realism artifacts
+### 2.6 exp_006_oulad_full_ablation
+
+- `data/artifacts/experiments/exp_006_oulad_full_ablation/exp_006_oulad_full_ablation_results.json`
+- `data/artifacts/experiments/exp_006_oulad_full_ablation/exp_006_oulad_full_ablation_results.csv`
+- `data/artifacts/experiments/exp_006_oulad_full_ablation/exp_006_oulad_full_ablation_summary.md` (includes the fixed-model re-analysis table)
+- `data/artifacts/experiments/exp_006_oulad_full_ablation/oulad_weekly_snapshots.csv`
+- `data/artifacts/experiments/exp_006_oulad_full_ablation/public_benchmark_mapping_summary.md`
+- `data/artifacts/experiments/exp_006_oulad_full_ablation/public_vs_synthetic_interpretation.md`
+- `data/artifacts/experiments/exp_006_oulad_full_ablation/experiment_metadata.json`
+
+### 2.7 exp_007_xai_on_oulad
+
+- `data/artifacts/experiments/exp_007_xai_on_oulad/exp_007_xai_on_oulad_results.json`
+- `data/artifacts/experiments/exp_007_xai_on_oulad/exp_007_xai_on_oulad_summary.md`
+- `data/artifacts/experiments/exp_007_xai_on_oulad/global_feature_importance.csv`
+- `data/artifacts/experiments/exp_007_xai_on_oulad/explanation_stability.json` (cross-split Kendall τ / Jaccard)
+- `data/artifacts/experiments/exp_007_xai_on_oulad/explanation_stability.md`
+- `data/artifacts/experiments/exp_007_xai_on_oulad/oulad_weekly_snapshots.csv`
+- `data/artifacts/experiments/exp_007_xai_on_oulad/experiment_metadata.json`
+
+### 2.8 exp_008_faithfulness_probe
+
+- `data/artifacts/experiments/exp_008_faithfulness_probe/exp_008_faithfulness_probe_results.json`
+- `data/artifacts/experiments/exp_008_faithfulness_probe/exp_008_faithfulness_probe_summary.md`
+- `data/artifacts/experiments/exp_008_faithfulness_probe/experiment_metadata.json`
+
+### 2.9 exp_009_oulad_ablation_bbb2013j
+
+- `data/artifacts/experiments/exp_009_oulad_ablation_bbb2013j/exp_009_oulad_ablation_bbb2013j_results.json`
+- `data/artifacts/experiments/exp_009_oulad_ablation_bbb2013j/exp_009_oulad_ablation_bbb2013j_results.csv`
+- `data/artifacts/experiments/exp_009_oulad_ablation_bbb2013j/exp_009_oulad_ablation_bbb2013j_summary.md` (includes the fixed-model re-analysis table, mastery temporal Δ −1.026)
+- `data/artifacts/experiments/exp_009_oulad_ablation_bbb2013j/oulad_weekly_snapshots.csv`
+- `data/artifacts/experiments/exp_009_oulad_ablation_bbb2013j/public_benchmark_mapping_summary.md`
+- `data/artifacts/experiments/exp_009_oulad_ablation_bbb2013j/public_vs_synthetic_interpretation.md`
+- `data/artifacts/experiments/exp_009_oulad_ablation_bbb2013j/experiment_metadata.json`
+
+### 2.10 exp_010_xai_on_oulad_bbb2013j
+
+- `data/artifacts/experiments/exp_010_xai_on_oulad_bbb2013j/exp_010_xai_on_oulad_bbb2013j_results.json`
+- `data/artifacts/experiments/exp_010_xai_on_oulad_bbb2013j/exp_010_xai_on_oulad_bbb2013j_summary.md`
+- `data/artifacts/experiments/exp_010_xai_on_oulad_bbb2013j/global_feature_importance.csv`
+- `data/artifacts/experiments/exp_010_xai_on_oulad_bbb2013j/cross_cohort_stability.json` (DDD vs BBB Kendall τ / Jaccard)
+- `data/artifacts/experiments/exp_010_xai_on_oulad_bbb2013j/cross_cohort_stability.md`
+- `data/artifacts/experiments/exp_010_xai_on_oulad_bbb2013j/oulad_weekly_snapshots.csv`
+- `data/artifacts/experiments/exp_010_xai_on_oulad_bbb2013j/experiment_metadata.json`
+
+### 2.11 exp_011_kuleuven_engagement
+
+- `data/artifacts/experiments/exp_011_kuleuven_engagement/exp_011_kuleuven_engagement_results.json`
+- `data/artifacts/experiments/exp_011_kuleuven_engagement/exp_011_kuleuven_engagement_results.csv`
+- `data/artifacts/experiments/exp_011_kuleuven_engagement/exp_011_kuleuven_engagement_summary.md`
+- `data/artifacts/experiments/exp_011_kuleuven_engagement/engagement_importance.csv`
+- `data/artifacts/experiments/exp_011_kuleuven_engagement/experiment_metadata.json`
+
+### 2.12 exp_012 cross-institution engagement (DDD + BBB + KU 1819)
+
+Per-cohort engagement artifacts:
+
+- `data/artifacts/experiments/exp_012_oulad_engagement_ddd2013j/exp_012_oulad_engagement_ddd2013j_results.json`
+- `data/artifacts/experiments/exp_012_oulad_engagement_ddd2013j/exp_012_oulad_engagement_ddd2013j_results.csv`
+- `data/artifacts/experiments/exp_012_oulad_engagement_ddd2013j/exp_012_oulad_engagement_ddd2013j_summary.md`
+- `data/artifacts/experiments/exp_012_oulad_engagement_ddd2013j/engagement_importance.csv`
+- `data/artifacts/experiments/exp_012_oulad_engagement_ddd2013j/experiment_metadata.json`
+- `data/artifacts/experiments/exp_012_oulad_engagement_bbb2013j/exp_012_oulad_engagement_bbb2013j_results.json`
+- `data/artifacts/experiments/exp_012_oulad_engagement_bbb2013j/exp_012_oulad_engagement_bbb2013j_results.csv`
+- `data/artifacts/experiments/exp_012_oulad_engagement_bbb2013j/exp_012_oulad_engagement_bbb2013j_summary.md`
+- `data/artifacts/experiments/exp_012_oulad_engagement_bbb2013j/engagement_importance.csv`
+- `data/artifacts/experiments/exp_012_oulad_engagement_bbb2013j/experiment_metadata.json`
+
+Cross-institution synthesis (Part A accuracy deltas, Part B importance-rank stability):
+
+- `data/artifacts/experiments/exp_012_cross_institution_engagement/cross_institution_engagement.json`
+- `data/artifacts/experiments/exp_012_cross_institution_engagement/cross_institution_engagement.md`
+
+### 2.13 Schema, data model, and realism artifacts
 
 - `packages/contracts/schema_versions/schema_v1.2.yaml` (active contract)
 - `docs/data_model/00_scope.md` through
@@ -155,6 +317,11 @@ experiment artifacts and writes outputs under `docs/dissertation/figures/`.
 | [exp_004_global_importance_comparison.svg](figures/exp_004_global_importance_comparison.svg) | `data/artifacts/experiments/exp_004_xai_on_lean_twin/global_feature_importance.csv` | Shows top global permutation importance shares for the LMS baseline and lean Twin model. |
 | [exp_005_oulad_rmse_comparison.svg](figures/exp_005_oulad_rmse_comparison.svg) | `data/artifacts/experiments/exp_005_public_benchmark_oulad/exp_005_public_benchmark_oulad_results.json` | Shows the mixed OULAD result across grouped and temporal-forward splits. |
 | [final_experiment_sequence.svg](figures/final_experiment_sequence.svg) | Dissertation synthesis files and experiment metadata | Shows the dependency chain from `exp_001` through `exp_005`. |
+
+> Note: SVG figure assets currently cover only `exp_001`–`exp_005`. Figure assets
+> for `exp_006`–`exp_012` are not yet generated; until they are, the
+> `exp_006`–`exp_012` tables and artifacts are indexed in §1 (Result Tables) and §2
+> (Artifact Files).
 
 ## 4. Generated Dissertation Tables
 
