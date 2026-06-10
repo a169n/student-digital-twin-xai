@@ -513,7 +513,13 @@ def run_xai_on_oulad(
     metadata_path = write_experiment_metadata(metadata, output_dir=output_dir)
 
     registry_path = experiment_docs_dir / "registry.md"
-    short_conclusion = _short_conclusion(all_records)
+    short_conclusion = _short_conclusion(
+        all_records,
+        cohort_label=(
+            f"{config.oulad.course_filter.code_module or ''} "
+            f"{config.oulad.course_filter.code_presentation or ''}".strip()
+        ),
+    )
     upsert_registry_entry(
         registry_path,
         RegistryEntry(
@@ -811,7 +817,7 @@ def _validate_feature_columns(
         raise ValueError(f"XAI feature columns missing in frame: {missing_by_set}")
 
 
-def _short_conclusion(records: list[dict[str, Any]]) -> str:
+def _short_conclusion(records: list[dict[str, Any]], cohort_label: str) -> str:
     """One-line summary of the XAI result for the registry."""
     tf_records = [r for r in records if r["split_strategy"] == "temporal_forward"]
     if not tf_records:
@@ -823,7 +829,7 @@ def _short_conclusion(records: list[dict[str, Any]]) -> str:
     if not unique_tops:
         return "XAI runner completed; concentration data unavailable."
     return (
-        f"Model-behavior explanations for OULAD DDD 2013J; "
+        f"Model-behavior explanations for OULAD {cohort_label}; "
         f"top driver(s) on temporal_forward: {', '.join(unique_tops[:3])}."
     )
 
