@@ -415,6 +415,7 @@ def build_activity_features(
 
     weekly_parts: list[pd.DataFrame] = []
     type_parts: list[pd.DataFrame] = []
+    day_parts: list[pd.DataFrame] = []
     selected_rows = 0
 
     for chunk in pd.read_csv(
@@ -453,6 +454,11 @@ def build_activity_features(
             :, list(KEY_COLUMNS) + ["activity_week", "activity_type"]
         ].drop_duplicates()
         type_parts.append(type_part)
+
+        day_part = chunk.loc[
+            :, list(KEY_COLUMNS) + ["activity_week", "date"]
+        ].drop_duplicates()
+        day_parts.append(day_part)
 
     if weekly_parts:
         weekly_clicks = pd.concat(weekly_parts, ignore_index=True)
@@ -514,6 +520,24 @@ def build_activity_features(
         .astype(int)
     )
 
+    if day_parts:
+        day_frame = pd.concat(day_parts, ignore_index=True).drop_duplicates()
+        day_counts = (
+            day_frame.groupby(list(KEY_COLUMNS) + ["activity_week"])
+            .size()
+            .rename("current_week_active_days")
+            .reset_index()
+            .rename(columns={"activity_week": "week_number"})
+        )
+        activity = activity.merge(day_counts, on=base_cols, how="left")
+    else:
+        activity["current_week_active_days"] = 0
+    activity["current_week_active_days"] = (
+        pd.to_numeric(activity["current_week_active_days"], errors="coerce")
+        .fillna(0)
+        .astype(int)
+    )
+
     activity = activity.sort_values(base_cols).reset_index(drop=True)
     group = activity.groupby(list(KEY_COLUMNS), sort=False)
     activity["cumulative_clicks_to_date"] = group["current_week_clicks"].cumsum()
@@ -521,6 +545,7 @@ def build_activity_features(
         current_col = f"current_week_{category}_clicks"
         cumulative_col = f"cumulative_{category}_clicks_to_date"
         activity[cumulative_col] = group[current_col].cumsum()
+    activity["cumulative_active_days_to_date"] = group["current_week_active_days"].cumsum()
     activity["has_vle_activity_to_date"] = (
         activity["cumulative_clicks_to_date"] > 0
     ).astype(int)
@@ -1120,6 +1145,15 @@ def _add_trend_and_index_features(snapshots: pd.DataFrame) -> pd.DataFrame:
         axis=1,
     ).fillna(0.0)
     out["engagement_index_oulad"] = eng.mean(axis=1)
+
+    out["content_click_ratio_to_date"] = (
+        _safe_divide(
+            out.get("cumulative_content_clicks_to_date", pd.Series(0.0, index=out.index)),
+            out.get("cumulative_clicks_to_date", pd.Series(0.0, index=out.index)),
+        )
+        .fillna(0.0)
+        .clip(0.0, 1.0)
+    )
     return out
 
 
@@ -1144,6 +1178,9 @@ def _finalize_snapshot_frame(snapshots: pd.DataFrame) -> pd.DataFrame:
         "engagement_index_oulad",
         "performance_index_oulad",
         "discipline_index_oulad",
+        "current_week_active_days",
+        "cumulative_active_days_to_date",
+        "content_click_ratio_to_date",
     ]
     for category in ACTIVITY_CATEGORIES:
         fill_zero.extend(
@@ -1181,6 +1218,8 @@ def _finalize_snapshot_frame(snapshots: pd.DataFrame) -> pd.DataFrame:
         "cumulative_content_clicks_to_date",
         "cumulative_social_clicks_to_date",
         "cumulative_other_clicks_to_date",
+        "cumulative_active_days_to_date",
+        "content_click_ratio_to_date",
         "overall_mastery_proxy",
         "current_assessment_cluster_mastery",
         "tma_mastery_to_date",

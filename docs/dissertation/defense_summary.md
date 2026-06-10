@@ -118,3 +118,34 @@ ablation cannot even be built. It does not prove Digital Twin superiority, full
 external validity, or causal intervention effects, and its external evidence
 spans two OULAD courses plus a partial, engagement-only check on a second
 institution.
+
+## Defense Q&A
+
+**Q: Does the engagement finding hold beyond one dataset or one institution?**
+
+Yes — and it holds as a *robustness* finding, not an accuracy win. `exp_012`
+folds the two OULAD cohorts (DDD 2013J, BBB 2013J) and KU Leuven 1819 into one
+**matched, engagement-only, classification-only** PASSED comparison under an
+identical two-feature design (the matched constraint is forced by KU Leuven's
+lack of assessment scores, so mastery/Twin blocks are excluded by construction).
+Across all three institutions, a richer engagement representation
+(`B_engagement`) adds only **neutral-to-modest** F1 over a minimal two-feature
+baseline (`A_simple_engagement` = cumulative clicks + cumulative active days),
+with a clear split asymmetry: the positive deltas sit on the `student_group`
+split (DDD `+0.072`, BBB `+0.039`, KU `+0.000`), while the stricter
+`temporal_forward` early-warning split is essentially flat to slightly negative
+(DDD `-0.0003`, KU `-0.015`, BBB `+0.026`). So a two-feature engagement baseline
+is hard to beat, and the dominant `PASSED` signal is already carried by clicks
+and active-days.
+
+The importance drivers transfer only **partially**: mean Kendall `tau` ≈ `0.56`
+across the seven shared engagement concepts (verdict
+`drivers_partly_institution_specific`, well below the `0.90` stability bar; most
+stable KU↔BBB at `0.71`, least KU↔DDD on student_group at `0.24`). The leading
+concepts — `cumulative_active_days_to_date` and `cumulative_clicks_to_date` —
+recur everywhere (the `#1` driver flips between the two by cohort/split), but the
+mid- and lower-ranked ordering is partly institution-specific. This is a
+statement about gradient-boosting model behaviour, not a causal claim, and it is
+consistent with the project's broader honest posture: adding feature richness
+does not robustly improve prediction. See
+[../experiments/exp_012_oulad_engagement.md](../experiments/exp_012_oulad_engagement.md).

@@ -29,6 +29,8 @@ maintained as a concise research history, not as a full MLOps system.
 | exp_009_oulad_ablation_bbb2013j | Second-cohort full A/B/C ablation on OULAD (BBB 2013J) | completed | external_oulad_adapter_v1 | OULAD BBB 2013J | final_weighted_score | [exp_009_oulad_ablation_bbb2013j](../../data/artifacts/experiments/exp_009_oulad_ablation_bbb2013j) | [exp_009_oulad_ablation_bbb2013j.md](exp_009_oulad_ablation_bbb2013j.md) | `C_twin_oulad` improved over `B_lms_oulad` on OULAD. |
 | exp_010_xai_on_oulad_bbb2013j | Second-cohort OULAD model-behavior XAI (BBB 2013J) | completed | external_oulad_adapter_v1 | OULAD BBB 2013J | final_weighted_score | [exp_010_xai_on_oulad_bbb2013j](../../data/artifacts/experiments/exp_010_xai_on_oulad_bbb2013j) | [exp_010_xai_on_oulad_bbb2013j.md](exp_010_xai_on_oulad_bbb2013j.md) | Model-behavior explanations for OULAD DDD 2013J; top driver(s) on temporal_forward: cumulative_submitted_weight_to_date, overall_mastery_proxy. |
 | exp_011_kuleuven_engagement | Third-institution engagement-only PASSED classification on KU Leuven (1819) | completed | ku_leuven_engagement_v1 | local KU Leuven dataset files; academic year 1819 | passed (classification only) | [exp_011_kuleuven_engagement](../../data/artifacts/experiments/exp_011_kuleuven_engagement) | [exp_011_kuleuven_engagement.md](exp_011_kuleuven_engagement.md) | `B_engagement` was approximately level with `A_simple_engagement` (delta F1 = -0.015). |
+| exp_012_oulad_engagement_bbb2013j | Matched engagement-only PASSED classification on OULAD (BBB 2013J) | completed | external_oulad_adapter_v1 | local OULAD CSV files; BBB 2013J engagement-only subset | passed (classification only) | [exp_012_oulad_engagement_bbb2013j](../../data/artifacts/experiments/exp_012_oulad_engagement_bbb2013j) | [exp_012_oulad_engagement_bbb2013j.md](exp_012_oulad_engagement_bbb2013j.md) | `B_engagement_oulad` improved F1 by +0.026 over `A_simple_engagement_oulad` on the primary split. |
+| exp_012_oulad_engagement_ddd2013j | Matched engagement-only PASSED classification on OULAD (DDD 2013J) | completed | external_oulad_adapter_v1 | local OULAD CSV files; DDD 2013J engagement-only subset | passed (classification only) | [exp_012_oulad_engagement_ddd2013j](../../data/artifacts/experiments/exp_012_oulad_engagement_ddd2013j) | [exp_012_oulad_engagement_ddd2013j.md](exp_012_oulad_engagement_ddd2013j.md) | `B_engagement_oulad` was approximately level with `A_simple_engagement_oulad` (delta F1 = -0.000). |
 <!-- experiment-registry:end -->
 
 ## Comparison Notes
@@ -40,3 +42,16 @@ an unexamined full feature set.
 
 See [exp_001_vs_exp_002_comparison.md](exp_001_vs_exp_002_comparison.md) for
 the compact comparison summary.
+
+`exp_012` is a three-institution engagement-only PASSED-classification synthesis
+that folds the two matched OULAD cohorts (DDD 2013J, BBB 2013J) and the KU Leuven
+1819 run (exp_011) into one robustness check answering exp_011's next-step
+question. Headline: richer engagement (B) over the minimal click/active-days
+baseline (A) is neutral-to-modest across all three institutions and both splits
+(fixed-model ΔF1 ranges -0.016 to +0.072, larger on `student_group`, flat-to-slightly-negative
+on the early-warning `temporal_forward` split), and the permutation-importance
+drivers of PASSED prediction transfer only PARTIALLY across institutions
+(mean Kendall τ ≈ 0.556 → `drivers_partly_institution_specific`), with cumulative
+active-days and clicks the stable leading concepts everywhere. See
+[exp_012_oulad_engagement.md](exp_012_oulad_engagement.md) and the
+`exp_012_cross_institution_engagement/` artifacts.

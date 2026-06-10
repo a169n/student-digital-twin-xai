@@ -296,6 +296,61 @@ distinct from the OULAD assessment task), so this is evidence about the
 robustness of feature-richness claims, not a like-for-like institutional
 replication.
 
+## 5f. Cross-Institution Engagement Robustness (Three Institutions)
+
+To consolidate the cross-institution evidence into a single matched comparison,
+`exp_012` runs an **engagement-only, classification-only** PASSED comparison
+across all three real cohorts at once — OULAD DDD 2013J, OULAD BBB 2013J, and
+KU Leuven 1819 — under an identical two-feature design. The matched constraint
+is imposed by KU Leuven's lack of assessment-score data (Section 5e): the
+mastery/Twin blocks are excluded by construction so the three institutions are
+directly comparable. The question is narrow and robustness-oriented: does a
+richer engagement representation (`B_engagement`) consistently beat a minimal
+two-feature baseline (`A_simple_engagement` = cumulative clicks + cumulative
+active days), and do the importance drivers of `PASSED` transfer across
+institutions? Part A reports the fixed-model (gradient boosting) `B − A` F1
+delta on both splits; Part B reports the cross-institution importance-rank
+stability. See `docs/experiments/exp_012_oulad_engagement.md` for the full
+synthesis.
+
+Part A is **neutral-to-modest with a split asymmetry**. The richer engagement
+set never decisively wins or loses on F1. The positive deltas concentrate on
+the `student_group` split — DDD `+0.072`, BBB `+0.039`, KU `+0.000` — while the
+stricter, early-warning-relevant `temporal_forward` split (train on early weeks,
+predict forward) is essentially flat to slightly negative: DDD `-0.0003`, KU
+`-0.015`, and only modestly positive on BBB (`+0.026`). The full
+`temporal_forward` spread is therefore `-0.016` to `+0.026` and the
+`student_group` spread runs up to `+0.072`. ROC-AUC rises slightly more
+consistently (all six cells positive, `+0.009` to `+0.041`), indicating the
+richer set improves ranking/calibration more than thresholded F1. The honest
+reading is the opposite of an accuracy win: **a two-feature engagement baseline
+is hard to beat**, and the dominant `PASSED` signal is already captured by
+cumulative clicks plus active days.
+
+Part B is **partial transfer**. Aligning permutation-importance rankings onto
+seven shared engagement concepts and comparing pairwise yields a mean Kendall
+`tau` of `0.56` (student_group mean `0.49`, temporal_forward mean `0.62`), well
+below the `0.90` "stable everywhere" bar; the most stable pair is
+KU↔BBB (`tau = 0.714`) and the least is KU↔DDD on student_group (`tau = 0.238`).
+The verdict is `drivers_partly_institution_specific`. The leading concepts —
+`cumulative_active_days_to_date` and `cumulative_clicks_to_date` (the minimal
+`A_simple` baseline's two features, plus current-week clicks) — recur as the top
+drivers across all three institutions and both splits, with the `#1` driver
+flipping between active-days and clicks by cohort and split. But the relative
+ordering of the mid- and lower-ranked concepts (content clicks, content ratio,
+forum/social, week) only partially transfers.
+
+The defensible statement is a **robustness result, not an accuracy claim**:
+across three independent institutions, a minimal two-feature engagement baseline
+is hard to beat, and richer engagement features add neutral-to-modest F1 —
+positive mostly on the `student_group` split and approximately zero on the
+stricter `temporal_forward` early-warning split. The importance drivers transfer
+only partially (mean `tau` ≈ `0.56`): broad drivers (clicks, active-days) recur,
+but the full ordering is partly institution-specific. This is a statement about
+gradient-boosting model behaviour, not causal evidence, and it is consistent
+with the project's broader honest, mixed-result posture (Sections 5b–5e):
+adding feature richness does not robustly improve prediction.
+
 ## 6. The Resulting Contribution Is a Methodology + an Honest Real-Data Finding
 
 The project's resulting contribution, on the basis of the eleven
@@ -341,6 +396,14 @@ institutional validation. Specifically, the project produces:
   `0.75`-`0.76`), and a richer engagement representation does not beat a minimal
   one (fixed-model F1 delta `-0.015`/`+0.000`) — reinforcing that
   feature-richness does not robustly help across institutions;
+- a matched three-institution engagement-only robustness synthesis (`exp_012`,
+  OULAD DDD 2013J + BBB 2013J + KU Leuven 1819) showing that a richer engagement
+  set adds only neutral-to-modest F1 over a two-feature click/active-days
+  baseline — positive on the `student_group` split (up to `+0.072`) but ≈0 on
+  the stricter `temporal_forward` early-warning split — and that the importance
+  drivers transfer only partially (mean Kendall `tau` ≈ `0.56`,
+  `drivers_partly_institution_specific`, with clicks/active-days the recurring
+  leading concepts);
 - a versioned experiment governance layer with frozen configurations,
   metadata, machine-readable artifacts, per-experiment writeups, and a
   cumulative registry.

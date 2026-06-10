@@ -1,0 +1,467 @@
+{
+  "run_name": "exp_012_oulad_engagement_ddd2013j",
+  "note": "OULAD engagement-only benchmark (matched design with KU Leuven exp_011). Classification (PASSED) only. Regression intentionally omitted (engagement-only matched design). final_grade is a placeholder equal to float(passed). cumulative_social_clicks_to_date (forum/social clicks) is the OULAD analog of KU Leuven forum posts; cross-institution comparison uses ranks, not magnitudes.",
+  "rows": [
+    {
+      "feature_set": "A_simple_engagement_oulad",
+      "model": "logistic_regression",
+      "target": "passed",
+      "task": "classification",
+      "split_strategy": "student_group",
+      "n_train_rows": 50890,
+      "n_test_rows": 16940,
+      "n_train_students": 1454,
+      "n_test_students": 484,
+      "metric_accuracy": 0.7573199527744983,
+      "metric_precision": 0.7656124578584043,
+      "metric_recall": 0.642722371967655,
+      "metric_f1": 0.6988057733167266,
+      "metric_roc_auc": 0.8617107409001337,
+      "split_metadata_json": "{\"row_counts\": {\"test\": 16940, \"train\": 50890, \"validation\": 0}, \"seed\": 42, \"student_counts\": {\"test\": 484, \"train\": 1454, \"validation\": 0}}",
+      "metrics": {
+        "accuracy": 0.7573199527744983,
+        "precision": 0.7656124578584043,
+        "recall": 0.642722371967655,
+        "f1": 0.6988057733167266,
+        "roc_auc": 0.8617107409001337
+      },
+      "split_metadata": {
+        "seed": 42,
+        "student_counts": {
+          "train": 1454,
+          "test": 484,
+          "validation": 0
+        },
+        "row_counts": {
+          "train": 50890,
+          "test": 16940,
+          "validation": 0
+        }
+      }
+    },
+    {
+      "feature_set": "A_simple_engagement_oulad",
+      "model": "random_forest",
+      "target": "passed",
+      "task": "classification",
+      "split_strategy": "student_group",
+      "n_train_rows": 50890,
+      "n_test_rows": 16940,
+      "n_train_students": 1454,
+      "n_test_students": 484,
+      "metric_accuracy": 0.6902597402597402,
+      "metric_precision": 0.6079912533545373,
+      "metric_recall": 0.8243935309973046,
+      "metric_f1": 0.6998455465934443,
+      "metric_roc_auc": 0.7903324891277265,
+      "split_metadata_json": "{\"row_counts\": {\"test\": 16940, \"train\": 50890, \"validation\": 0}, \"seed\": 42, \"student_counts\": {\"test\": 484, \"train\": 1454, \"validation\": 0}}",
+      "metrics": {
+        "accuracy": 0.6902597402597402,
+        "precision": 0.6079912533545373,
+        "recall": 0.8243935309973046,
+        "f1": 0.6998455465934443,
+        "roc_auc": 0.7903324891277265
+      },
+      "split_metadata": {
+        "seed": 42,
+        "student_counts": {
+          "train": 1454,
+          "test": 484,
+          "validation": 0
+        },
+        "row_counts": {
+          "train": 50890,
+          "test": 16940,
+          "validation": 0
+        }
+      }
+    },
+    {
+      "feature_set": "A_simple_engagement_oulad",
+      "model": "gradient_boosting",
+      "target": "passed",
+      "task": "classification",
+      "split_strategy": "student_group",
+      "n_train_rows": 50890,
+      "n_test_rows": 16940,
+      "n_train_students": 1454,
+      "n_test_students": 484,
+      "metric_accuracy": 0.7655844155844156,
+      "metric_precision": 0.7296577440404848,
+      "metric_recall": 0.7384097035040431,
+      "metric_f1": 0.7340076361444169,
+      "metric_roc_auc": 0.8601734184239734,
+      "split_metadata_json": "{\"row_counts\": {\"test\": 16940, \"train\": 50890, \"validation\": 0}, \"seed\": 42, \"student_counts\": {\"test\": 484, \"train\": 1454, \"validation\": 0}}",
+      "metrics": {
+        "accuracy": 0.7655844155844156,
+        "precision": 0.7296577440404848,
+        "recall": 0.7384097035040431,
+        "f1": 0.7340076361444169,
+        "roc_auc": 0.8601734184239734
+      },
+      "split_metadata": {
+        "seed": 42,
+        "student_counts": {
+          "train": 1454,
+          "test": 484,
+          "validation": 0
+        },
+        "row_counts": {
+          "train": 50890,
+          "test": 16940,
+          "validation": 0
+        }
+      }
+    },
+    {
+      "feature_set": "A_simple_engagement_oulad",
+      "model": "logistic_regression",
+      "target": "passed",
+      "task": "classification",
+      "split_strategy": "temporal_forward",
+      "n_train_rows": 24718,
+      "n_test_rows": 8712,
+      "n_train_students": 1454,
+      "n_test_students": 484,
+      "metric_accuracy": 0.7984389348025712,
+      "metric_precision": 0.6997672614429791,
+      "metric_recall": 0.9454926624737946,
+      "metric_f1": 0.804279982166741,
+      "metric_roc_auc": 0.9100182645996903,
+      "split_metadata_json": "{\"held_out_students\": 484, \"student_seed\": 42, \"student_test_size\": 0.25, \"test_rows\": 8712, \"train_rows\": 24718, \"train_weeks\": 20}",
+      "metrics": {
+        "accuracy": 0.7984389348025712,
+        "precision": 0.6997672614429791,
+        "recall": 0.9454926624737946,
+        "f1": 0.804279982166741,
+        "roc_auc": 0.9100182645996903
+      },
+      "split_metadata": {
+        "train_weeks": 20,
+        "student_test_size": 0.25,
+        "student_seed": 42,
+        "held_out_students": 484,
+        "train_rows": 24718,
+        "test_rows": 8712
+      }
+    },
+    {
+      "feature_set": "A_simple_engagement_oulad",
+      "model": "random_forest",
+      "target": "passed",
+      "task": "classification",
+      "split_strategy": "temporal_forward",
+      "n_train_rows": 24718,
+      "n_test_rows": 8712,
+      "n_train_students": 1454,
+      "n_test_students": 484,
+      "metric_accuracy": 0.7176308539944903,
+      "metric_precision": 0.6218109953287819,
+      "metric_recall": 0.9069706498951782,
+      "metric_f1": 0.7377957791515668,
+      "metric_roc_auc": 0.812377483094915,
+      "split_metadata_json": "{\"held_out_students\": 484, \"student_seed\": 42, \"student_test_size\": 0.25, \"test_rows\": 8712, \"train_rows\": 24718, \"train_weeks\": 20}",
+      "metrics": {
+        "accuracy": 0.7176308539944903,
+        "precision": 0.6218109953287819,
+        "recall": 0.9069706498951782,
+        "f1": 0.7377957791515668,
+        "roc_auc": 0.812377483094915
+      },
+      "split_metadata": {
+        "train_weeks": 20,
+        "student_test_size": 0.25,
+        "student_seed": 42,
+        "held_out_students": 484,
+        "train_rows": 24718,
+        "test_rows": 8712
+      }
+    },
+    {
+      "feature_set": "A_simple_engagement_oulad",
+      "model": "gradient_boosting",
+      "target": "passed",
+      "task": "classification",
+      "split_strategy": "temporal_forward",
+      "n_train_rows": 24718,
+      "n_test_rows": 8712,
+      "n_train_students": 1454,
+      "n_test_students": 484,
+      "metric_accuracy": 0.7743342516069789,
+      "metric_precision": 0.667390517553384,
+      "metric_recall": 0.9664570230607966,
+      "metric_f1": 0.7895525583386855,
+      "metric_roc_auc": 0.892860813088338,
+      "split_metadata_json": "{\"held_out_students\": 484, \"student_seed\": 42, \"student_test_size\": 0.25, \"test_rows\": 8712, \"train_rows\": 24718, \"train_weeks\": 20}",
+      "metrics": {
+        "accuracy": 0.7743342516069789,
+        "precision": 0.667390517553384,
+        "recall": 0.9664570230607966,
+        "f1": 0.7895525583386855,
+        "roc_auc": 0.892860813088338
+      },
+      "split_metadata": {
+        "train_weeks": 20,
+        "student_test_size": 0.25,
+        "student_seed": 42,
+        "held_out_students": 484,
+        "train_rows": 24718,
+        "test_rows": 8712
+      }
+    },
+    {
+      "feature_set": "B_engagement_oulad",
+      "model": "logistic_regression",
+      "target": "passed",
+      "task": "classification",
+      "split_strategy": "student_group",
+      "n_train_rows": 50890,
+      "n_test_rows": 16940,
+      "n_train_students": 1454,
+      "n_test_students": 484,
+      "metric_accuracy": 0.7964580873671783,
+      "metric_precision": 0.787492762015055,
+      "metric_recall": 0.7331536388140162,
+      "metric_f1": 0.7593523171412618,
+      "metric_roc_auc": 0.8876473419556502,
+      "split_metadata_json": "{\"row_counts\": {\"test\": 16940, \"train\": 50890, \"validation\": 0}, \"seed\": 42, \"student_counts\": {\"test\": 484, \"train\": 1454, \"validation\": 0}}",
+      "metrics": {
+        "accuracy": 0.7964580873671783,
+        "precision": 0.787492762015055,
+        "recall": 0.7331536388140162,
+        "f1": 0.7593523171412618,
+        "roc_auc": 0.8876473419556502
+      },
+      "split_metadata": {
+        "seed": 42,
+        "student_counts": {
+          "train": 1454,
+          "test": 484,
+          "validation": 0
+        },
+        "row_counts": {
+          "train": 50890,
+          "test": 16940,
+          "validation": 0
+        }
+      }
+    },
+    {
+      "feature_set": "B_engagement_oulad",
+      "model": "random_forest",
+      "target": "passed",
+      "task": "classification",
+      "split_strategy": "student_group",
+      "n_train_rows": 50890,
+      "n_test_rows": 16940,
+      "n_train_students": 1454,
+      "n_test_students": 484,
+      "metric_accuracy": 0.7968713105076741,
+      "metric_precision": 0.7319034852546917,
+      "metric_recall": 0.8462264150943396,
+      "metric_f1": 0.7849240577536096,
+      "metric_roc_auc": 0.8775720571247365,
+      "split_metadata_json": "{\"row_counts\": {\"test\": 16940, \"train\": 50890, \"validation\": 0}, \"seed\": 42, \"student_counts\": {\"test\": 484, \"train\": 1454, \"validation\": 0}}",
+      "metrics": {
+        "accuracy": 0.7968713105076741,
+        "precision": 0.7319034852546917,
+        "recall": 0.8462264150943396,
+        "f1": 0.7849240577536096,
+        "roc_auc": 0.8775720571247365
+      },
+      "split_metadata": {
+        "seed": 42,
+        "student_counts": {
+          "train": 1454,
+          "test": 484,
+          "validation": 0
+        },
+        "row_counts": {
+          "train": 50890,
+          "test": 16940,
+          "validation": 0
+        }
+      }
+    },
+    {
+      "feature_set": "B_engagement_oulad",
+      "model": "gradient_boosting",
+      "target": "passed",
+      "task": "classification",
+      "split_strategy": "student_group",
+      "n_train_rows": 50890,
+      "n_test_rows": 16940,
+      "n_train_students": 1454,
+      "n_test_students": 484,
+      "metric_accuracy": 0.8201889020070838,
+      "metric_precision": 0.7645137880986937,
+      "metric_recall": 0.8518867924528302,
+      "metric_f1": 0.8058388577256502,
+      "metric_roc_auc": 0.8997391503771319,
+      "split_metadata_json": "{\"row_counts\": {\"test\": 16940, \"train\": 50890, \"validation\": 0}, \"seed\": 42, \"student_counts\": {\"test\": 484, \"train\": 1454, \"validation\": 0}}",
+      "metrics": {
+        "accuracy": 0.8201889020070838,
+        "precision": 0.7645137880986937,
+        "recall": 0.8518867924528302,
+        "f1": 0.8058388577256502,
+        "roc_auc": 0.8997391503771319
+      },
+      "split_metadata": {
+        "seed": 42,
+        "student_counts": {
+          "train": 1454,
+          "test": 484,
+          "validation": 0
+        },
+        "row_counts": {
+          "train": 50890,
+          "test": 16940,
+          "validation": 0
+        }
+      }
+    },
+    {
+      "feature_set": "B_engagement_oulad",
+      "model": "logistic_regression",
+      "target": "passed",
+      "task": "classification",
+      "split_strategy": "temporal_forward",
+      "n_train_rows": 24718,
+      "n_test_rows": 8712,
+      "n_train_students": 1454,
+      "n_test_students": 484,
+      "metric_accuracy": 0.8277089072543617,
+      "metric_precision": 0.8385492834162036,
+      "metric_recall": 0.7513102725366876,
+      "metric_f1": 0.7925362819626814,
+      "metric_roc_auc": 0.9156734179957797,
+      "split_metadata_json": "{\"held_out_students\": 484, \"student_seed\": 42, \"student_test_size\": 0.25, \"test_rows\": 8712, \"train_rows\": 24718, \"train_weeks\": 20}",
+      "metrics": {
+        "accuracy": 0.8277089072543617,
+        "precision": 0.8385492834162036,
+        "recall": 0.7513102725366876,
+        "f1": 0.7925362819626814,
+        "roc_auc": 0.9156734179957797
+      },
+      "split_metadata": {
+        "train_weeks": 20,
+        "student_test_size": 0.25,
+        "student_seed": 42,
+        "held_out_students": 484,
+        "train_rows": 24718,
+        "test_rows": 8712
+      }
+    },
+    {
+      "feature_set": "B_engagement_oulad",
+      "model": "random_forest",
+      "target": "passed",
+      "task": "classification",
+      "split_strategy": "temporal_forward",
+      "n_train_rows": 24718,
+      "n_test_rows": 8712,
+      "n_train_students": 1454,
+      "n_test_students": 484,
+      "metric_accuracy": 0.7995867768595041,
+      "metric_precision": 0.7668901495616297,
+      "metric_recall": 0.7793501048218029,
+      "metric_f1": 0.7730699246165843,
+      "metric_roc_auc": 0.8896711451439415,
+      "split_metadata_json": "{\"held_out_students\": 484, \"student_seed\": 42, \"student_test_size\": 0.25, \"test_rows\": 8712, \"train_rows\": 24718, \"train_weeks\": 20}",
+      "metrics": {
+        "accuracy": 0.7995867768595041,
+        "precision": 0.7668901495616297,
+        "recall": 0.7793501048218029,
+        "f1": 0.7730699246165843,
+        "roc_auc": 0.8896711451439415
+      },
+      "split_metadata": {
+        "train_weeks": 20,
+        "student_test_size": 0.25,
+        "student_seed": 42,
+        "held_out_students": 484,
+        "train_rows": 24718,
+        "test_rows": 8712
+      }
+    },
+    {
+      "feature_set": "B_engagement_oulad",
+      "model": "gradient_boosting",
+      "target": "passed",
+      "task": "classification",
+      "split_strategy": "temporal_forward",
+      "n_train_rows": 24718,
+      "n_test_rows": 8712,
+      "n_train_students": 1454,
+      "n_test_students": 484,
+      "metric_accuracy": 0.8259871441689624,
+      "metric_precision": 0.8406398104265402,
+      "metric_recall": 0.7437106918238994,
+      "metric_f1": 0.789210233592881,
+      "metric_roc_auc": 0.9136827457660213,
+      "split_metadata_json": "{\"held_out_students\": 484, \"student_seed\": 42, \"student_test_size\": 0.25, \"test_rows\": 8712, \"train_rows\": 24718, \"train_weeks\": 20}",
+      "metrics": {
+        "accuracy": 0.8259871441689624,
+        "precision": 0.8406398104265402,
+        "recall": 0.7437106918238994,
+        "f1": 0.789210233592881,
+        "roc_auc": 0.9136827457660213
+      },
+      "split_metadata": {
+        "train_weeks": 20,
+        "student_test_size": 0.25,
+        "student_seed": 42,
+        "held_out_students": 484,
+        "train_rows": 24718,
+        "test_rows": 8712
+      }
+    }
+  ],
+  "metadata": {
+    "target": "passed",
+    "row_counts": {
+      "assessments": 7,
+      "courses": 1,
+      "student_info": 1938,
+      "student_registration": 1938,
+      "vle": 462,
+      "student_assessment": 7936,
+      "student_vle": 680806,
+      "snapshots": 67830,
+      "students": 1938
+    },
+    "target_summary": {
+      "n_snapshot_rows": 67830,
+      "n_students": 1938,
+      "n_student_course_presentations": 1938,
+      "week_min": 4,
+      "week_max": 38,
+      "final_weighted_score": {
+        "count": 1938,
+        "mean": 36.17997291021672,
+        "std": 32.589972122319644,
+        "min": 0.0,
+        "median": 33.0125,
+        "max": 98.075
+      },
+      "passed_observed_counts": {
+        "0.0": 1109,
+        "1.0": 829
+      },
+      "final_result_counts": {
+        "Distinction": 98,
+        "Fail": 428,
+        "Pass": 731,
+        "Withdrawn": 681
+      },
+      "target_weight_coverage": {
+        "mean": 0.5371452528379773,
+        "min": 0.0,
+        "median": 0.5
+      },
+      "n_passed": 829,
+      "n_failed": 1109,
+      "passed_rate_student_level": 0.4278
+    }
+  }
+}

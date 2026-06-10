@@ -1,0 +1,375 @@
+{
+  "artifacts": {
+    "documentation": "docs/experiments/exp_012_oulad_engagement_ddd2013j.md",
+    "engagement_importance_csv": "data/artifacts/experiments/exp_012_oulad_engagement_ddd2013j/engagement_importance.csv",
+    "results_csv": "data/artifacts/experiments/exp_012_oulad_engagement_ddd2013j/exp_012_oulad_engagement_ddd2013j_results.csv",
+    "results_json": "data/artifacts/experiments/exp_012_oulad_engagement_ddd2013j/exp_012_oulad_engagement_ddd2013j_results.json",
+    "results_markdown": "data/artifacts/experiments/exp_012_oulad_engagement_ddd2013j/exp_012_oulad_engagement_ddd2013j_summary.md"
+  },
+  "config_path": "services/ml/configs/experiments/exp_012_oulad_engagement_ddd2013j.yaml",
+  "created_at": "2026-06-10T17:00:48Z",
+  "dataset": {
+    "course_filter": {
+      "code_module": "DDD",
+      "code_presentation": "2013J"
+    },
+    "dataset_config_name": "local OULAD CSV files; DDD 2013J engagement-only subset",
+    "dataset_version": "OULAD",
+    "raw_dir": "datasets/oulad",
+    "row_counts": {
+      "assessments": 7,
+      "courses": 1,
+      "snapshots": 67830,
+      "student_assessment": 7936,
+      "student_info": 1938,
+      "student_registration": 1938,
+      "student_vle": 680806,
+      "students": 1938,
+      "vle": 462
+    },
+    "source": "OULAD (DDD 2013J)"
+  },
+  "diagnostics": {
+    "classification_best_by_feature_set": [
+      {
+        "accuracy": 0.7984389348025712,
+        "f1": 0.804279982166741,
+        "feature_set": "A_simple_engagement_oulad",
+        "model": "logistic_regression",
+        "n_test_rows": 8712,
+        "n_train_rows": 24718,
+        "roc_auc": 0.9100182645996903,
+        "split_strategy": "temporal_forward"
+      },
+      {
+        "accuracy": 0.8277089072543617,
+        "f1": 0.7925362819626814,
+        "feature_set": "B_engagement_oulad",
+        "model": "logistic_regression",
+        "n_test_rows": 8712,
+        "n_train_rows": 24718,
+        "roc_auc": 0.9156734179957797,
+        "split_strategy": "temporal_forward"
+      },
+      {
+        "accuracy": 0.7655844155844156,
+        "f1": 0.7340076361444169,
+        "feature_set": "A_simple_engagement_oulad",
+        "model": "gradient_boosting",
+        "n_test_rows": 16940,
+        "n_train_rows": 50890,
+        "roc_auc": 0.8601734184239734,
+        "split_strategy": "student_group"
+      },
+      {
+        "accuracy": 0.8201889020070838,
+        "f1": 0.8058388577256502,
+        "feature_set": "B_engagement_oulad",
+        "model": "gradient_boosting",
+        "n_test_rows": 16940,
+        "n_train_rows": 50890,
+        "roc_auc": 0.8997391503771319,
+        "split_strategy": "student_group"
+      }
+    ],
+    "classification_fixed_model_by_feature_set": [
+      {
+        "accuracy": 0.7743342516069789,
+        "delta_auc": 0.0,
+        "delta_f1": 0.0,
+        "f1": 0.7895525583386855,
+        "feature_set": "A_simple_engagement_oulad",
+        "model": "gradient_boosting",
+        "n_test_rows": 8712,
+        "n_train_rows": 24718,
+        "roc_auc": 0.892860813088338,
+        "split_strategy": "temporal_forward"
+      },
+      {
+        "accuracy": 0.8259871441689624,
+        "delta_auc": 0.0208,
+        "delta_f1": -0.0003,
+        "f1": 0.789210233592881,
+        "feature_set": "B_engagement_oulad",
+        "model": "gradient_boosting",
+        "n_test_rows": 8712,
+        "n_train_rows": 24718,
+        "roc_auc": 0.9136827457660213,
+        "split_strategy": "temporal_forward"
+      },
+      {
+        "accuracy": 0.7655844155844156,
+        "delta_auc": 0.0,
+        "delta_f1": 0.0,
+        "f1": 0.7340076361444169,
+        "feature_set": "A_simple_engagement_oulad",
+        "model": "gradient_boosting",
+        "n_test_rows": 16940,
+        "n_train_rows": 50890,
+        "roc_auc": 0.8601734184239734,
+        "split_strategy": "student_group"
+      },
+      {
+        "accuracy": 0.8201889020070838,
+        "delta_auc": 0.0396,
+        "delta_f1": 0.0718,
+        "f1": 0.8058388577256502,
+        "feature_set": "B_engagement_oulad",
+        "model": "gradient_boosting",
+        "n_test_rows": 16940,
+        "n_train_rows": 50890,
+        "roc_auc": 0.8997391503771319,
+        "split_strategy": "student_group"
+      }
+    ],
+    "experiment_id": "exp_012_oulad_engagement_ddd2013j",
+    "fixed_model": "gradient_boosting",
+    "interpretation": {
+      "interpretation": "Richer engagement features provide negligible additional F1 lift over the minimal baseline on OULAD. The dominant PASSED signal is already captured by cumulative clicks and active days; the additional features do not materially shift classification accuracy.",
+      "outcome": "engagement_richness_neutral",
+      "primary_delta_f1": -0.0003,
+      "short_conclusion": "`B_engagement_oulad` was approximately level with `A_simple_engagement_oulad` (delta F1 = -0.000)."
+    },
+    "permutation_importance": {
+      "student_group": {
+        "features": [
+          {
+            "feature": "cumulative_active_days_to_date",
+            "mean_importance": 0.260285,
+            "rank": 1,
+            "share_of_positive": 0.5941,
+            "std_importance": 0.00191
+          },
+          {
+            "feature": "current_week_clicks",
+            "mean_importance": 0.089543,
+            "rank": 2,
+            "share_of_positive": 0.2044,
+            "std_importance": 0.00142
+          },
+          {
+            "feature": "cumulative_clicks_to_date",
+            "mean_importance": 0.046999,
+            "rank": 3,
+            "share_of_positive": 0.1073,
+            "std_importance": 0.002115
+          },
+          {
+            "feature": "cumulative_social_clicks_to_date",
+            "mean_importance": 0.029239,
+            "rank": 4,
+            "share_of_positive": 0.0667,
+            "std_importance": 0.001252
+          },
+          {
+            "feature": "week_number",
+            "mean_importance": 0.007322,
+            "rank": 5,
+            "share_of_positive": 0.0167,
+            "std_importance": 0.000455
+          },
+          {
+            "feature": "cumulative_content_clicks_to_date",
+            "mean_importance": 0.004183,
+            "rank": 6,
+            "share_of_positive": 0.0095,
+            "std_importance": 0.000538
+          },
+          {
+            "feature": "content_click_ratio_to_date",
+            "mean_importance": 0.000537,
+            "rank": 7,
+            "share_of_positive": 0.0012,
+            "std_importance": 0.000385
+          },
+          {
+            "feature": "has_vle_activity_to_date",
+            "mean_importance": 0.0,
+            "rank": 8,
+            "share_of_positive": 0.0,
+            "std_importance": 0.0
+          }
+        ],
+        "model": "gradient_boosting",
+        "n_features": 8,
+        "n_repeats": 15,
+        "positive_importance_sum": 0.438108,
+        "scoring": "roc_auc",
+        "top1_share": 0.5941,
+        "top3_share": 0.9058
+      },
+      "temporal_forward": {
+        "features": [
+          {
+            "feature": "cumulative_active_days_to_date",
+            "mean_importance": 0.171946,
+            "rank": 1,
+            "share_of_positive": 0.4601,
+            "std_importance": 0.003025
+          },
+          {
+            "feature": "current_week_clicks",
+            "mean_importance": 0.133792,
+            "rank": 2,
+            "share_of_positive": 0.358,
+            "std_importance": 0.004551
+          },
+          {
+            "feature": "cumulative_clicks_to_date",
+            "mean_importance": 0.044351,
+            "rank": 3,
+            "share_of_positive": 0.1187,
+            "std_importance": 0.00272
+          },
+          {
+            "feature": "cumulative_content_clicks_to_date",
+            "mean_importance": 0.014582,
+            "rank": 4,
+            "share_of_positive": 0.039,
+            "std_importance": 0.001393
+          },
+          {
+            "feature": "cumulative_social_clicks_to_date",
+            "mean_importance": 0.009019,
+            "rank": 5,
+            "share_of_positive": 0.0241,
+            "std_importance": 0.001132
+          },
+          {
+            "feature": "has_vle_activity_to_date",
+            "mean_importance": 0.0,
+            "rank": 6,
+            "share_of_positive": 0.0,
+            "std_importance": 0.0
+          },
+          {
+            "feature": "week_number",
+            "mean_importance": 0.0,
+            "rank": 7,
+            "share_of_positive": 0.0,
+            "std_importance": 0.0
+          },
+          {
+            "feature": "content_click_ratio_to_date",
+            "mean_importance": -0.001655,
+            "rank": 8,
+            "share_of_positive": 0.0,
+            "std_importance": 0.000589
+          }
+        ],
+        "model": "gradient_boosting",
+        "n_features": 8,
+        "n_repeats": 15,
+        "positive_importance_sum": 0.373691,
+        "scoring": "roc_auc",
+        "top1_share": 0.4601,
+        "top3_share": 0.9368
+      }
+    },
+    "primary_split": "temporal_forward",
+    "primary_target": "passed",
+    "row_counts": {
+      "assessments": 7,
+      "courses": 1,
+      "snapshots": 67830,
+      "student_assessment": 7936,
+      "student_info": 1938,
+      "student_registration": 1938,
+      "student_vle": 680806,
+      "students": 1938,
+      "vle": 462
+    },
+    "target_summary": {
+      "final_result_counts": {
+        "Distinction": 98,
+        "Fail": 428,
+        "Pass": 731,
+        "Withdrawn": 681
+      },
+      "final_weighted_score": {
+        "count": 1938,
+        "max": 98.075,
+        "mean": 36.17997291021672,
+        "median": 33.0125,
+        "min": 0.0,
+        "std": 32.589972122319644
+      },
+      "n_failed": 1109,
+      "n_passed": 829,
+      "n_snapshot_rows": 67830,
+      "n_student_course_presentations": 1938,
+      "n_students": 1938,
+      "passed_observed_counts": {
+        "0.0": 1109,
+        "1.0": 829
+      },
+      "passed_rate_student_level": 0.4278,
+      "target_weight_coverage": {
+        "mean": 0.5371452528379773,
+        "median": 0.5,
+        "min": 0.0
+      },
+      "week_max": 38,
+      "week_min": 4
+    }
+  },
+  "experiment_id": "exp_012_oulad_engagement_ddd2013j",
+  "feature_sets": [
+    {
+      "columns": [
+        "cumulative_clicks_to_date",
+        "cumulative_active_days_to_date"
+      ],
+      "description": "Minimal OULAD engagement baseline matched to KU Leuven A_simple_engagement: cumulative click volume and cumulative active days only. Has-VLE-activity indicator added for leakage-safe missingness handling.\n",
+      "indicator_columns": [
+        "has_vle_activity_to_date"
+      ],
+      "name": "A_simple_engagement_oulad"
+    },
+    {
+      "columns": [
+        "cumulative_clicks_to_date",
+        "cumulative_active_days_to_date",
+        "current_week_clicks",
+        "cumulative_content_clicks_to_date",
+        "cumulative_social_clicks_to_date",
+        "content_click_ratio_to_date",
+        "week_number"
+      ],
+      "description": "Rich OULAD engagement feature set matched to KU Leuven B_engagement: total click volume, active days, current-week clicks, content-type click split (content vs social/forum), content focus ratio, and the raw week counter. Session features are omitted because OULAD VLE logs are daily, not session-resolved. cumulative_social_clicks_to_date is the OULAD analog of KU Leuven forum posts. This is the candidate feature set characterising WHICH engagement dimensions drive PASSED prediction.\n",
+      "indicator_columns": [
+        "has_vle_activity_to_date"
+      ],
+      "name": "B_engagement_oulad"
+    }
+  ],
+  "models": {
+    "classification": [
+      "logistic_regression",
+      "random_forest",
+      "gradient_boosting"
+    ],
+    "regression": "NOT APPLICABLE \u2014 final_grade is a placeholder"
+  },
+  "output_directory": "data/artifacts/experiments/exp_012_oulad_engagement_ddd2013j",
+  "parent_experiment": "exp_011_kuleuven_engagement",
+  "schema_version": "external_oulad_adapter_v1",
+  "seed": 42,
+  "split_strategies": {
+    "student_group": {
+      "seed": 42,
+      "test_size": 0.25
+    },
+    "temporal_forward": {
+      "student_seed": 42,
+      "student_test_size": 0.25,
+      "train_weeks": 20
+    }
+  },
+  "status": "completed",
+  "targets": {
+    "note": "Classification only. final_grade is a placeholder = float(passed). Regression intentionally omitted (engagement-only matched design). cumulative_social_clicks_to_date (forum/social clicks) is the OULAD analog of KU Leuven forum posts; cross-institution comparison uses ranks, not magnitudes.",
+    "primary": "passed"
+  },
+  "title": "Matched engagement-only PASSED classification on OULAD (DDD 2013J)"
+}

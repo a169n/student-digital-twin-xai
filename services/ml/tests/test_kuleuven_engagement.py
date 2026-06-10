@@ -125,7 +125,7 @@ def test_split_masks_leakage_safe() -> None:
     # so we need to bypass the model_validator path check. Instead we
     # instantiate the config directly without the full outputs block and
     # call build_split directly.
-    from src.experiments.run_engagement_benchmark_kuleuven import (
+    from src.experiments.engagement_benchmark import (
         SplitsConfig,
         StudentGroupSplitConfig,
         TemporalForwardSplitConfig,
@@ -142,7 +142,7 @@ def test_split_masks_leakage_safe() -> None:
     frame = _make_tiny_frame()
 
     # Build a minimal feature set for the tiny frame
-    from src.experiments.run_engagement_benchmark_kuleuven import BenchmarkFeatureSet
+    from src.experiments.engagement_benchmark import BenchmarkFeatureSet
     tiny_fs = BenchmarkFeatureSet(
         name="A_simple_engagement",
         description="test",

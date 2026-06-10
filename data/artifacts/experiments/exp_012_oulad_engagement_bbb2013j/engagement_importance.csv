@@ -1,0 +1,17 @@
+split_strategy,feature,mean_importance,std_importance,rank,share_of_positive
+student_group,cumulative_clicks_to_date,0.150052,0.002778,1,0.4518
+student_group,cumulative_active_days_to_date,0.07496,0.002427,2,0.2257
+student_group,current_week_clicks,0.052504,0.001602,3,0.1581
+student_group,content_click_ratio_to_date,0.025762,0.000863,4,0.0776
+student_group,cumulative_social_clicks_to_date,0.017295,0.000923,5,0.0521
+student_group,week_number,0.010103,0.000522,6,0.0304
+student_group,cumulative_content_clicks_to_date,0.001433,0.000275,7,0.0043
+student_group,has_vle_activity_to_date,0.0,0.0,8,0.0
+temporal_forward,current_week_clicks,0.095033,0.002052,1,0.3849
+temporal_forward,cumulative_active_days_to_date,0.058237,0.002571,2,0.2359
+temporal_forward,cumulative_clicks_to_date,0.054099,0.002595,3,0.2191
+temporal_forward,content_click_ratio_to_date,0.025777,0.001486,4,0.1044
+temporal_forward,cumulative_content_clicks_to_date,0.006931,0.000405,5,0.0281
+temporal_forward,cumulative_social_clicks_to_date,0.006847,0.000697,6,0.0277
+temporal_forward,has_vle_activity_to_date,0.0,0.0,7,0.0
+temporal_forward,week_number,0.0,0.0,8,0.0

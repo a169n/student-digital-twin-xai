@@ -1,0 +1,229 @@
+{
+  "institutions": {
+    "OULAD_DDD": "oulad",
+    "OULAD_BBB": "oulad",
+    "KU_Leuven": "ku_leuven"
+  },
+  "fixed_model": "gradient_boosting",
+  "baseline_key_by_inst": {
+    "OULAD_DDD": "A_simple_engagement_oulad",
+    "OULAD_BBB": "A_simple_engagement_oulad",
+    "KU_Leuven": "A_simple_engagement"
+  },
+  "candidate_key_by_inst": {
+    "OULAD_DDD": "B_engagement_oulad",
+    "OULAD_BBB": "B_engagement_oulad",
+    "KU_Leuven": "B_engagement"
+  },
+  "part_a_delta_table": [
+    {
+      "institution": "KU_Leuven",
+      "split": "student_group",
+      "baseline_feature_set": "A_simple_engagement",
+      "candidate_feature_set": "B_engagement",
+      "a_f1": 0.7535744322960471,
+      "b_f1": 0.7536571094207138,
+      "delta_f1": 8.267712466669686e-05,
+      "a_roc_auc": 0.6598409415481377,
+      "b_roc_auc": 0.7005197664522085,
+      "delta_roc_auc": 0.04067882490407082
+    },
+    {
+      "institution": "KU_Leuven",
+      "split": "temporal_forward",
+      "baseline_feature_set": "A_simple_engagement",
+      "candidate_feature_set": "B_engagement",
+      "a_f1": 0.7566938300349243,
+      "b_f1": 0.7411461687057308,
+      "delta_f1": -0.015547661329193496,
+      "a_roc_auc": 0.6927149336640223,
+      "b_roc_auc": 0.7020117383253774,
+      "delta_roc_auc": 0.009296804661355185
+    },
+    {
+      "institution": "OULAD_BBB",
+      "split": "student_group",
+      "baseline_feature_set": "A_simple_engagement_oulad",
+      "candidate_feature_set": "B_engagement_oulad",
+      "a_f1": 0.7726947478891381,
+      "b_f1": 0.8119996046258773,
+      "delta_f1": 0.039304856736739224,
+      "a_roc_auc": 0.8499232994424584,
+      "b_roc_auc": 0.884314323029178,
+      "delta_roc_auc": 0.03439102358671964
+    },
+    {
+      "institution": "OULAD_BBB",
+      "split": "temporal_forward",
+      "baseline_feature_set": "A_simple_engagement_oulad",
+      "candidate_feature_set": "B_engagement_oulad",
+      "a_f1": 0.7873078829945463,
+      "b_f1": 0.8130796443254613,
+      "delta_f1": 0.025771761330914966,
+      "a_roc_auc": 0.8746459453134959,
+      "b_roc_auc": 0.8983207458664472,
+      "delta_roc_auc": 0.023674800552951236
+    },
+    {
+      "institution": "OULAD_DDD",
+      "split": "student_group",
+      "baseline_feature_set": "A_simple_engagement_oulad",
+      "candidate_feature_set": "B_engagement_oulad",
+      "a_f1": 0.7340076361444169,
+      "b_f1": 0.8058388577256502,
+      "delta_f1": 0.07183122158123334,
+      "a_roc_auc": 0.8601734184239734,
+      "b_roc_auc": 0.8997391503771319,
+      "delta_roc_auc": 0.03956573195315849
+    },
+    {
+      "institution": "OULAD_DDD",
+      "split": "temporal_forward",
+      "baseline_feature_set": "A_simple_engagement_oulad",
+      "candidate_feature_set": "B_engagement_oulad",
+      "a_f1": 0.7895525583386855,
+      "b_f1": 0.789210233592881,
+      "delta_f1": -0.0003423247458045342,
+      "a_roc_auc": 0.892860813088338,
+      "b_roc_auc": 0.9136827457660213,
+      "delta_roc_auc": 0.020821932677683286
+    }
+  ],
+  "part_b_importance_stability": {
+    "per_split": {
+      "student_group": {
+        "aligned_rankings": {
+          "OULAD_DDD": [
+            "active_days",
+            "current_clicks",
+            "total_clicks",
+            "forum_engagement",
+            "week",
+            "content_clicks",
+            "content_ratio"
+          ],
+          "OULAD_BBB": [
+            "total_clicks",
+            "active_days",
+            "current_clicks",
+            "content_ratio",
+            "forum_engagement",
+            "week",
+            "content_clicks"
+          ],
+          "KU_Leuven": [
+            "total_clicks",
+            "active_days",
+            "current_clicks",
+            "content_ratio",
+            "content_clicks",
+            "week",
+            "forum_engagement"
+          ]
+        },
+        "pairs": [
+          {
+            "pair": [
+              "KU_Leuven",
+              "OULAD_BBB"
+            ],
+            "kendall_tau": 0.7142857142857143,
+            "jaccard_topk": 0.6666666666666666,
+            "n_shared_concepts": 7,
+            "top_k": 5
+          },
+          {
+            "pair": [
+              "KU_Leuven",
+              "OULAD_DDD"
+            ],
+            "kendall_tau": 0.23809523809523814,
+            "jaccard_topk": 0.42857142857142855,
+            "n_shared_concepts": 7,
+            "top_k": 5
+          },
+          {
+            "pair": [
+              "OULAD_BBB",
+              "OULAD_DDD"
+            ],
+            "kendall_tau": 0.5238095238095238,
+            "jaccard_topk": 0.6666666666666666,
+            "n_shared_concepts": 7,
+            "top_k": 5
+          }
+        ],
+        "mean_kendall_tau": 0.4920634920634921
+      },
+      "temporal_forward": {
+        "aligned_rankings": {
+          "OULAD_DDD": [
+            "active_days",
+            "current_clicks",
+            "total_clicks",
+            "content_clicks",
+            "forum_engagement",
+            "week",
+            "content_ratio"
+          ],
+          "OULAD_BBB": [
+            "current_clicks",
+            "active_days",
+            "total_clicks",
+            "content_ratio",
+            "content_clicks",
+            "forum_engagement",
+            "week"
+          ],
+          "KU_Leuven": [
+            "active_days",
+            "total_clicks",
+            "current_clicks",
+            "content_ratio",
+            "forum_engagement",
+            "content_clicks",
+            "week"
+          ]
+        },
+        "pairs": [
+          {
+            "pair": [
+              "KU_Leuven",
+              "OULAD_BBB"
+            ],
+            "kendall_tau": 0.7142857142857143,
+            "jaccard_topk": 0.6666666666666666,
+            "n_shared_concepts": 7,
+            "top_k": 5
+          },
+          {
+            "pair": [
+              "KU_Leuven",
+              "OULAD_DDD"
+            ],
+            "kendall_tau": 0.5238095238095238,
+            "jaccard_topk": 0.6666666666666666,
+            "n_shared_concepts": 7,
+            "top_k": 5
+          },
+          {
+            "pair": [
+              "OULAD_BBB",
+              "OULAD_DDD"
+            ],
+            "kendall_tau": 0.6190476190476191,
+            "jaccard_topk": 0.6666666666666666,
+            "n_shared_concepts": 7,
+            "top_k": 5
+          }
+        ],
+        "mean_kendall_tau": 0.6190476190476191
+      }
+    },
+    "top_k": 5,
+    "stable_tau_threshold": 0.9,
+    "mean_kendall_tau": 0.5555555555555556,
+    "all_stable": false,
+    "verdict": "drivers_partly_institution_specific"
+  }
+}
