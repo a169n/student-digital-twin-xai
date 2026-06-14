@@ -44,3 +44,10 @@ data/application/
 
 # Logs
 *.log
+
+# Build caches / review-scratch (Next.js custom distDir from automated reviews)
+.next-review/
+.next-rev-*/
+*.tsbuildinfo
+# Playwright MCP scratch
+.playwright-mcp/
