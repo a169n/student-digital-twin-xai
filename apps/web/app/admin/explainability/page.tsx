@@ -2,6 +2,12 @@ import Link from "next/link";
 
 import { PlatformUnavailableNotice } from "@/components/common/platform-unavailable";
 import { ExplanationPanel } from "@/components/student/explanation-panel";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle
+} from "@/components/ui/card";
 import { formatNumber } from "@/lib/platform/format";
 import {
   tryLoadExplanationCases,
@@ -67,7 +73,8 @@ export default async function AdminExplainabilityPage() {
           </p>
         </div>
 
-        <div className="panel">
+        <Card>
+          <CardContent>
           <dl className="metric-list">
             <div>
               <dt>XAI method</dt>
@@ -116,17 +123,22 @@ export default async function AdminExplainabilityPage() {
             These numbers describe model behavior on this cohort. They do not imply that
             the top feature causally drives student outcomes.
           </p>
-        </div>
+          </CardContent>
+        </Card>
 
         {xai.recommendation && (
-          <div className="panel panel--caveat" style={{ marginTop: "var(--space-4, 1rem)" }}>
-            <h3>Recommendation</h3>
-            <p>{xai.recommendation.decisionText}</p>
-            <p className="muted">Outcome: {xai.recommendation.outcome}</p>
-            {xai.recommendation.flags.length > 0 && (
-              <p className="caveat">Flags: {xai.recommendation.flags.join("; ")}.</p>
-            )}
-          </div>
+          <Card className="panel--caveat mt-4">
+            <CardHeader>
+              <CardTitle>Recommendation</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-2">
+              <p>{xai.recommendation.decisionText}</p>
+              <p className="muted">Outcome: {xai.recommendation.outcome}</p>
+              {xai.recommendation.flags.length > 0 && (
+                <p className="caveat">Flags: {xai.recommendation.flags.join("; ")}.</p>
+              )}
+            </CardContent>
+          </Card>
         )}
       </section>
 

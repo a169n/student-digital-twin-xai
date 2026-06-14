@@ -1,3 +1,11 @@
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from "@/components/ui/card";
 import { formatNumber, formatSigned } from "@/lib/platform/format";
 import type { ExplanationContribution, ExplanationSummary } from "@/lib/platform/types";
 
@@ -41,18 +49,20 @@ export function ExplanationPanel({ explanation }: { explanation: ExplanationSumm
   const scale = Math.max(...allContribs.map((item) => item.absContribution), 1);
 
   return (
-    <div className="explanation-panel">
-      <header className="explanation-panel__header">
-        <span className="explanation-panel__case-tag">{explanation.caseTypeLabel}</span>
-        <h3>Local model-behavior explanation · week {explanation.weekNumber}</h3>
-        <p className="muted">
+    <Card className="explanation-panel">
+      <CardHeader>
+        <Badge variant="secondary" className="mb-1">
+          {explanation.caseTypeLabel}
+        </Badge>
+        <CardTitle>Local model-behavior explanation · week {explanation.weekNumber}</CardTitle>
+        <CardDescription>
           Predicted {formatNumber(explanation.predictedFinalGrade, 2)} · actual{" "}
           {formatNumber(explanation.actualFinalGrade, 2)} · error{" "}
           {formatSigned(explanation.predictionError, 2)} · risk context{" "}
           {explanation.riskLevelContext}
-        </p>
-      </header>
-
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4">
       <div className="explanation-panel__columns">
         <section>
           <h4>Model raises prediction</h4>
@@ -88,6 +98,7 @@ export function ExplanationPanel({ explanation }: { explanation: ExplanationSumm
         What&apos;s pushing this student&apos;s estimate up or down, per the model. A guide for
         conversation, not a cause.
       </p>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

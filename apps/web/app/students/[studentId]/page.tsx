@@ -5,6 +5,13 @@ import { PlatformUnavailableNotice } from "@/components/common/platform-unavaila
 import { RiskBadge } from "@/components/common/risk-badge";
 import { ExplanationPanel } from "@/components/student/explanation-panel";
 import { TimelineChart } from "@/components/student/timeline-chart";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from "@/components/ui/card";
 import { formatNumber, formatPercent, formatSigned } from "@/lib/platform/format";
 import { tryLoadStudentDetail } from "@/lib/platform/loaders";
 
@@ -89,56 +96,73 @@ export default async function StudentDetailPage({ params }: { params: Params }) 
         </div>
       </header>
 
-      <section className="summary-cards">
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {summaryCards.map((card) => (
-          <div className="summary-card" key={card.label}>
-            <span className="summary-card__label">{card.label}</span>
-            <strong className="summary-card__value">{card.value}</strong>
-          </div>
+          <Card key={card.label}>
+            <CardHeader>
+              <CardDescription>{card.label}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <strong className="text-2xl font-semibold tracking-tight">{card.value}</strong>
+            </CardContent>
+          </Card>
         ))}
       </section>
 
-      <section className="section latest-state">
-        <article className="panel latest-state__main">
-          <h2>Latest state for week {detail.currentWeek}</h2>
-          <p>
-            The current Twin projects a final grade of{" "}
-            <strong>{formatNumber(detail.predictedFinalGrade, 1)}</strong> with a{" "}
-            <strong>{detail.riskBadge}</strong> heuristic risk label. Overall mastery is{" "}
-            <strong>{formatNumber(detail.overallMastery, 1)}</strong>, activity is{" "}
-            <strong>{formatNumber(detail.activityScore, 1)}</strong>, and attendance is{" "}
-            <strong>{formatPercent(detail.attendanceRate)}</strong>.
-          </p>
-          {detail.explanation ? (
-            <p className="muted">
-              An explanation is available for this student:{" "}
-              <strong>{detail.explanation.caseTypeLabel}</strong>. The explanation below links the
-              model factors to the same week-{detail.explanation.weekNumber} snapshot.
+      <section className="grid gap-4 lg:grid-cols-[2fr_1fr]">
+        <Card>
+          <CardHeader>
+            <CardTitle>Latest state for week {detail.currentWeek}</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3">
+            <p>
+              The current Twin projects a final grade of{" "}
+              <strong>{formatNumber(detail.predictedFinalGrade, 1)}</strong> with a{" "}
+              <strong>{detail.riskBadge}</strong> heuristic risk label. Overall mastery is{" "}
+              <strong>{formatNumber(detail.overallMastery, 1)}</strong>, activity is{" "}
+              <strong>{formatNumber(detail.activityScore, 1)}</strong>, and attendance is{" "}
+              <strong>{formatPercent(detail.attendanceRate)}</strong>.
             </p>
-          ) : (
-            <p className="muted">
-              No explanation case is available for this student.
+            {detail.explanation ? (
+              <p className="text-muted-foreground">
+                An explanation is available for this student:{" "}
+                <strong>{detail.explanation.caseTypeLabel}</strong>. The explanation below links the
+                model factors to the same week-{detail.explanation.weekNumber} snapshot.
+              </p>
+            ) : (
+              <p className="text-muted-foreground">
+                No explanation case is available for this student.
+              </p>
+            )}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>How to read this</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>
+              Predicted grade is an AI-assisted estimate to guide attention — not a final judgment.
+              The recorded outcome is shown for context only.
             </p>
-          )}
-        </article>
-        <article className="panel latest-state__guardrail">
-          <h2>How to read this</h2>
-          <p>
-            Predicted grade is an AI-assisted estimate to guide attention — not a final judgment. The
-            recorded outcome is shown for context only.
-          </p>
-        </article>
+          </CardContent>
+        </Card>
       </section>
 
       <section className="section section--two-thirds">
-        <article className="panel">
-          <TimelineChart
-            timeline={detail.timeline}
-            title="Prediction, mastery, activity, and risk trajectory"
-          />
-        </article>
-        <article className="panel">
-          <h3>Weekly snapshots</h3>
+        <Card>
+          <CardContent>
+            <TimelineChart
+              timeline={detail.timeline}
+              title="Prediction, mastery, activity, and risk trajectory"
+            />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Weekly snapshots</CardTitle>
+          </CardHeader>
+          <CardContent>
           <table className="weekly-table">
             <thead>
               <tr>
@@ -165,19 +189,24 @@ export default async function StudentDetailPage({ params }: { params: Params }) 
               ))}
             </tbody>
           </table>
-        </article>
+          </CardContent>
+        </Card>
       </section>
 
       <section className="section">
         {detail.explanation ? (
           <ExplanationPanel explanation={detail.explanation} />
         ) : (
-          <article className="panel">
-            <h3>No explanation available for this student</h3>
-            <p className="muted">
-              This student does not have a local explanation case.
-            </p>
-          </article>
+          <Card>
+            <CardHeader>
+              <CardTitle>No explanation available for this student</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                This student does not have a local explanation case.
+              </p>
+            </CardContent>
+          </Card>
         )}
       </section>
 

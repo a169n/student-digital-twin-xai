@@ -1,4 +1,19 @@
 import { PlatformUnavailableNotice } from "@/components/common/platform-unavailable";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from "@/components/ui/table";
 import { formatNumber, formatSigned } from "@/lib/platform/format";
 import { tryLoadResearchEvidence } from "@/lib/platform/loaders";
 
@@ -43,41 +58,57 @@ export default async function AdminModelPage() {
           <h2>Claim guardrails</h2>
           <p className="muted">What this model can show, and what it must not overclaim.</p>
         </div>
-        <div className="guardrail-grid">
-          <article className="guardrail-card">
-            <span>Pass-risk classifier</span>
-            <strong>F1 &asymp; 0.861 · ROC-AUC &asymp; 0.953</strong>
-            <p>
-              Pass-risk is a held-out classifier on real OULAD data (F1 &asymp; 0.861, ROC-AUC
-              &asymp; 0.953, never 1.000). The schema-controlled synthetic course is retained only
-              as a controlled faithfulness probe, not as primary evidence.
-            </p>
-          </article>
-          <article className="guardrail-card">
-            <span>Target circularity</span>
-            <strong>Synthetic target is not independent</strong>
-            <p>
-              In the synthetic course the final grade is a deterministic function of the model&rsquo;s
-              own features, so synthetic regression accuracy is not evidence of generalization. Only
-              the real OULAD results are treated as external evidence.
-            </p>
-          </article>
-          <article className="guardrail-card">
-            <span>OULAD transfer</span>
-            <strong>Mixed external evidence</strong>
-            <p>
-              The lean analogue improves the temporal split but not the primary grouped split, so
-              transfer remains a caveat.
-            </p>
-          </article>
-          <article className="guardrail-card">
-            <span>Interventions</span>
-            <strong>No causal scenario claim</strong>
-            <p>
-              The model is predictive and explanatory only. It is not causal: it does not simulate
-              teacher actions or claim that any intervention changes an outcome.
-            </p>
-          </article>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardDescription>Pass-risk classifier</CardDescription>
+              <CardTitle>F1 &asymp; 0.861 · ROC-AUC &asymp; 0.953</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>
+                Pass-risk is a held-out classifier on real OULAD data (F1 &asymp; 0.861, ROC-AUC
+                &asymp; 0.953, never 1.000). The schema-controlled synthetic course is retained only
+                as a controlled faithfulness probe, not as primary evidence.
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardDescription>Target circularity</CardDescription>
+              <CardTitle>Synthetic target is not independent</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>
+                In the synthetic course the final grade is a deterministic function of the
+                model&rsquo;s own features, so synthetic regression accuracy is not evidence of
+                generalization. Only the real OULAD results are treated as external evidence.
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardDescription>OULAD transfer</CardDescription>
+              <CardTitle>Mixed external evidence</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>
+                The lean analogue improves the temporal split but not the primary grouped split, so
+                transfer remains a caveat.
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardDescription>Interventions</CardDescription>
+              <CardTitle>No causal scenario claim</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>
+                The model is predictive and explanatory only. It is not causal: it does not simulate
+                teacher actions or claim that any intervention changes an outcome.
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
@@ -101,12 +132,15 @@ export default async function AdminModelPage() {
       </section>
 
       <section className="section">
-        <article className="panel">
-          <h2>Lean Twin carry-forward</h2>
-          <p className="muted">
-            Why <code>B_lms_plus_mastery</code> was preferred over the full Twin and why mastery is
-            kept despite redundancy with cumulative LMS scores.
-          </p>
+        <Card>
+          <CardHeader>
+            <CardTitle>Lean Twin carry-forward</CardTitle>
+            <CardDescription>
+              Why <code>B_lms_plus_mastery</code> was preferred over the full Twin and why mastery is
+              kept despite redundancy with cumulative LMS scores.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3">
           <dl className="metric-list">
             <div>
               <dt>Baseline RMSE</dt>
@@ -133,52 +167,61 @@ export default async function AdminModelPage() {
             . Flags carried forward:{" "}
             {research.leanTwin.flags.length > 0 ? research.leanTwin.flags.join("; ") : "none"}.
           </p>
-        </article>
+          </CardContent>
+        </Card>
       </section>
 
       <section className="section section--two-column">
-        <article className="panel">
-          <h2>OULAD benchmark</h2>
-          <p className="muted">{research.oulad.shortConclusion}</p>
-          <table className="result-table">
-            <thead>
-              <tr>
-                <th>Split</th>
-                <th>B_lms</th>
-                <th>Lean</th>
-                <th>Δ</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Grouped</td>
-                <td>{formatNumber(research.oulad.grouped.baselineRmse, 3)}</td>
-                <td>{formatNumber(research.oulad.grouped.leanRmse, 3)}</td>
-                <td>{formatSigned(research.oulad.grouped.delta, 3)}</td>
-              </tr>
-              <tr>
-                <td>Temporal</td>
-                <td>{formatNumber(research.oulad.temporal.baselineRmse, 3)}</td>
-                <td>{formatNumber(research.oulad.temporal.leanRmse, 3)}</td>
-                <td>{formatSigned(research.oulad.temporal.delta, 3)}</td>
-              </tr>
-            </tbody>
-          </table>
+        <Card>
+          <CardHeader>
+            <CardTitle>OULAD benchmark</CardTitle>
+            <CardDescription>{research.oulad.shortConclusion}</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Split</TableHead>
+                <TableHead>B_lms</TableHead>
+                <TableHead>Lean</TableHead>
+                <TableHead>Δ</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                <TableCell>Grouped</TableCell>
+                <TableCell>{formatNumber(research.oulad.grouped.baselineRmse, 3)}</TableCell>
+                <TableCell>{formatNumber(research.oulad.grouped.leanRmse, 3)}</TableCell>
+                <TableCell>{formatSigned(research.oulad.grouped.delta, 3)}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Temporal</TableCell>
+                <TableCell>{formatNumber(research.oulad.temporal.baselineRmse, 3)}</TableCell>
+                <TableCell>{formatNumber(research.oulad.temporal.leanRmse, 3)}</TableCell>
+                <TableCell>{formatSigned(research.oulad.temporal.delta, 3)}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
           <p className="caveat">
             {research.oulad.rowCounts.snapshots.toLocaleString()} snapshots ·{" "}
             {research.oulad.rowCounts.students.toLocaleString()} students · weeks{" "}
             {research.oulad.weekMin}–{research.oulad.weekMax}.
           </p>
-        </article>
+          </CardContent>
+        </Card>
 
-        <article className="panel panel--caveat">
-          <h2>Limitations</h2>
+        <Card className="panel--caveat">
+          <CardHeader>
+            <CardTitle>Limitations</CardTitle>
+          </CardHeader>
+          <CardContent>
           <ul>
             {research.limitations.map((item) => (
               <li key={item}>{item}</li>
             ))}
           </ul>
-        </article>
+          </CardContent>
+        </Card>
       </section>
 
       <section className="section artifact-strip">

@@ -2,6 +2,16 @@ import Link from "next/link";
 
 import { PlatformUnavailableNotice } from "@/components/common/platform-unavailable";
 import { RiskBadge } from "@/components/common/risk-badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from "@/components/ui/table";
 import { formatNumber } from "@/lib/platform/format";
 import { tryLoadLatestPredictions } from "@/lib/platform/loaders";
 
@@ -26,34 +36,44 @@ export default async function PredictionsPage() {
         The model&rsquo;s current prediction for each student this week.
       </p>
       <section className="section">
-        <table className="weekly-table">
-          <thead>
-            <tr>
-              <th>Student</th>
-              <th>Week</th>
-              <th>Predicted</th>
-              <th>Actual</th>
-              <th>Risk</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
-            {predictions.slice(0, 20).map((prediction) => (
-              <tr key={prediction.studentId}>
-                <td>{prediction.studentLabel}</td>
-                <td>{prediction.weekNumber}</td>
-                <td>{formatNumber(prediction.predictedFinalGrade, 1)}</td>
-                <td>{formatNumber(prediction.actualFinalGrade, 1)}</td>
-                <td>
-                  <RiskBadge value={prediction.riskLevel} />
-                </td>
-                <td>
-                  <Link href={`/students/${prediction.studentId}`}>Open twin</Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <Card>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Student</TableHead>
+                  <TableHead>Week</TableHead>
+                  <TableHead>Predicted</TableHead>
+                  <TableHead>Actual</TableHead>
+                  <TableHead>Risk</TableHead>
+                  <TableHead />
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {predictions.slice(0, 20).map((prediction) => (
+                  <TableRow key={prediction.studentId}>
+                    <TableCell>{prediction.studentLabel}</TableCell>
+                    <TableCell>{prediction.weekNumber}</TableCell>
+                    <TableCell>{formatNumber(prediction.predictedFinalGrade, 1)}</TableCell>
+                    <TableCell>{formatNumber(prediction.actualFinalGrade, 1)}</TableCell>
+                    <TableCell>
+                      <RiskBadge value={prediction.riskLevel} />
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        render={<Link href={`/students/${prediction.studentId}`} />}
+                        variant="link"
+                        size="sm"
+                      >
+                        Open twin
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
         <p className="muted">Showing 20 of {predictions.length} prediction snapshots.</p>
       </section>
     </main>
