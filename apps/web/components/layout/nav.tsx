@@ -1,10 +1,11 @@
 import Link from "next/link";
+import { IdentityChip } from "@/components/layout/identity-chip";
 
 const links = [
   ["Dashboard", "/dashboard"],
   ["Students", "/students"],
   ["Predictions", "/predictions"],
-  ["Research", "/research-demo"]
+  ["Admin", "/admin"],
 ] as const;
 
 export function AppNav() {
@@ -12,7 +13,10 @@ export function AppNav() {
     <nav className="app-nav">
       <Link href="/" className="app-nav__brand">
         <span className="app-nav__brand-mark">SDT</span>
-        <span className="app-nav__brand-text">Student Digital Twin · Research Platform</span>
+        <span className="app-nav__brand-text">
+          Student Digital Twin
+          <span className="app-nav__tagline">Early-warning student analytics</span>
+        </span>
       </Link>
       <div className="app-nav__links">
         {links.map(([label, href]) => (
@@ -21,6 +25,7 @@ export function AppNav() {
           </Link>
         ))}
       </div>
+      <IdentityChip />
     </nav>
   );
 }

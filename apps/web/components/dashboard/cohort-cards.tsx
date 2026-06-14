@@ -1,3 +1,9 @@
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader
+} from "@/components/ui/card";
 import { formatNumber, formatPercent } from "@/lib/platform/format";
 import type { CohortSummary } from "@/lib/platform/types";
 
@@ -36,13 +42,21 @@ export function CohortCards({ cohort }: { cohort: CohortSummary }) {
   ];
 
   return (
-    <div className="cohort-cards">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {cards.map((card) => (
-        <div className="cohort-card" key={card.label}>
-          <span className="cohort-card__label">{card.label}</span>
-          <strong className="cohort-card__value">{card.value}</strong>
-          {card.detail ? <span className="cohort-card__detail">{card.detail}</span> : null}
-        </div>
+        <Card key={card.label}>
+          <CardHeader>
+            <CardDescription>{card.label}</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-1">
+            <strong className="text-2xl font-semibold tracking-tight">
+              {card.value}
+            </strong>
+            {card.detail ? (
+              <span className="text-xs text-muted-foreground">{card.detail}</span>
+            ) : null}
+          </CardContent>
+        </Card>
       ))}
     </div>
   );

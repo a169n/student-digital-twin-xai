@@ -4,7 +4,8 @@ const path = require("node:path");
 const test = require("node:test");
 
 const repoRoot = path.resolve(__dirname, "..", "..", "..");
-const pagePath = path.join(repoRoot, "apps", "web", "app", "research-demo", "page.tsx");
+const redirectPagePath = path.join(repoRoot, "apps", "web", "app", "research-demo", "page.tsx");
+const pagePath = path.join(repoRoot, "apps", "web", "app", "admin", "model", "page.tsx");
 const platformLoaderPath = path.join(repoRoot, "apps", "web", "lib", "platform", "loaders.ts");
 const appRoot = path.join(repoRoot, "apps", "web", "app");
 const componentRoot = path.join(repoRoot, "apps", "web", "components");
@@ -19,14 +20,24 @@ const requiredArtifacts = [
   "data/artifacts/experiments/exp_005_public_benchmark_oulad/experiment_metadata.json"
 ];
 
-test("research evidence route is present", () => {
+test("admin model & evaluation route is present", () => {
   assert.equal(fs.existsSync(pagePath), true);
   const source = fs.readFileSync(pagePath, "utf-8");
-  assert.match(source, /export default async function ResearchDemoPage/);
+  assert.match(source, /export default async function AdminModelPage/);
   assert.match(source, /tryLoadResearchEvidence/);
-  assert.match(source, /tryLoadPlatformStatus/);
-  assert.match(source, /href=\{`\/students\/\$\{item\.studentId\}`\}/);
-  assert.match(source, /id="representative-cases"/);
+  assert.match(source, /Model &amp; evaluation/);
+  // Honest claims must remain present and unsoftened.
+  assert.match(source, /0\.861/);
+  assert.match(source, /not causal/i);
+  assert.match(source, /circularity/i);
+  assert.match(source, /research\.limitations/);
+});
+
+test("research-demo route redirects to admin model page", () => {
+  assert.equal(fs.existsSync(redirectPagePath), true);
+  const source = fs.readFileSync(redirectPagePath, "utf-8");
+  assert.match(source, /redirect/);
+  assert.match(source, /\/admin\/model/);
 });
 
 test("research artifact files exist", () => {

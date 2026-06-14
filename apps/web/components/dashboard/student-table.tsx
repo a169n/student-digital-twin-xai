@@ -4,6 +4,16 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { RiskBadge } from "@/components/common/risk-badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from "@/components/ui/table";
 import { formatNumber, formatPercent } from "@/lib/platform/format";
 import type { StudentSummary } from "@/lib/platform/types";
 
@@ -144,103 +154,112 @@ export function StudentTable({ students }: { students: StudentSummary[] }) {
     }
   };
 
+  const sortKeys = Object.keys(SORT_LABELS) as SortKey[];
+
   return (
-    <div className="student-table">
-      <div className="student-table__controls">
-        <div className="student-table__filters" role="tablist">
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-wrap gap-2" role="tablist">
           {FILTERS.map((option) => (
-            <button
+            <Button
               type="button"
               key={option.key}
-              className={
-                "student-table__chip" +
-                (filter === option.key ? " student-table__chip--active" : "")
-              }
+              size="sm"
+              variant={filter === option.key ? "secondary" : "outline"}
+              aria-pressed={filter === option.key}
               onClick={() => setFilter(option.key)}
             >
               <span>{option.label}</span>
-              <strong>{filterCounts[option.key]}</strong>
-            </button>
+              <strong className="ml-1.5 text-muted-foreground">
+                {filterCounts[option.key]}
+              </strong>
+            </Button>
           ))}
         </div>
-        <input
-          className="student-table__search"
+        <Input
+          className="h-8 lg:max-w-xs"
           type="search"
           placeholder="Search by student label, code, cohort..."
           value={query}
           onChange={(event) => setQuery(event.target.value)}
         />
       </div>
-      <div className="student-table__meta">
+      <div className="text-xs text-muted-foreground">
         Showing {visible.length} of {students.length} students
       </div>
-      <table>
-        <thead>
-          <tr>
-            {(Object.keys(SORT_LABELS) as SortKey[]).map((key) => (
-              <th key={key}>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            {sortKeys.map((key) => (
+              <TableHead key={key}>
                 <button
                   type="button"
-                  className="student-table__sort"
+                  className="inline-flex items-center font-medium text-foreground hover:text-primary"
                   onClick={() => toggleSort(key)}
                 >
                   {SORT_LABELS[key]}
                   {sort === key ? (ascending ? " ↑" : " ↓") : ""}
                 </button>
-              </th>
+              </TableHead>
             ))}
-            <th>Top factors</th>
-            <th />
-          </tr>
-        </thead>
-        <tbody>
+            <TableHead>Top factors</TableHead>
+            <TableHead />
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {visible.map((student) => (
-            <tr key={student.studentId}>
-              <td>
-                <div className="student-table__label">
+            <TableRow key={student.studentId}>
+              <TableCell>
+                <div className="flex flex-col">
                   <strong>{student.studentLabel}</strong>
-                  <span>{student.studentId}</span>
+                  <span className="text-xs text-muted-foreground">{student.studentId}</span>
                 </div>
-              </td>
-              <td>{formatNumber(student.predictedFinalGrade, 1)}</td>
-              <td>{formatNumber(student.actualFinalGrade, 1)}</td>
-              <td>{formatNumber(student.overallMastery, 1)}</td>
-              <td>{formatNumber(student.activityScore, 1)}</td>
-              <td>
+              </TableCell>
+              <TableCell>{formatNumber(student.predictedFinalGrade, 1)}</TableCell>
+              <TableCell>{formatNumber(student.actualFinalGrade, 1)}</TableCell>
+              <TableCell>{formatNumber(student.overallMastery, 1)}</TableCell>
+              <TableCell>{formatNumber(student.activityScore, 1)}</TableCell>
+              <TableCell>
                 <RiskBadge value={student.riskBadge} />
-              </td>
-              <td className="student-table__factors">
+              </TableCell>
+              <TableCell>
                 {student.topExplanationFactors.length === 0 ? (
-                  <span className="muted">—</span>
+                  <span className="text-muted-foreground">—</span>
                 ) : (
-                  student.topExplanationFactors.map((factor) => (
-                    <span
-                      key={factor.feature}
-                      className={
-                        "student-table__factor" +
-                        (factor.direction === "raises_prediction"
-                          ? " student-table__factor--up"
-                          : " student-table__factor--down")
-                      }
-                    >
-                      {factor.featureLabel}
-                    </span>
-                  ))
+                  <div className="flex flex-wrap gap-1">
+                    {student.topExplanationFactors.map((factor) => (
+                      <span
+                        key={factor.feature}
+                        className="inline-flex items-center rounded-md px-1.5 py-0.5 text-xs"
+                        style={
+                          factor.direction === "raises_prediction"
+                            ? { background: "var(--success-soft)", color: "var(--success)" }
+                            : { background: "var(--danger-soft)", color: "var(--danger)" }
+                        }
+                      >
+                        {factor.featureLabel}
+                      </span>
+                    ))}
+                  </div>
                 )}
-              </td>
-              <td>
-                <Link href={`/students/${student.studentId}`} className="student-table__cta">
+              </TableCell>
+              <TableCell>
+                <Button
+                  render={<Link href={`/students/${student.studentId}`} />}
+                  variant="link"
+                  size="sm"
+                >
                   Open twin →
-                </Link>
-              </td>
-            </tr>
+                </Button>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
       {visible.length === 0 ? (
-        <p className="student-table__empty">No students match the current filters.</p>
+        <p className="text-sm text-muted-foreground">No students match the current filters.</p>
       ) : null}
-      <p className="student-table__caveat">
+      <p className="text-xs text-muted-foreground">
         Attendance values like {formatPercent(0.65)} are 0–1 ratios. Predicted grades come from the
         frozen lean Twin model; actual final grades are retrospective evaluation fields.
       </p>

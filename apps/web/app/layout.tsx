@@ -2,6 +2,7 @@ import "./globals.css";
 
 import { ReactNode } from "react";
 
+import { AppFooter } from "@/components/layout/footer";
 import { AppNav } from "@/components/layout/nav";
 
 export const metadata = {
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         <AppNav />
         {children}
+        <AppFooter />
       </body>
     </html>
   );
