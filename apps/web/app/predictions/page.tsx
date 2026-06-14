@@ -21,10 +21,9 @@ export default async function PredictionsPage() {
   return (
     <main className="page">
       <p className="eyebrow">Predictions</p>
-      <h1>Latest imported prediction snapshots</h1>
+      <h1>Current prediction snapshots</h1>
       <p className="muted">
-        These are served from the platform store and seeded from the frozen lean Twin payload.
-        Prediction refresh remains a later phase.
+        The model&rsquo;s current prediction for each student this week.
       </p>
       <section className="section">
         <table className="weekly-table">

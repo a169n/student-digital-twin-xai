@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     database_url: str = _default_database_url()
     auto_seed_from_research_payload: bool = True
     research_demo_payload_path: str = str(
-        REPO_ROOT / "data" / "artifacts" / "research_demo" / "research_demo_payload.json"
+        REPO_ROOT / "data" / "artifacts" / "research_demo" / "oulad_research_demo_payload.json"
     )
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")

@@ -85,9 +85,8 @@ export function ExplanationPanel({ explanation }: { explanation: ExplanationSumm
       </p>
 
       <p className="explanation-panel__caveat">
-        Explanations come from a permutation-importance plus local perturbation analysis on the lean
-        Twin model. The bars show how the fitted model changes around this snapshot; they are not
-        causal claims and do not recommend an intervention.
+        What&apos;s pushing this student&apos;s estimate up or down, per the model. A guide for
+        conversation, not a cause.
       </p>
     </div>
   );
