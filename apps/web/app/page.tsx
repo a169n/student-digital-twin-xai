@@ -2,6 +2,15 @@ import Link from "next/link";
 
 import { PlatformUnavailableNotice } from "@/components/common/platform-unavailable";
 import { RiskBadge } from "@/components/common/risk-badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from "@/components/ui/card";
 import { formatNumber } from "@/lib/platform/format";
 import { tryLoadDashboard } from "@/lib/platform/loaders";
 
@@ -59,13 +68,22 @@ export default async function HomePage() {
           <h2>Where do you want to go?</h2>
           <p className="muted">Direct entry into the main teacher views.</p>
         </div>
-        <div className="entry-grid">
+        <div className="grid gap-4 md:grid-cols-3">
           {ctaCards.map((card) => (
-            <Link className="entry-card" href={card.href} key={card.title}>
-              <span className="entry-card__eyebrow">{card.eyebrow}</span>
-              <strong>{card.title}</strong>
-              <p>{card.detail}</p>
-            </Link>
+            <Card key={card.title} className="flex flex-col">
+              <CardHeader>
+                <CardDescription>{card.eyebrow}</CardDescription>
+                <CardTitle>{card.title}</CardTitle>
+              </CardHeader>
+              <CardContent className="flex-1">
+                <p className="text-sm text-muted-foreground">{card.detail}</p>
+              </CardContent>
+              <CardFooter>
+                <Button render={<Link href={card.href} />} size="sm">
+                  Open →
+                </Button>
+              </CardFooter>
+            </Card>
           ))}
         </div>
       </section>
@@ -78,23 +96,28 @@ export default async function HomePage() {
               Top {atRiskList.length} students by predicted risk this week.
             </p>
           </div>
-          <div className="watchlist">
-            <ol>
-              {atRiskList.map((student) => (
-                <li key={student.studentId}>
-                  <Link href={`/students/${student.studentId}`}>
-                    <strong>{student.studentLabel}</strong>
-                    <span>
-                      Predicted grade: {formatNumber(student.predictedFinalGrade, 1)}
-                    </span>
-                    <em>
+          <Card>
+            <CardContent>
+              <ol className="flex flex-col divide-y divide-border">
+                {atRiskList.map((student) => (
+                  <li key={student.studentId}>
+                    <Link
+                      href={`/students/${student.studentId}`}
+                      className="flex items-center gap-3 py-3 transition-colors hover:text-primary"
+                    >
+                      <strong className="min-w-0 flex-1 truncate">
+                        {student.studentLabel}
+                      </strong>
+                      <span className="text-sm text-muted-foreground">
+                        Predicted grade: {formatNumber(student.predictedFinalGrade, 1)}
+                      </span>
                       <RiskBadge value={student.riskBadge} />
-                    </em>
-                  </Link>
-                </li>
-              ))}
-            </ol>
-          </div>
+                    </Link>
+                  </li>
+                ))}
+              </ol>
+            </CardContent>
+          </Card>
         </section>
       )}
     </main>

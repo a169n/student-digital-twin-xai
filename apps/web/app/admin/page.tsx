@@ -1,6 +1,12 @@
 import { PlatformUnavailableNotice } from "@/components/common/platform-unavailable";
 import { PlatformStatusStrip } from "@/components/common/platform-status-strip";
 import { CohortCards } from "@/components/dashboard/cohort-cards";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader
+} from "@/components/ui/card";
 import { tryLoadDashboard, tryLoadPlatformStatus } from "@/lib/platform/loaders";
 
 export const dynamic = "force-dynamic";
@@ -23,33 +29,36 @@ export default async function AdminOverviewPage() {
           <p className="muted">Live provenance from the seeded research payload.</p>
         </div>
         <PlatformStatusStrip status={status} />
-        <div className="cohort-cards" style={{ marginTop: "var(--space-4, 1rem)" }}>
-          <div className="cohort-card">
-            <span className="cohort-card__label">Schema version</span>
-            <strong className="cohort-card__value">
-              {status.payloadSchemaVersion ?? "unknown"}
-            </strong>
-          </div>
-          <div className="cohort-card">
-            <span className="cohort-card__label">Last imported</span>
-            <strong className="cohort-card__value">
-              {status.lastImportedAt
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {[
+            {
+              label: "Schema version",
+              value: status.payloadSchemaVersion ?? "unknown"
+            },
+            {
+              label: "Last imported",
+              value: status.lastImportedAt
                 ? status.lastImportedAt.replace("T", " ").split(".")[0]
-                : "Not imported"}
-            </strong>
-          </div>
-          <div className="cohort-card">
-            <span className="cohort-card__label">Students</span>
-            <strong className="cohort-card__value">{status.studentCount}</strong>
-          </div>
-          <div className="cohort-card">
-            <span className="cohort-card__label">Weekly snapshots</span>
-            <strong className="cohort-card__value">{status.snapshotCount}</strong>
-          </div>
-          <div className="cohort-card">
-            <span className="cohort-card__label">XAI explanation cases</span>
-            <strong className="cohort-card__value">{status.explanationCaseCount}</strong>
-          </div>
+                : "Not imported"
+            },
+            { label: "Students", value: status.studentCount },
+            { label: "Weekly snapshots", value: status.snapshotCount },
+            {
+              label: "XAI explanation cases",
+              value: status.explanationCaseCount
+            }
+          ].map((fact) => (
+            <Card key={fact.label}>
+              <CardHeader>
+                <CardDescription>{fact.label}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <strong className="text-2xl font-semibold tracking-tight">
+                  {fact.value}
+                </strong>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </section>
 
