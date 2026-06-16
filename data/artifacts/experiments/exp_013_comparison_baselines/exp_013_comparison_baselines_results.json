@@ -1,0 +1,184 @@
+{
+  "run_name": "exp_013_comparison_baselines",
+  "created_at": "2026-06-16T00:00:00Z",
+  "artifact_type": "derived_comparison_summary",
+  "description": "Derived comparison artifact for the dissertation Chapter 4 comparison table. All metrics extracted from exp_005_public_benchmark_oulad, which trained every model family (Logistic Regression, Random Forest, Gradient Boosting) on the same OULAD DDD 2013J student-grouped split. No new models were trained for this artifact; exp_013 exists solely to provide a consolidated, dissertation-chapter-ready view of baseline vs. this-work numbers.",
+  "source_experiments": [
+    "exp_005_public_benchmark_oulad"
+  ],
+  "dataset": {
+    "name": "OULAD DDD 2013J",
+    "source": "Open University Learning Analytics Dataset",
+    "module": "DDD",
+    "presentation": "2013J",
+    "n_students": 1938,
+    "n_snapshots": 67830,
+    "weeks": "4-38"
+  },
+  "split": {
+    "strategy": "student_group",
+    "test_size": 0.25,
+    "seed": 42,
+    "n_train_rows": 50890,
+    "n_test_rows": 16940,
+    "n_train_students": 1454,
+    "n_test_students": 484
+  },
+  "baselines": {
+    "note": "All trained on B_lms_oulad feature set (LMS-only, no mastery features). Source: exp_005, student_group split.",
+    "logistic_regression": {
+      "task": "classification",
+      "target": "passed_observed",
+      "feature_set": "B_lms_oulad",
+      "rmse": null,
+      "f1": 0.8540989996102377,
+      "roc_auc": 0.95074153718091,
+      "accuracy": 0.8674144037780401,
+      "precision": 0.8244293955354903,
+      "recall": 0.8859838274932614
+    },
+    "random_forest_classification": {
+      "task": "classification",
+      "target": "passed_observed",
+      "feature_set": "B_lms_oulad",
+      "rmse": null,
+      "f1": 0.8605675780743812,
+      "roc_auc": 0.9467379569752428,
+      "accuracy": 0.8729634002361275,
+      "precision": 0.8286748190666334,
+      "recall": 0.8950134770889487
+    },
+    "random_forest_regression": {
+      "task": "regression",
+      "target": "final_weighted_score",
+      "feature_set": "B_lms_oulad",
+      "rmse": 13.633098117952457,
+      "mae": 8.048272229886138,
+      "r2": 0.832345000915514
+    },
+    "gradient_boosting_lms_only": {
+      "task_classification": {
+        "target": "passed_observed",
+        "feature_set": "B_lms_oulad",
+        "f1": 0.8629646507388842,
+        "roc_auc": 0.9531604622981268,
+        "accuracy": 0.8757378984651711,
+        "precision": 0.8346555849389246,
+        "recall": 0.8932614555256064
+      },
+      "task_regression": {
+        "target": "final_weighted_score",
+        "feature_set": "B_lms_oulad",
+        "rmse": 12.658194751487525,
+        "mae": 7.889711691378467,
+        "r2": 0.8554656967282084
+      }
+    }
+  },
+  "this_work": {
+    "note": "Lean Twin model: Gradient Boosting on B_lms_plus_mastery_oulad (LMS + mastery proxy features). Source: exp_005, student_group split. XAI via permutation importance + local perturbation (exp_007).",
+    "gradient_boosting_with_mastery": {
+      "task_classification": {
+        "target": "passed_observed",
+        "feature_set": "B_lms_plus_mastery_oulad",
+        "f1": 0.8609643113459907,
+        "roc_auc": 0.9528756384629322,
+        "accuracy": 0.8742030696576151,
+        "precision": 0.8344504869103326,
+        "recall": 0.8892183288409703
+      },
+      "task_regression": {
+        "target": "final_weighted_score",
+        "feature_set": "B_lms_plus_mastery_oulad",
+        "rmse": 12.724263919462159,
+        "mae": 7.896353785671763,
+        "r2": 0.8539529719790948
+      }
+    }
+  },
+  "dissertation_comparison_table": {
+    "note": "For the Chapter comparison table. All 'ours' rows use student_group split (test_size=0.25, seed=42) on OULAD DDD 2013J. Literature numbers are from papers as cited.",
+    "rows": [
+      {
+        "approach": "Logistic Regression (ours)",
+        "feature_set": "B_lms_oulad",
+        "model": "logistic_regression",
+        "source_experiment": "exp_005_public_benchmark_oulad",
+        "rmse": null,
+        "rmse_display": "—",
+        "f1": 0.854,
+        "roc_auc": 0.951,
+        "per_student_xai": false,
+        "teacher_ui": false,
+        "open_reproducible": true
+      },
+      {
+        "approach": "Random Forest (ours)",
+        "feature_set": "B_lms_oulad",
+        "model": "random_forest",
+        "source_experiment": "exp_005_public_benchmark_oulad",
+        "rmse": 13.633,
+        "f1": 0.861,
+        "roc_auc": 0.947,
+        "per_student_xai": false,
+        "teacher_ui": false,
+        "open_reproducible": true
+      },
+      {
+        "approach": "GB LMS-only (ours, exp_005)",
+        "feature_set": "B_lms_oulad",
+        "model": "gradient_boosting",
+        "source_experiment": "exp_005_public_benchmark_oulad",
+        "rmse": 12.658,
+        "f1": 0.863,
+        "roc_auc": 0.953,
+        "per_student_xai": false,
+        "teacher_ui": false,
+        "open_reproducible": true
+      },
+      {
+        "approach": "GB + Twin + XAI (this work)",
+        "feature_set": "B_lms_plus_mastery_oulad",
+        "model": "gradient_boosting",
+        "source_experiment": "exp_005_public_benchmark_oulad (model); exp_007_xai_on_oulad (XAI)",
+        "rmse": 12.724,
+        "f1": 0.861,
+        "roc_auc": 0.953,
+        "per_student_xai": true,
+        "xai_method": "perturbation-based (permutation importance + local median replacement)",
+        "teacher_ui": true,
+        "open_reproducible": true,
+        "note": "Mastery features did NOT improve over LMS-only baseline on student_group split (RMSE delta +0.066). This is the honest negative result."
+      },
+      {
+        "approach": "GB + SHAP (literature, 2025)",
+        "source": "Algorithms 2025, doi:10.3390/a18100662",
+        "rmse": null,
+        "rmse_display": "—",
+        "f1": 0.911,
+        "roc_auc": 0.993,
+        "per_student_xai": true,
+        "xai_method": "SHAP",
+        "teacher_ui": false,
+        "open_reproducible": "partial",
+        "note": "Test split may differ; reported on OULAD but cohort details not fully comparable."
+      },
+      {
+        "approach": "Commercial (EAB Navigate)",
+        "rmse": "unknown",
+        "f1": "unknown",
+        "roc_auc": "unknown",
+        "per_student_xai": "partial",
+        "teacher_ui": true,
+        "open_reproducible": false,
+        "note": "Qualitative only; no access to model or evaluation details."
+      }
+    ]
+  },
+  "key_finding": {
+    "summary": "Mastery features (lean Twin) did NOT improve predictive accuracy over LMS-only baseline on OULAD DDD 2013J student-grouped split. RMSE delta = +0.066 (worse). This is the honest negative result that must be stated in the dissertation.",
+    "rmse_delta_mastery_vs_lms": "+0.066 (regression, student_group split)",
+    "f1_delta_mastery_vs_lms": "-0.002 (classification, student_group split)",
+    "differentiator": "The system's contribution is end-to-end teacher UI + per-student XAI explanations, not raw accuracy superiority."
+  }
+}

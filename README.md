@@ -2,6 +2,21 @@
 
 Research-oriented prototype for educational analytics using **Student Digital Twin** and **Explainable AI (XAI)**.
 
+## ▶️ Run the app locally
+
+Launch the backend (FastAPI) **and** frontend (Next.js) with one script — see **[RUNNING.md](RUNNING.md)** for details:
+
+```powershell
+.\dev.ps1            # Windows (PowerShell) — starts API :8000 + Web :3000
+.\dev.ps1 -Seed      # ...seeding the OULAD demo data first
+```
+
+```bash
+./dev.sh             # Git Bash / macOS / Linux
+```
+
+Then open **http://localhost:3000**. (To run the two parts in separate terminals manually, see [RUNNING.md](RUNNING.md).)
+
 ## Overview
 
 This repository contains the initial architecture for a master's/dissertation-related prototype focused on **student performance analytics**, **early academic risk detection**, **final grade prediction**, and **teacher-oriented decision support**.

@@ -17,13 +17,14 @@ import {
 import { formatNumber, formatPercent } from "@/lib/platform/format";
 import type { StudentSummary } from "@/lib/platform/types";
 
-type FilterKey = "all" | "at_risk" | "low_mastery" | "low_activity" | "with_explanation";
+type FilterKey = "all" | "at_risk" | "low_mastery" | "low_activity" | "with_explanation" | "no_engagement";
 
 const FILTERS: Array<{ key: FilterKey; label: string }> = [
   { key: "all", label: "All" },
   { key: "at_risk", label: "Predicted < 60" },
   { key: "low_mastery", label: "Mastery < 60" },
   { key: "low_activity", label: "Activity < 40" },
+  { key: "no_engagement", label: "No engagement" },
   { key: "with_explanation", label: "Has explanation" }
 ];
 
@@ -76,6 +77,12 @@ function applyFilter(
       return false;
     }
     if (filter === "with_explanation" && !student.hasExplanation) {
+      return false;
+    }
+    if (
+      filter === "no_engagement" &&
+      !(student.overallMastery === 0 && student.assignmentAverage === null)
+    ) {
       return false;
     }
     return true;
@@ -161,19 +168,19 @@ export function StudentTable({ students }: { students: StudentSummary[] }) {
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex flex-wrap gap-2" role="tablist">
           {FILTERS.map((option) => (
-            <Button
+            <button
               type="button"
               key={option.key}
-              size="sm"
-              variant={filter === option.key ? "secondary" : "outline"}
               aria-pressed={filter === option.key}
               onClick={() => setFilter(option.key)}
+              className={[
+                "filter-chip",
+                filter === option.key ? "filter-chip--active" : ""
+              ].join(" ")}
             >
               <span>{option.label}</span>
-              <strong className="ml-1.5 text-muted-foreground">
-                {filterCounts[option.key]}
-              </strong>
-            </Button>
+              <strong className="filter-chip__count">{filterCounts[option.key]}</strong>
+            </button>
           ))}
         </div>
         <Input

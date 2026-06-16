@@ -10,7 +10,9 @@ interpretable model behavior, and structured evidence for intervention
 reasoning. The evidence base consists of twelve frozen experiments spanning a
 synthetic lean-Twin methodological arc, two OULAD cohorts (DDD and BBB 2013J),
 and a second institution (KU Leuven), with the detailed per-experiment
-manifest given in §5, §6, and §12.
+manifest given in §5, §6, and §13. A structured comparison with published baselines
+(Logistic Regression, Random Forest, Gradient Boosting, and GB + SHAP from the
+literature) and commercial platforms is given in §10.
 
 A leading caveat governs the synthetic phase and must be read first. The
 synthetic `final_grade` is a **deterministic, noise-free closed-form weighted
@@ -167,6 +169,65 @@ derives `final_weighted_score` from OULAD assessment weights and student
 assessment scores. This target is comparable to `final_grade` only at the
 level of broad predictive task framing; it is not identical to the synthetic
 target.
+
+### 4.1 System Architecture
+
+The prototype is implemented as a monorepo with two independently runnable
+services. The machine learning service (`services/ml/`) is a Python package
+containing the OULAD data adapter, the feature engineering pipeline, the
+experiment runner, the model training code, and the perturbation-based XAI
+module. All experiment outputs are versioned JSON and CSV artifacts written to
+`data/artifacts/experiments/<experiment_id>/`. The web application
+(`apps/web/`) is a Next.js server-side-rendered frontend that reads those
+frozen artifacts at request time and serves teacher-facing views.
+
+The data flow is: raw OULAD CSV files → OULAD adapter (`oulad_adapter.py`) →
+weekly snapshot table (one row per student per week) → feature engineering →
+trained Gradient Boosting model → prediction and perturbation-based explanation
+artifacts → JSON payload consumed by the web app at runtime. The web layer
+performs no ML computation; it is a pure read-only view over pre-computed
+artifacts. This separation means that the experimental results are reproducible
+independently of the web frontend, and the frontend can be tested without
+retraining the model.
+
+The demo payload loaded by the web app is a sample of approximately 150
+students from the OULAD DDD 2013J cohort, drawn from the `exp_005` snapshot
+table. The full cohort (1,938 students, 67,830 weekly snapshots) is not shipped
+with the repository due to file size; the OULAD raw files and the snapshot
+builder allow full reconstruction.
+
+### 4.2 Teacher-Facing Interface
+
+The web application provides two primary views for teachers.
+
+The **cohort dashboard** (`/dashboard`) shows a sortable, filterable table of
+all students in the loaded payload. Each row displays predicted final grade,
+pass-risk badge (high / medium / low), current week, and key LMS signals. The
+table supports filtering by risk level, enabling a teacher to quickly identify
+students in the high-risk group across the full cohort without examining each
+student individually.
+
+The **student detail page** (`/students/[studentId]`) provides the full
+per-student picture. Nine summary cards show the predicted grade, actual grade,
+risk score, mastery, activity, attendance, assignment and quiz averages, and the
+3-week score trend. A timeline chart plots the weekly trajectory of predictions,
+mastery, activity, and risk over all available weeks. A scrollable weekly
+snapshot table gives the raw weekly values. Below the timeline, the
+explanation panel shows per-student model-behavior factors: which signals raise
+and which lower the prediction for the student's current week, alongside a
+teacher-readable summary sentence.
+
+The explanation panel carries an explicit XAI limitation notice with three
+points: that the factors describe model behaviour, not causes; that the score
+should not be the sole basis for a student intervention; and that rankings can
+shift across time periods and cohorts. This framing directly addresses the
+research gap identified in the literature review — that published academic work
+adds explanations without documenting how teachers may misinterpret them.
+
+The interface is built with shadcn/ui components and Tailwind CSS. It requires
+no external authentication or database: all data is loaded from local JSON files
+at server render time, making it deployable in a research or demonstration
+context without infrastructure dependencies.
 
 ## 5. Experimental Design
 
@@ -584,7 +645,102 @@ course- and regime-dependent. This is the project's external-evidence verdict:
 not a complication to be resolved later, but a clear honest mixed/negative
 result.
 
-## 10. Limitations and Threats to Validity
+## 10. Comparison with Published Methods and Baselines
+
+### 10.1 Dimensions of Comparison
+
+Accuracy alone is insufficient as a comparison axis for a system contribution.
+Three dimensions are compared: predictive accuracy (RMSE for regression,
+F1 and ROC-AUC for pass/fail classification), explainability (whether
+per-student explanations are produced and by what method), and
+teacher-facing completeness (weekly trajectory view, explanation framing,
+openness and reproducibility).
+
+All "ours" rows use OULAD DDD 2013J, the `B_lms_oulad` feature set, and the
+student-grouped split (`test_size = 0.25`, `seed = 42`). Numbers are from
+`exp_005_public_benchmark_oulad`, consolidated in `exp_013_comparison_baselines`.
+RMSE is on the `final_weighted_score` scale (0–100); F1 and ROC-AUC are for
+binary `passed_observed`.
+
+| Approach | RMSE | F1 | ROC-AUC | Per-student XAI | Teacher UI | Open |
+|---|---|---|---|---|---|---|
+| Logistic Regression (ours) | — | 0.854 | 0.951 | No | No | Yes |
+| Random Forest (ours) | 13.633 | 0.861 | 0.947 | No | No | Yes |
+| GB LMS-only (ours, `exp_005`) | 12.658 | 0.863 | 0.953 | No | No | Yes |
+| **GB + Twin + XAI (this work)** | **12.724** | **0.861** | **0.953** | **Yes (perturbation)** | **Yes** | **Yes** |
+| GB + SHAP (Algorithms, 2025) | — | 0.911 | 0.993 | Yes (SHAP) | No | Partial |
+| Commercial (EAB Navigate) | unknown | unknown | unknown | Partial | Yes | No |
+
+### 10.2 Baseline Model Results
+
+Logistic Regression on `B_lms_oulad` achieves F1 = 0.854 and ROC-AUC = 0.951
+on the held-out student group. This is competitive, reflecting that the dominant
+predictive signal — assessment submission rate — is approximately linear in the
+log-odds of passing. Ridge regression (labeled `linear_regression`) achieves
+RMSE = 14.318, the weakest regression baseline.
+
+Random Forest achieves RMSE = 13.633 (regression) and F1 = 0.861, ROC-AUC = 0.947
+(classification). The slight F1 gain over Logistic Regression is not practically
+meaningful. Gradient Boosting on `B_lms_oulad` is the strongest baseline: RMSE = 12.658,
+F1 = 0.863, ROC-AUC = 0.953. All accuracy comparisons for this work are relative
+to this baseline.
+
+### 10.3 This Work versus Published Benchmarks
+
+The core system trains Gradient Boosting on `B_lms_plus_mastery_oulad`, adding
+six mastery-proxy features to the LMS set. On the student-grouped split: RMSE = 12.724
+(delta **+0.066** versus LMS-only), F1 = 0.861 (delta −0.002). Adding mastery
+features did not improve accuracy on this cohort under this split. This is the
+honest negative result central to the contribution.
+
+The XAI layer from `exp_007` applies permutation importance and local
+median-replacement to the GB model. The dominant factor is
+`assessment_submission_rate_due_to_date` (importance share 0.381); genuinely
+exogenous signals (`is_unregistered_by_week`, VLE clickstream) carry interpretable
+but secondary weight. Importance rankings are regime-sensitive: Kendall tau between
+student-grouped and temporal-forward splits is 0.55–0.79 — none reaching 0.90 —
+so explanations describe model behaviour under a particular evaluation scenario,
+not stable causal rankings. Per-student explanations are surfaced in the teacher
+UI alongside weekly trajectory charts.
+
+The published reference benchmark is López de la Rosa et al. (Algorithms, 2025),
+which reports ROC-AUC = 0.993 and F1 = 0.911 using gradient boosting with SHAP
+on OULAD dropout prediction (doi: 10.3390/a18100662). Three caveats limit direct
+comparison. First, their target is binary dropout, not the weighted assessment
+score regression used here. Second, the exact cohort selection and split strategy
+are not reported in sufficient detail to confirm student-grouped evaluation;
+a non-student-grouped split can inflate classification metrics substantially.
+Third, no teacher UI or documented explanation framing for non-ML users is provided.
+Taking the published number at face value: the literature's best classification
+result (AUC 0.993) outperforms this work (AUC 0.953). This is expected and is
+not a weakness of the contribution — the contribution is an end-to-end prototype
+with honest evaluation, not a superior classifier.
+
+### 10.4 Commercial Platforms
+
+EAB Navigate, Civitas Learning, and Brightspace Insights offer teacher-facing
+risk-scoring dashboards. None publishes model evaluation details, test-set
+construction, or underlying feature engineering. Accuracy comparison is impossible.
+Where explanations exist, they are framed as opaque "contributing factors" without
+documented limitations. This work differs on three points: it is fully open and
+reproducible, it documents regime-sensitivity of the XAI rankings, and it frames
+explanations explicitly as model-behaviour descriptions rather than causal
+intervention recommendations. The teacher interface built here — with weekly
+trajectory, per-student XAI panel, and explicit XAI limitation notice — has no
+published academic equivalent.
+
+### 10.5 Summary
+
+The accuracy of this work is comparable to standard baselines and below the
+published best on OULAD. The mastery (Twin) features did not improve over the
+LMS-only baseline on the primary split. The most defensible comparative claim is
+not accuracy superiority but a different combination: a complete, open,
+reproducible end-to-end prototype; documented honest negative result; and a
+teacher UI with explicit XAI caveats that no published academic paper in this
+area provides. Detailed experiment code, data artifacts, and comparison numbers
+are in `exp_013_comparison_baselines` and `docs/dissertation/comparison-chapter.md`.
+
+## 11. Limitations and Threats to Validity
 
 The main development evidence is synthetic, and on a **circular target**. The
 synthetic `final_grade` is a deterministic, noise-free closed-form weighted
@@ -633,7 +789,7 @@ not validate intervention recommendations, and the "Digital Twin" here is a
 lean, time-aware weekly student-state representation, not a simulation or
 counterfactual engine.
 
-## 11. Final Conclusions
+## 12. Final Conclusions
 
 The final conclusion is deliberately bounded and honest. Within the synthetic
 environment, a compact mastery-centered Twin subset, `B_lms_plus_mastery`,
@@ -681,7 +837,7 @@ real-data finding across two OULAD cohorts and a second institution. The
 not a simulation or counterfactual engine. External validation across more
 institutions and causal intervention reasoning remain future work.
 
-## 12. Canonical Evidence References
+## 13. Canonical Evidence References
 
 - [exp_001_baseline](../experiments/exp_001_baseline.md)
 - [exp_002_twin_ablation](../experiments/exp_002_twin_ablation.md)
@@ -695,6 +851,8 @@ institutions and causal intervention reasoning remain future work.
 - [exp_010_xai_on_oulad_bbb2013j (BBB 2013J)](../experiments/exp_010_xai_on_oulad_bbb2013j.md)
 - [exp_011_kuleuven_engagement](../experiments/exp_011_kuleuven_engagement.md)
 - [exp_012_oulad_engagement (3-institution synthesis)](../experiments/exp_012_oulad_engagement.md)
+- [exp_013_comparison_baselines](../../data/artifacts/experiments/exp_013_comparison_baselines/exp_013_comparison_baselines_results.json)
+- [Comparison chapter (standalone)](comparison-chapter.md)
 - [Experiment progression summary](experiment_progression_summary.md)
 - [Experimental results synthesis](experimental_results_synthesis.md)
 - [Limitations and threats to validity](limitations_and_threats_to_validity.md)

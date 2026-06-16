@@ -6,6 +6,7 @@ import { StudentTable } from "@/components/dashboard/student-table";
 import { tryLoadDashboard } from "@/lib/platform/loaders";
 
 export const dynamic = "force-dynamic";
+export const metadata = { title: "Dashboard" };
 
 export default async function DashboardPage() {
   const data = await tryLoadDashboard();

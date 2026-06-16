@@ -1,6 +1,8 @@
 import { ReactNode } from "react";
 import { AdminSubNav } from "@/components/layout/admin-sub-nav";
 
+export const metadata = { title: "Admin" };
+
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <div className="admin-shell">

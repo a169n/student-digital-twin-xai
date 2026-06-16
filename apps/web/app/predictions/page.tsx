@@ -16,6 +16,7 @@ import { formatNumber } from "@/lib/platform/format";
 import { tryLoadLatestPredictions } from "@/lib/platform/loaders";
 
 export const dynamic = "force-dynamic";
+export const metadata = { title: "Predictions" };
 
 export default async function PredictionsPage() {
   const predictions = await tryLoadLatestPredictions();
@@ -30,11 +31,15 @@ export default async function PredictionsPage() {
 
   return (
     <main className="page">
-      <p className="eyebrow">Predictions</p>
-      <h1>Current prediction snapshots</h1>
-      <p className="muted">
-        The model&rsquo;s current prediction for each student this week.
-      </p>
+      <header className="page-header">
+        <div>
+          <p className="eyebrow">Predictions</p>
+          <h1>Current prediction snapshots</h1>
+          <p className="page-header__lede">
+            The model&rsquo;s current prediction for each student this week.
+          </p>
+        </div>
+      </header>
       <section className="section">
         <Card>
           <CardContent>

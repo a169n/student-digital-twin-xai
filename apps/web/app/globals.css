@@ -115,17 +115,10 @@ button {
   font-weight: 600;
 }
 
-.app-nav__brand-mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
+.app-nav__logo {
+  display: block;
+  flex-shrink: 0;
   border-radius: 8px;
-  background: var(--primary);
-  color: #fff;
-  font-size: 12px;
-  letter-spacing: 0.5px;
 }
 
 .app-nav__brand-text {
@@ -152,6 +145,16 @@ button {
 .app-nav__link:hover {
   background: rgba(15, 23, 42, 0.05);
   color: var(--text);
+}
+
+.app-nav__link--active {
+  background: rgba(29, 78, 216, 0.08);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.app-nav__link--active:hover {
+  background: rgba(29, 78, 216, 0.12);
 }
 
 /* ---------- Layout ---------- */
@@ -834,6 +837,50 @@ h4 {
   color: var(--app-muted);
 }
 
+/* ---------- Filter chips (student table) ---------- */
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border-strong);
+  background: transparent;
+  color: var(--app-muted);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.12s, color 0.12s;
+  white-space: nowrap;
+}
+
+.filter-chip:hover {
+  border-color: var(--text);
+  color: var(--text);
+}
+
+.filter-chip--active {
+  border-color: var(--text);
+  background: var(--text);
+  color: #fff;
+}
+
+.filter-chip--active:hover {
+  border-color: var(--text);
+  color: #fff;
+  opacity: 0.88;
+}
+
+.filter-chip__count {
+  font-weight: 700;
+  opacity: 0.65;
+}
+
+.filter-chip--active .filter-chip__count {
+  opacity: 0.75;
+}
+
 /* ---------- Student detail ---------- */
 
 .summary-cards {
@@ -884,6 +931,10 @@ h4 {
   color: var(--app-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
+  position: sticky;
+  top: 0;
+  background: var(--card);
+  z-index: 1;
 }
 
 .latest-state {
@@ -1005,6 +1056,45 @@ h4 {
   margin: 4px 0 0;
   font-size: 12px;
   color: var(--app-muted);
+}
+
+/* ---------- XAI disclaimer ---------- */
+
+.xai-disclaimer {
+  margin-top: 4px;
+  padding: 12px 14px;
+  background: hsl(var(--muted) / 0.5);
+  border-left: 3px solid hsl(var(--muted-foreground) / 0.4);
+  border-radius: 0 6px 6px 0;
+}
+
+.xai-disclaimer__heading {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--app-muted);
+  margin-bottom: 8px;
+}
+
+.xai-disclaimer__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.xai-disclaimer__list li {
+  font-size: 12px;
+  color: var(--app-muted);
+  line-height: 1.5;
+}
+
+.xai-disclaimer__list li strong {
+  color: var(--foreground);
+  font-weight: 600;
 }
 
 .contribution-row {
