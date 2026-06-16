@@ -3,6 +3,7 @@ import { PlatformUnavailableNotice } from "@/components/common/platform-unavaila
 import { tryLoadStudents } from "@/lib/platform/loaders";
 
 export const dynamic = "force-dynamic";
+export const metadata = { title: "Students" };
 
 export default async function StudentsPage() {
   const students = await tryLoadStudents();

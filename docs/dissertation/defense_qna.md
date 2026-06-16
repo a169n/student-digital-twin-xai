@@ -184,3 +184,52 @@ only partially (mean Kendall `tau` ≈ `0.56`, verdict
 `drivers_partly_institution_specific`, most stable KU↔BBB `0.71`, least KU↔DDD
 `0.24`). This is a robustness statement about gradient-boosting behavior, not an
 accuracy win or a like-for-like institutional replication.
+
+## The literature benchmark (Algorithms 2025) achieves ROC-AUC 0.993 and you get 0.953 — isn't your system just weaker?
+
+Yes on classification accuracy, and we say so openly. The comparison is included
+in §10 of the final report and is not hidden. Three caveats limit how much weight
+to place on the gap. First, the published target is binary dropout, not the
+weighted assessment score regression used here — the targets are not identical.
+Second, the exact cohort and split construction in that paper are not fully
+specified; a non-student-grouped split on OULAD weekly snapshots can inflate
+ROC-AUC substantially, because the same student's rows appear in both train and
+test. Third, that paper does not provide a teacher interface or document how
+explanations are communicated to non-ML users.
+
+The more important answer is that accuracy superiority is not the claimed
+contribution. The contribution is: (i) a complete, open, end-to-end prototype
+from raw OULAD data to per-student teacher-facing explanations; (ii) an honest
+negative result — adding mastery features over a strong LMS baseline did not
+help (Δ RMSE +0.066, Δ F1 −0.002 on the student-grouped split) — which most
+published papers in this area omit; (iii) an explanation-stability analysis with
+documented regime-sensitivity. A master's dissertation does not need to set a new
+benchmark; it needs to make a defensible methodological contribution.
+
+## Why does the system have a teacher UI if the model accuracy is not better than a simple baseline?
+
+The UI is not justified by accuracy superiority — it is justified by the absence
+of comparable open, teacher-facing academic tools. Published papers in this space
+release model metrics, not systems. Commercial platforms (EAB Navigate, Civitas
+Learning) have teacher dashboards but are closed, undocumented as to their models,
+and do not communicate explanation limitations. The interface built here provides
+a weekly trajectory view, per-student XAI panel, and — critically — an explicit
+limitation notice telling teachers that the factors shown describe model behaviour,
+not causes, and should not be the sole basis for intervention. No published
+academic paper in the literature review provides an equivalent. That design
+decision directly addresses the third research gap identified in the literature:
+that existing XAI papers add explanations without addressing how teachers may
+misinterpret them.
+
+## Why add an XAI disclaimer to the UI rather than just describing the limitation in the dissertation?
+
+A dissertation section that notes "our explanations are not causal" while the UI
+says "this factor is driving the student's outcome" is internally inconsistent.
+The disclaimer in the UI (`XaiDisclaimer` component in `explanation-panel.tsx`)
+makes the same three points as the methodology: the factors describe model
+behaviour, not causes; they should not be the sole basis for intervention; and
+their ranking can shift across time periods and cohorts. This consistency between
+the written claim and the deployed interface is itself part of the contribution —
+it is what distinguishes "system contribution" from "model contribution plus
+optional visualisation". The component is minimal (12 lines), non-intrusive, and
+directly grounded in the regime-sensitivity finding of `exp_007`.

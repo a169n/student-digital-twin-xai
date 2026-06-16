@@ -10,3 +10,4 @@ Requires-Dist: numpy>=2.1.0
 Requires-Dist: pandas>=2.2.2
 Requires-Dist: pyarrow>=17.0.0
 Requires-Dist: scikit-learn>=1.5.0
+Requires-Dist: scipy>=1.10.0

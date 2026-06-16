@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { formatNumber, formatSigned } from "@/lib/platform/format";
 import type { ExplanationContribution, ExplanationSummary } from "@/lib/platform/types";
+import { XaiDisclaimer } from "@/components/student/xai-disclaimer";
 
 function ContributionRow({
   contribution,
@@ -94,10 +95,7 @@ export function ExplanationPanel({ explanation }: { explanation: ExplanationSumm
         <strong>Teacher-facing read.</strong> {explanation.teacherAssessment}.
       </p>
 
-      <p className="explanation-panel__caveat">
-        What&apos;s pushing this student&apos;s estimate up or down, per the model. A guide for
-        conversation, not a cause.
-      </p>
+      <XaiDisclaimer />
       </CardContent>
     </Card>
   );

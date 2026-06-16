@@ -96,7 +96,7 @@ export default async function StudentDetailPage({ params }: { params: Params }) 
         </div>
       </header>
 
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <section className="section grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {summaryCards.map((card) => (
           <Card key={card.label}>
             <CardHeader>
@@ -109,7 +109,7 @@ export default async function StudentDetailPage({ params }: { params: Params }) 
         ))}
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-[2fr_1fr]">
+      <section className="section grid gap-4 lg:grid-cols-[2fr_1fr]">
         <Card>
           <CardHeader>
             <CardTitle>Latest state for week {detail.currentWeek}</CardTitle>
@@ -140,10 +140,15 @@ export default async function StudentDetailPage({ params }: { params: Params }) 
           <CardHeader>
             <CardTitle>How to read this</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex flex-col gap-2">
             <p>
               Predicted grade is an AI-assisted estimate to guide attention — not a final judgment.
               The recorded outcome is shown for context only.
+            </p>
+            <p className="text-muted-foreground text-sm">
+              Explanations below describe how the model weights each signal for this student.
+              They are not causal claims. Do not act on a risk score or explanation alone — use
+              it alongside direct student contact and assessment records.
             </p>
           </CardContent>
         </Card>
@@ -163,6 +168,7 @@ export default async function StudentDetailPage({ params }: { params: Params }) 
             <CardTitle>Weekly snapshots</CardTitle>
           </CardHeader>
           <CardContent>
+          <div className="overflow-y-auto max-h-[480px]">
           <table className="weekly-table">
             <thead>
               <tr>
@@ -189,6 +195,7 @@ export default async function StudentDetailPage({ params }: { params: Params }) 
               ))}
             </tbody>
           </table>
+          </div>
           </CardContent>
         </Card>
       </section>

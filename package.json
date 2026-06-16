@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "pnpm --filter @sdtxai/web dev",
     "dev:web": "pnpm --filter @sdtxai/web dev",
+    "dev:all": "powershell -ExecutionPolicy Bypass -File dev.ps1",
+    "start:all": "bash dev.sh",
     "lint": "pnpm -r lint",
     "format": "pnpm -r format",
     "check": "pnpm -r typecheck"
