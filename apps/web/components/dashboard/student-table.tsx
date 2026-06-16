@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { RiskBadge } from "@/components/common/risk-badge";
 import { Button } from "@/components/ui/button";
@@ -38,6 +38,8 @@ const SORT_LABELS: Record<SortKey, string> = {
   activity: "Activity",
   risk: "Risk"
 };
+
+const PAGE_SIZE_OPTIONS = [25, 50, 100] as const;
 
 function applyFilter(
   students: StudentSummary[],
@@ -136,6 +138,8 @@ export function StudentTable({ students }: { students: StudentSummary[] }) {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortKey>("predicted");
   const [ascending, setAscending] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState<number>(25);
 
   const visible = useMemo(() => {
     const filtered = applyFilter(students, filter, query);
@@ -151,6 +155,17 @@ export function StudentTable({ students }: { students: StudentSummary[] }) {
       {} as Record<FilterKey, number>
     );
   }, [students]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [filter, query, sort, ascending, pageSize]);
+
+  const pageCount = Math.max(1, Math.ceil(visible.length / pageSize));
+  const currentPage = Math.min(page, pageCount);
+  const startIndex = (currentPage - 1) * pageSize;
+  const paged = visible.slice(startIndex, startIndex + pageSize);
+  const rangeStart = visible.length === 0 ? 0 : startIndex + 1;
+  const rangeEnd = Math.min(startIndex + pageSize, visible.length);
 
   const toggleSort = (key: SortKey) => {
     if (key === sort) {
@@ -192,7 +207,10 @@ export function StudentTable({ students }: { students: StudentSummary[] }) {
         />
       </div>
       <div className="text-xs text-muted-foreground">
-        Showing {visible.length} of {students.length} students
+        Showing {rangeStart}–{rangeEnd} of {visible.length}
+        {visible.length === students.length
+          ? " students"
+          : ` filtered (of ${students.length} total)`}
       </div>
       <Table>
         <TableHeader>
@@ -214,7 +232,7 @@ export function StudentTable({ students }: { students: StudentSummary[] }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {visible.map((student) => (
+          {paged.map((student) => (
             <TableRow key={student.studentId}>
               <TableCell>
                 <div className="flex flex-col">
@@ -263,6 +281,45 @@ export function StudentTable({ students }: { students: StudentSummary[] }) {
           ))}
         </TableBody>
       </Table>
+      {visible.length > 0 ? (
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <label className="flex items-center gap-2 text-xs text-muted-foreground">
+            Rows per page
+            <select
+              className="h-7 rounded-md border border-border bg-background px-2 text-xs text-foreground"
+              value={pageSize}
+              onChange={(event) => setPageSize(Number(event.target.value))}
+            >
+              {PAGE_SIZE_OPTIONS.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+          </label>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage <= 1}
+              onClick={() => setPage(Math.max(1, currentPage - 1))}
+            >
+              ← Prev
+            </Button>
+            <span className="text-xs text-muted-foreground">
+              Page {currentPage} of {pageCount}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage >= pageCount}
+              onClick={() => setPage(Math.min(pageCount, currentPage + 1))}
+            >
+              Next →
+            </Button>
+          </div>
+        </div>
+      ) : null}
       {visible.length === 0 ? (
         <p className="text-sm text-muted-foreground">No students match the current filters.</p>
       ) : null}

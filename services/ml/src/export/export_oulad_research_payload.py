@@ -43,6 +43,7 @@ from __future__ import annotations
 
 import json
 import math
+import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -129,8 +130,10 @@ PERMUTATION_REPEATS = 15
 RISK_HIGH_THRESHOLD = 0.60
 RISK_MEDIUM_THRESHOLD = 0.35
 
-# Demo sampling.
-TARGET_SAMPLE_STUDENTS = 150
+# Demo sampling. Defaults to a snappy 150-student stratified subset; set
+# OULAD_DEMO_MAX_STUDENTS to a value >= the full DDD 2013J cohort (e.g. 100000)
+# to emit every student (the model always trains on the full cohort regardless).
+TARGET_SAMPLE_STUDENTS = int(os.environ.get("OULAD_DEMO_MAX_STUDENTS", "150"))
 
 # Cohort flag thresholds (mirror the synthetic exporter's semantics).
 LOW_ACTIVITY_THRESHOLD = 40.0
