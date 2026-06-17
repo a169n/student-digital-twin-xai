@@ -1,15 +1,16 @@
 # Does Feature Richness Help? A Reproducible, Honest Evaluation of a Student Digital Twin and Its Explanation Stability Across Two Institutions
 
-> **Submission note (remove before submission).** Targeted at an educational
-> data-mining / learning-analytics venue (EDM, LAK, or AIED), whose scope rewards
-> reproducible methodology, explanation-stability analysis, and honest negative
-> results — a better fit than an applied smart-systems track. Reformat to the
-> target template before submission (ACM two-column for LAK; Springer LNCS / EDM
-> template for EDM) and convert the bracketed IEEE-style references to the venue
-> citation style. Author block and ORCIDs are placeholders — fill in co-authors
-> and affiliations. All numbers are taken verbatim from the frozen experiment
-> artifacts in `data/artifacts/experiments/` and the dissertation synthesis in
-> `docs/dissertation/`.
+> **Submission note (remove before submission).** Primary target: the **IEEE SIST
+> 2026** conference, Computational Intelligence track (Applications of CI in
+> Education). Reformat to the IEEE conference two-column template before submission
+> and **export the inline Mermaid diagrams (Fig. 1, 4, 5, 7) to static images** —
+> Mermaid source does not render in a PDF. Author block and ORCIDs are placeholders
+> — fill in co-authors and affiliations. All numbers are taken verbatim from the
+> frozen experiment artifacts in `data/artifacts/experiments/` and the dissertation
+> synthesis in `docs/dissertation/`. The work also fits a learning-analytics venue
+> (LAK / EDM / *Computers and Education: AI*) if a higher-impact venue is preferred
+> later; that route would keep this question-style title and convert the references
+> to the venue style.
 
 ---
 
@@ -79,7 +80,10 @@ This paper addresses those questions with a working prototype and an explicitly
 honest evaluation. The central object is the student modelled as a **dynamic
 digital twin**: weekly state snapshots at the grain *1 row = 1 student × 1 week*.
 The term "Digital Twin" here denotes a lean, time-aware state representation, not
-a counterfactual or simulation engine. Around this representation we build a
+a counterfactual or simulation engine. We retain the term deliberately but scope
+it narrowly to a *descriptive* state twin, and treat the absence of a
+simulation/counterfactual layer as an explicit design boundary (Section VII)
+rather than an implicit promise. Around this representation we build a
 gradient-boosting predictor, a perturbation-based XAI layer, and a Next.js
 teacher interface that reads frozen prediction artifacts.
 
@@ -290,7 +294,7 @@ split-dependent answer:
 | Cohort | Student-grouped | Temporal-forward |
 |---|---|---|
 | DDD 2013J | null (mastery +0.061) | weak: mastery −0.381 |
-| BBB 2013J | null (all within 0.087) | **significant: mastery −1.026** |
+| BBB 2013J | null (all within 0.087) | **largest gain: mastery −1.026** |
 
 On DDD, no Twin block beats `B_lms` by more than 1.0 RMSE on either split, the
 full `C_twin` stays within ±0.025 RMSE (non-inferior, not better), and the minimal
@@ -302,9 +306,14 @@ stays null and the trend/index blocks are null on both courses.
 
 **Reading.** Engineered Twin value is *heterogeneous*: it appears only under
 forward-time prediction on a course with rich assessment structure, and disappears
-under the student-grouped regime. It is not a robust improvement. Crucially, the
-OULAD classification target is genuinely predictive throughout (best-model F1
-0.83–0.93, never 1.000), which is what makes this negative finding trustworthy.
+under the student-grouped regime. It is not a robust improvement. We verified that
+the single positive cell is not noise: a student-clustered bootstrap (5,000
+resamples of the held-out test students) places the 95% confidence interval of the
+mastery RMSE reduction entirely below zero. The magnitude is nonetheless sensitive
+to the out-of-time extrapolation regime, so we treat this as the one cell where
+Twin features clearly help, not as a stable effect size. Crucially, the OULAD
+classification target is genuinely predictive throughout (best-model F1 0.83–0.93,
+never 1.000), which is what makes this negative finding trustworthy.
 
 ```mermaid
 flowchart TB
@@ -315,7 +324,7 @@ flowchart TB
     DDD --> DDDg["student-grouped:<br/>null (mastery +0.061)"]
     DDD --> DDDt["temporal-forward:<br/>weak (mastery -0.381)"]
     BBB --> BBBg["student-grouped:<br/>null (all within 0.087)"]
-    BBB --> BBBt["temporal-forward:<br/>mastery -1.026 RMSE (significant)"]
+    BBB --> BBBt["temporal-forward:<br/>mastery -1.026 RMSE (largest single gain)"]
     KUL --> KULx["no scored assessments:<br/>mastery ablation not buildable"]
     DDDg --> V["Verdict: feature richness does NOT robustly help<br/>= mixed-to-null"]
     DDDt --> V
@@ -335,8 +344,13 @@ robustly help.*
 ### C. XAI and explanation stability
 
 Explanations use held-out **permutation importance**, model-native importance, and
-one-feature **local median-replacement** perturbation (no SHAP, to avoid its known
-instability on small per-student samples). On DDD, the dominant factor is
+one-feature **local median-replacement** perturbation. We deliberately avoid SHAP:
+Shapley-value attributions rest on a background / conditional-expectation estimate
+that is fragile on the small per-student samples surfaced in the teacher UI, and
+have documented conceptual and robustness problems as feature-importance measures
+[12], [13]; the perturbation method instead operates directly on the single
+prediction row shown to the teacher, with no background-set assumption. On DDD, the
+dominant factor is
 `assessment_submission_rate_due_to_date` (importance share 0.28–0.38; 0.381 in the
 headline model) and, once mastery is included, the co-circular
 `overall_mastery_proxy` (0.23–0.43). The genuinely exogenous signals —
@@ -475,6 +489,16 @@ Delete this appendix (and the companion file reference) before submission.
 
 ---
 
+## Data and Code Availability
+
+All datasets used are public and openly licensed. OULAD is distributed under
+CC-BY 4.0 [1]; the KU Leuven activity/performance dataset is distributed under
+CC-BY 4.0 via Zenodo [3]. The authors are not affiliated with, and report no
+competing interest in, the dataset providers; both datasets were obtained from
+their public releases. All experiment code, configuration, and frozen result
+artifacts (versioned JSON/CSV per experiment) are available in the project
+repository at [[repository URL]] to support independent reproduction.
+
 ## References
 
 [1] J. Kuzilek, M. Hlosta, and Z. Zdrahal, "Open University Learning Analytics
@@ -522,3 +546,11 @@ predictions," in *Advances in Neural Information Processing Systems (NeurIPS)*,
 
 [11] J. H. Friedman, "Greedy function approximation: a gradient boosting machine,"
 *Annals of Statistics*, vol. 29, no. 5, pp. 1189–1232, 2001.
+
+[12] I. E. Kumar, S. Venkatasubramanian, C. Scheidegger, and S. Friedler,
+"Problems with Shapley-value-based explanations as feature importance measures,"
+in *Proc. 37th Int. Conf. Machine Learning (ICML)*, 2020, pp. 5491–5500.
+
+[13] D. Slack, S. Hilgard, E. Jia, S. Singh, and H. Lakkaraju, "Fooling LIME and
+SHAP: Adversarial attacks on post hoc explanation methods," in *Proc. AAAI/ACM
+Conf. AI, Ethics, and Society (AIES)*, 2020, pp. 180–186.

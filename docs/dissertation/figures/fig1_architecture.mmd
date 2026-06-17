@@ -1,0 +1,30 @@
+flowchart LR
+    CSV["Raw OULAD CSV"]
+
+    subgraph ML["ML service - services/ml (Python)"]
+        direction LR
+        ADP["OULAD adapter"]
+        SNAP["Weekly snapshot builder<br/>(1 row = 1 student x 1 week)"]
+        FE["Feature engineering<br/>A_simple / B_lms / +mastery / C_twin"]
+        GB["Gradient Boosting<br/>(fixed model)"]
+        XAI["Perturbation XAI<br/>permutation + local median-replace"]
+        ADP --> SNAP --> FE --> GB --> XAI
+    end
+
+    ART["Frozen JSON/CSV artifacts<br/>data/artifacts/experiments/"]
+
+    subgraph WEB["Web service - apps/web (Next.js, read-only)"]
+        direction TB
+        DASH["Cohort dashboard<br/>/dashboard"]
+        DET["Student detail page<br/>/students/:id"]
+        PANEL["XAI explanation panel<br/>+ limitation notice"]
+        DET --> PANEL
+    end
+
+    CSV --> ADP
+    XAI --> ART
+    ART --> DASH
+    ART --> DET
+
+    style CSV fill:#e5e7eb,stroke:#374151,color:#000
+    style ART fill:#fde68a,stroke:#b45309,color:#000

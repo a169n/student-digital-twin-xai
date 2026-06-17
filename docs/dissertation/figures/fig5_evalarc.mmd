@@ -1,0 +1,17 @@
+flowchart TB
+    Q["Falsifiable question:<br/>do Digital-Twin features beat a competent LMS baseline?"]
+    Q --> DDD["OULAD DDD 2013J"]
+    Q --> BBB["OULAD BBB 2013J"]
+    Q --> KUL["KU Leuven 1819"]
+    DDD --> DDDg["student-grouped:<br/>null (mastery +0.061)"]
+    DDD --> DDDt["temporal-forward:<br/>weak (mastery -0.381)"]
+    BBB --> BBBg["student-grouped:<br/>null (all within 0.087)"]
+    BBB --> BBBt["temporal-forward:<br/>mastery -1.026 RMSE (largest single gain)"]
+    KUL --> KULx["no scored assessments:<br/>mastery ablation not buildable"]
+    DDDg --> V["Verdict: feature richness does NOT robustly help<br/>= mixed-to-null"]
+    DDDt --> V
+    BBBg --> V
+    BBBt --> V
+    KULx --> V
+    style BBBt fill:#dcfce7,stroke:#15803d,color:#000
+    style V fill:#fee2e2,stroke:#b91c1c,color:#000
