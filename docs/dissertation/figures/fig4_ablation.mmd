@@ -1,0 +1,9 @@
+flowchart LR
+    A["A_simple<br/>minimal baseline"]
+    B["B_lms<br/>LMS behavioural features"]
+    M["B_lms + mastery<br/>+ lean mastery proxy"]
+    C["C_twin<br/>full engineered Twin"]
+    A -->|"+ LMS behaviour"| B
+    B -->|"+ mastery proxy"| M
+    M -->|"+ trends, indices,<br/>temporal context"| C
+    style C fill:#dbeafe,stroke:#1d4ed8,color:#000
