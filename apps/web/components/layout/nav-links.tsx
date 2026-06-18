@@ -7,7 +7,7 @@ const links = [
   ["Dashboard", "/dashboard"],
   ["Students", "/students"],
   ["Predictions", "/predictions"],
-  ["Admin", "/admin"],
+  ["Admin", "/admin"]
 ] as const;
 
 export function NavLinks() {

@@ -1,11 +1,5 @@
 import { PlatformUnavailableNotice } from "@/components/common/platform-unavailable";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -32,9 +26,9 @@ export default async function AdminModelPage() {
         <div className="section__heading">
           <h2>Model &amp; evaluation</h2>
           <p className="muted">
-            Frozen evidence base for the lean mastery-centered Twin
-            (<code>B_lms_plus_mastery</code>): regression accuracy, the held-out pass-risk
-            classifier, the OULAD external benchmark, and the caveats that bound every claim.
+            Frozen evidence base for the lean mastery-centered Twin (<code>B_lms_plus_mastery</code>
+            ): regression accuracy, the held-out pass-risk classifier, the OULAD external benchmark,
+            and the caveats that bound every claim.
           </p>
         </div>
         <div className="hero-metrics">
@@ -136,37 +130,37 @@ export default async function AdminModelPage() {
           <CardHeader>
             <CardTitle>Lean Twin carry-forward</CardTitle>
             <CardDescription>
-              Why <code>B_lms_plus_mastery</code> was preferred over the full Twin and why mastery is
-              kept despite redundancy with cumulative LMS scores.
+              Why <code>B_lms_plus_mastery</code> was preferred over the full Twin and why mastery
+              is kept despite redundancy with cumulative LMS scores.
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
-          <dl className="metric-list">
-            <div>
-              <dt>Baseline RMSE</dt>
-              <dd>{formatNumber(research.leanTwin.baselineRmse, 3)}</dd>
-            </div>
-            <div>
-              <dt>Lean RMSE</dt>
-              <dd>{formatNumber(research.leanTwin.leanRmse, 3)}</dd>
-            </div>
-            <div>
-              <dt>Δ vs baseline</dt>
-              <dd>{formatSigned(research.leanTwin.leanDelta, 3)}</dd>
-            </div>
-            <div>
-              <dt>Drop overall_mastery cost</dt>
-              <dd>{formatSigned(research.leanTwin.withoutOverallDelta, 3)}</dd>
-            </div>
-          </dl>
-          <p>
-            Validation improved on weeks {research.leanTwin.earlyWeeksImproved.join(", ") || "—"}
-            {research.leanTwin.lateWeeksImproved.length > 0
-              ? ` and later weeks ${research.leanTwin.lateWeeksImproved.join(", ")}`
-              : ""}
-            . Flags carried forward:{" "}
-            {research.leanTwin.flags.length > 0 ? research.leanTwin.flags.join("; ") : "none"}.
-          </p>
+            <dl className="metric-list">
+              <div>
+                <dt>Baseline RMSE</dt>
+                <dd>{formatNumber(research.leanTwin.baselineRmse, 3)}</dd>
+              </div>
+              <div>
+                <dt>Lean RMSE</dt>
+                <dd>{formatNumber(research.leanTwin.leanRmse, 3)}</dd>
+              </div>
+              <div>
+                <dt>Δ vs baseline</dt>
+                <dd>{formatSigned(research.leanTwin.leanDelta, 3)}</dd>
+              </div>
+              <div>
+                <dt>Drop overall_mastery cost</dt>
+                <dd>{formatSigned(research.leanTwin.withoutOverallDelta, 3)}</dd>
+              </div>
+            </dl>
+            <p>
+              Validation improved on weeks {research.leanTwin.earlyWeeksImproved.join(", ") || "—"}
+              {research.leanTwin.lateWeeksImproved.length > 0
+                ? ` and later weeks ${research.leanTwin.lateWeeksImproved.join(", ")}`
+                : ""}
+              . Flags carried forward:{" "}
+              {research.leanTwin.flags.length > 0 ? research.leanTwin.flags.join("; ") : "none"}.
+            </p>
           </CardContent>
         </Card>
       </section>
@@ -178,35 +172,35 @@ export default async function AdminModelPage() {
             <CardDescription>{research.oulad.shortConclusion}</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Split</TableHead>
-                <TableHead>B_lms</TableHead>
-                <TableHead>Lean</TableHead>
-                <TableHead>Δ</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell>Grouped</TableCell>
-                <TableCell>{formatNumber(research.oulad.grouped.baselineRmse, 3)}</TableCell>
-                <TableCell>{formatNumber(research.oulad.grouped.leanRmse, 3)}</TableCell>
-                <TableCell>{formatSigned(research.oulad.grouped.delta, 3)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Temporal</TableCell>
-                <TableCell>{formatNumber(research.oulad.temporal.baselineRmse, 3)}</TableCell>
-                <TableCell>{formatNumber(research.oulad.temporal.leanRmse, 3)}</TableCell>
-                <TableCell>{formatSigned(research.oulad.temporal.delta, 3)}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-          <p className="caveat">
-            {research.oulad.rowCounts.snapshots.toLocaleString()} snapshots ·{" "}
-            {research.oulad.rowCounts.students.toLocaleString()} students · weeks{" "}
-            {research.oulad.weekMin}–{research.oulad.weekMax}.
-          </p>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Split</TableHead>
+                  <TableHead>B_lms</TableHead>
+                  <TableHead>Lean</TableHead>
+                  <TableHead>Δ</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell>Grouped</TableCell>
+                  <TableCell>{formatNumber(research.oulad.grouped.baselineRmse, 3)}</TableCell>
+                  <TableCell>{formatNumber(research.oulad.grouped.leanRmse, 3)}</TableCell>
+                  <TableCell>{formatSigned(research.oulad.grouped.delta, 3)}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Temporal</TableCell>
+                  <TableCell>{formatNumber(research.oulad.temporal.baselineRmse, 3)}</TableCell>
+                  <TableCell>{formatNumber(research.oulad.temporal.leanRmse, 3)}</TableCell>
+                  <TableCell>{formatSigned(research.oulad.temporal.delta, 3)}</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+            <p className="caveat">
+              {research.oulad.rowCounts.snapshots.toLocaleString()} snapshots ·{" "}
+              {research.oulad.rowCounts.students.toLocaleString()} students · weeks{" "}
+              {research.oulad.weekMin}–{research.oulad.weekMax}.
+            </p>
           </CardContent>
         </Card>
 
@@ -215,11 +209,11 @@ export default async function AdminModelPage() {
             <CardTitle>Limitations</CardTitle>
           </CardHeader>
           <CardContent>
-          <ul>
-            {research.limitations.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
+            <ul>
+              {research.limitations.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
           </CardContent>
         </Card>
       </section>

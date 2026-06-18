@@ -1,21 +1,13 @@
 import { PlatformUnavailableNotice } from "@/components/common/platform-unavailable";
 import { PlatformStatusStrip } from "@/components/common/platform-status-strip";
 import { CohortCards } from "@/components/dashboard/cohort-cards";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { tryLoadDashboard, tryLoadPlatformStatus } from "@/lib/platform/loaders";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminOverviewPage() {
-  const [status, dashboard] = await Promise.all([
-    tryLoadPlatformStatus(),
-    tryLoadDashboard(),
-  ]);
+  const [status, dashboard] = await Promise.all([tryLoadPlatformStatus(), tryLoadDashboard()]);
 
   if (!status || !dashboard) {
     return <PlatformUnavailableNotice />;
@@ -53,9 +45,7 @@ export default async function AdminOverviewPage() {
                 <CardDescription>{fact.label}</CardDescription>
               </CardHeader>
               <CardContent>
-                <strong className="text-2xl font-semibold tracking-tight">
-                  {fact.value}
-                </strong>
+                <strong className="text-2xl font-semibold tracking-tight">{fact.value}</strong>
               </CardContent>
             </Card>
           ))}

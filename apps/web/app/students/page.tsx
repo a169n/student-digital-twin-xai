@@ -22,9 +22,7 @@ export default async function StudentsPage() {
         <div>
           <p className="eyebrow">Students</p>
           <h1>Cohort roster</h1>
-          <p className="page-header__lede">
-            Search and open any student.
-          </p>
+          <p className="page-header__lede">Search and open any student.</p>
         </div>
       </header>
 

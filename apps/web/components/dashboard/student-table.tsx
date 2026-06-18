@@ -17,7 +17,13 @@ import {
 import { formatNumber, formatPercent } from "@/lib/platform/format";
 import type { StudentSummary } from "@/lib/platform/types";
 
-type FilterKey = "all" | "at_risk" | "low_mastery" | "low_activity" | "with_explanation" | "no_engagement";
+type FilterKey =
+  | "all"
+  | "at_risk"
+  | "low_mastery"
+  | "low_activity"
+  | "with_explanation"
+  | "no_engagement";
 
 const FILTERS: Array<{ key: FilterKey; label: string }> = [
   { key: "all", label: "All" },
@@ -188,10 +194,9 @@ export function StudentTable({ students }: { students: StudentSummary[] }) {
               key={option.key}
               aria-pressed={filter === option.key}
               onClick={() => setFilter(option.key)}
-              className={[
-                "filter-chip",
-                filter === option.key ? "filter-chip--active" : ""
-              ].join(" ")}
+              className={["filter-chip", filter === option.key ? "filter-chip--active" : ""].join(
+                " "
+              )}
             >
               <span>{option.label}</span>
               <strong className="filter-chip__count">{filterCounts[option.key]}</strong>

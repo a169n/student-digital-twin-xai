@@ -4,14 +4,9 @@ import { notFound } from "next/navigation";
 import { PlatformUnavailableNotice } from "@/components/common/platform-unavailable";
 import { RiskBadge } from "@/components/common/risk-badge";
 import { ExplanationPanel } from "@/components/student/explanation-panel";
+import { WhatIfPanel } from "@/components/student/what-if-panel";
 import { TimelineChart } from "@/components/student/timeline-chart";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatNumber, formatPercent, formatSigned } from "@/lib/platform/format";
 import { tryLoadStudentDetail } from "@/lib/platform/loaders";
 
@@ -83,9 +78,7 @@ export default async function StudentDetailPage({ params }: { params: Params }) 
             <span className="chip">Week {detail.currentWeek}</span>
             {detail.cohortLabel ? <span className="chip">Cohort {detail.cohortLabel}</span> : null}
             {detail.trajectoryLabel ? (
-              <span className="chip chip--muted">
-                Trajectory · {detail.trajectoryLabel}
-              </span>
+              <span className="chip chip--muted">Trajectory · {detail.trajectoryLabel}</span>
             ) : null}
           </div>
         </div>
@@ -146,9 +139,9 @@ export default async function StudentDetailPage({ params }: { params: Params }) 
               The recorded outcome is shown for context only.
             </p>
             <p className="text-muted-foreground text-sm">
-              Explanations below describe how the model weights each signal for this student.
-              They are not causal claims. Do not act on a risk score or explanation alone — use
-              it alongside direct student contact and assessment records.
+              Explanations below describe how the model weights each signal for this student. They
+              are not causal claims. Do not act on a risk score or explanation alone — use it
+              alongside direct student contact and assessment records.
             </p>
           </CardContent>
         </Card>
@@ -168,34 +161,34 @@ export default async function StudentDetailPage({ params }: { params: Params }) 
             <CardTitle>Weekly snapshots</CardTitle>
           </CardHeader>
           <CardContent>
-          <div className="overflow-y-auto max-h-[480px]">
-          <table className="weekly-table">
-            <thead>
-              <tr>
-                <th>Wk</th>
-                <th>Pred</th>
-                <th>Mastery</th>
-                <th>Activity</th>
-                <th>Risk score</th>
-                <th>Risk</th>
-              </tr>
-            </thead>
-            <tbody>
-              {detail.timeline.map((row) => (
-                <tr key={row.weekNumber}>
-                  <td>{row.weekNumber}</td>
-                  <td>{formatNumber(row.predictedFinalGrade, 1)}</td>
-                  <td>{formatNumber(row.overallMastery, 1)}</td>
-                  <td>{formatNumber(row.activityScore, 1)}</td>
-                  <td>{formatNumber(row.riskScore, 2)}</td>
-                  <td>
-                    <RiskBadge value={row.riskLevel} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          </div>
+            <div className="overflow-y-auto max-h-[480px]">
+              <table className="weekly-table">
+                <thead>
+                  <tr>
+                    <th>Wk</th>
+                    <th>Pred</th>
+                    <th>Mastery</th>
+                    <th>Activity</th>
+                    <th>Risk score</th>
+                    <th>Risk</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {detail.timeline.map((row) => (
+                    <tr key={row.weekNumber}>
+                      <td>{row.weekNumber}</td>
+                      <td>{formatNumber(row.predictedFinalGrade, 1)}</td>
+                      <td>{formatNumber(row.overallMastery, 1)}</td>
+                      <td>{formatNumber(row.activityScore, 1)}</td>
+                      <td>{formatNumber(row.riskScore, 2)}</td>
+                      <td>
+                        <RiskBadge value={row.riskLevel} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </CardContent>
         </Card>
       </section>
@@ -216,6 +209,12 @@ export default async function StudentDetailPage({ params }: { params: Params }) 
           </Card>
         )}
       </section>
+
+      {detail.explanation ? (
+        <section className="section">
+          <WhatIfPanel explanation={detail.explanation} />
+        </section>
+      ) : null}
 
       <footer className="page-footer">
         <p>

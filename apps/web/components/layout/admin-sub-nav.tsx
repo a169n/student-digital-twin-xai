@@ -28,9 +28,7 @@ export function AdminSubNav() {
             aria-current={active ? "page" : undefined}
             className={cn(
               "inline-flex items-center justify-center rounded-md border border-transparent px-2.5 py-1 text-sm font-medium whitespace-nowrap transition-all hover:text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none",
-              active
-                ? "bg-background text-foreground shadow-sm"
-                : "text-foreground/60"
+              active ? "bg-background text-foreground shadow-sm" : "text-foreground/60"
             )}
           >
             {link.label}

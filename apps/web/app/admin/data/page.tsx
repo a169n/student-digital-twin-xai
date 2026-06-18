@@ -1,10 +1,5 @@
 import { PlatformUnavailableNotice } from "@/components/common/platform-unavailable";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -75,9 +70,9 @@ export default async function AdminDataPage() {
           <CardContent className="flex flex-col gap-2">
             <strong className="text-2xl font-semibold tracking-tight">OULAD DDD 2013J</strong>
             <p className="muted">
-              Open University Learning Analytics Dataset, course module DDD, presentation 2013J.
-              All snapshots, predictions, and explanation cases are seeded from this single
-              real-world cohort.
+              Open University Learning Analytics Dataset, course module DDD, presentation 2013J. All
+              snapshots, predictions, and explanation cases are seeded from this single real-world
+              cohort.
             </p>
           </CardContent>
         </Card>
@@ -131,8 +126,8 @@ export default async function AdminDataPage() {
         <Card>
           <CardContent className="flex flex-col gap-3">
             <p>
-              OULAD has <strong>no attendance record and no quiz analog</strong>. The platform schema
-              carries <code>attendanceRate</code>, <code>quizAverage</code>, and related
+              OULAD has <strong>no attendance record and no quiz analog</strong>. The platform
+              schema carries <code>attendanceRate</code>, <code>quizAverage</code>, and related
               attendance/quiz-trend fields for compatibility with richer course models, but for this
               cohort those fields are <strong>null by design</strong>.
             </p>

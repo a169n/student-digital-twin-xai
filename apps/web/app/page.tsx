@@ -92,9 +92,7 @@ export default async function HomePage() {
         <section className="section">
           <div className="section__heading">
             <h2>Students needing attention</h2>
-            <p className="muted">
-              Top {atRiskList.length} students by predicted risk this week.
-            </p>
+            <p className="muted">Top {atRiskList.length} students by predicted risk this week.</p>
           </div>
           <Card>
             <CardContent>
@@ -105,9 +103,7 @@ export default async function HomePage() {
                       href={`/students/${student.studentId}`}
                       className="flex items-center gap-3 py-3 transition-colors hover:text-primary"
                     >
-                      <strong className="min-w-0 flex-1 truncate">
-                        {student.studentLabel}
-                      </strong>
+                      <strong className="min-w-0 flex-1 truncate">{student.studentLabel}</strong>
                       <span className="text-sm text-muted-foreground">
                         Predicted grade: {formatNumber(student.predictedFinalGrade, 1)}
                       </span>

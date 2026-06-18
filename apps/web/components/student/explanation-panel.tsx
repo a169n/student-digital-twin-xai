@@ -1,11 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatNumber, formatSigned } from "@/lib/platform/format";
 import type { ExplanationContribution, ExplanationSummary } from "@/lib/platform/types";
 import { XaiDisclaimer } from "@/components/student/xai-disclaimer";
@@ -64,38 +58,38 @@ export function ExplanationPanel({ explanation }: { explanation: ExplanationSumm
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-      <div className="explanation-panel__columns">
-        <section>
-          <h4>Model raises prediction</h4>
-          {explanation.topPositive.length === 0 ? (
-            <p className="muted">No raising factors in the top six.</p>
-          ) : (
-            explanation.topPositive
-              .slice(0, 4)
-              .map((item) => (
-                <ContributionRow key={item.feature} contribution={item} scale={scale} />
-              ))
-          )}
-        </section>
-        <section>
-          <h4>Model lowers prediction</h4>
-          {explanation.topNegative.length === 0 ? (
-            <p className="muted">No lowering factors in the top six.</p>
-          ) : (
-            explanation.topNegative
-              .slice(0, 4)
-              .map((item) => (
-                <ContributionRow key={item.feature} contribution={item} scale={scale} />
-              ))
-          )}
-        </section>
-      </div>
+        <div className="explanation-panel__columns">
+          <section>
+            <h4>Model raises prediction</h4>
+            {explanation.topPositive.length === 0 ? (
+              <p className="muted">No raising factors in the top six.</p>
+            ) : (
+              explanation.topPositive
+                .slice(0, 4)
+                .map((item) => (
+                  <ContributionRow key={item.feature} contribution={item} scale={scale} />
+                ))
+            )}
+          </section>
+          <section>
+            <h4>Model lowers prediction</h4>
+            {explanation.topNegative.length === 0 ? (
+              <p className="muted">No lowering factors in the top six.</p>
+            ) : (
+              explanation.topNegative
+                .slice(0, 4)
+                .map((item) => (
+                  <ContributionRow key={item.feature} contribution={item} scale={scale} />
+                ))
+            )}
+          </section>
+        </div>
 
-      <p className="explanation-panel__interpretation">
-        <strong>Teacher-facing read.</strong> {explanation.teacherAssessment}.
-      </p>
+        <p className="explanation-panel__interpretation">
+          <strong>Teacher-facing read.</strong> {explanation.teacherAssessment}.
+        </p>
 
-      <XaiDisclaimer />
+        <XaiDisclaimer />
       </CardContent>
     </Card>
   );

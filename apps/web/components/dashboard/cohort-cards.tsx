@@ -1,9 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { formatNumber, formatPercent } from "@/lib/platform/format";
 import type { CohortSummary } from "@/lib/platform/types";
 
@@ -49,9 +44,7 @@ export function CohortCards({ cohort }: { cohort: CohortSummary }) {
             <CardDescription>{card.label}</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-1">
-            <strong className="text-2xl font-semibold tracking-tight">
-              {card.value}
-            </strong>
+            <strong className="text-2xl font-semibold tracking-tight">{card.value}</strong>
             {card.detail ? (
               <span className="text-xs text-muted-foreground">{card.detail}</span>
             ) : null}

@@ -18,10 +18,7 @@ const STYLES: Record<RiskBadgeKind, string> = {
 
 export function RiskBadge({ value }: { value: RiskBadgeKind }) {
   return (
-    <Badge
-      variant={value === "unknown" ? "secondary" : "default"}
-      className={cn(STYLES[value])}
-    >
+    <Badge variant={value === "unknown" ? "secondary" : "default"} className={cn(STYLES[value])}>
       {LABELS[value]}
     </Badge>
   );

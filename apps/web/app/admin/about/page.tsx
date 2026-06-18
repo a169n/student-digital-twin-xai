@@ -1,9 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { tryLoadResearchEvidence } from "@/lib/platform/loaders";
 
 export const dynamic = "force-dynamic";
@@ -32,11 +27,11 @@ export default async function AdminAboutPage() {
               staged synthetic showcase: the cohort, snapshots, and outcomes are real.
             </p>
             <p>
-              Pass-risk is a <strong>held-out classifier</strong>, evaluated on data it never trained
-              on: <strong>F1 &asymp; 0.861</strong> and <strong>ROC-AUC &asymp; 0.953</strong>. Those
-              are strong but never-perfect numbers — this is a real model, never 1.000. If you ever
-              see a perfect score in a learning-analytics demo, be suspicious; you will not see one
-              here.
+              Pass-risk is a <strong>held-out classifier</strong>, evaluated on data it never
+              trained on: <strong>F1 &asymp; 0.861</strong> and{" "}
+              <strong>ROC-AUC &asymp; 0.953</strong>. Those are strong but never-perfect numbers —
+              this is a real model, never 1.000. If you ever see a perfect score in a
+              learning-analytics demo, be suspicious; you will not see one here.
             </p>
           </CardContent>
         </Card>
