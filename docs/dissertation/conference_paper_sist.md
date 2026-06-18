@@ -21,7 +21,7 @@ Astana, Kazakhstan
 a1byn.talgat05@gmail.com
 ORCID: 0000-0000-0000-0000
 
-**Co-author 2**
+**Co-author 2**   
 Affiliation
 City, Country
 email
@@ -80,10 +80,12 @@ This paper addresses those questions with a working prototype and an explicitly
 honest evaluation. The central object is the student modelled as a **dynamic
 digital twin**: weekly state snapshots at the grain *1 row = 1 student × 1 week*.
 The term "Digital Twin" here denotes a lean, time-aware state representation, not
-a counterfactual or simulation engine. We retain the term deliberately but scope
-it narrowly to a *descriptive* state twin, and treat the absence of a
-simulation/counterfactual layer as an explicit design boundary (Section VII)
-rather than an implicit promise. Around this representation we build a
+a full counterfactual simulation engine. We retain the term deliberately but scope
+it narrowly: the twin maintains a *descriptive* weekly state and includes a
+lightweight SHAP-based what-if layer — estimating the predicted-grade change if a
+flagged factor reached its cohort median — rather than a mechanistic simulation.
+Full simulation and causal counterfactual reasoning are treated as explicit design
+boundaries (Section VII) rather than implicit promises. Around this representation we build a
 gradient-boosting predictor, a perturbation-based XAI layer, and a Next.js
 teacher interface that reads frozen prediction artifacts.
 
@@ -187,14 +189,18 @@ artifacts → read-only Next.js teacher interface.*
 of all students with predicted grade, pass-risk badge, current week, and key LMS
 signals. A *student detail page* shows summary cards (predicted vs. actual grade,
 risk, mastery, activity, attendance, assignment/quiz averages, 3-week trend), a
-weekly trajectory chart, a raw weekly-snapshot table, and an explanation panel
-listing which signals raise or lower the current-week prediction. The panel
-carries an explicit XAI limitation notice: the factors describe *model behaviour,
-not causes*; the score is not a sole basis for intervention; and rankings can
-shift across time periods and cohorts. This framing directly operationalises the
-research gap of Section II. We present the interface as a *design demonstrator*
-whose presentation of XAI output is derived from the explanation-stability result
-(Section V-C), not as an evaluated intervention; no user study is claimed here.
+weekly trajectory chart, a raw weekly-snapshot table, an explanation panel
+listing which signals raise or lower the current-week prediction, and a
+*what-if panel* showing the estimated predicted-grade gain if each flagged
+below-median factor reached its cohort median. The explanation panel carries an
+explicit XAI limitation notice: the factors describe *model behaviour, not
+causes*; the score is not a sole basis for intervention; and rankings can shift
+across time periods and cohorts. The what-if estimates are labelled as
+perturbation-based approximations, not causal or simulation-derived claims. This
+framing directly operationalises the research gap of Section II. We present the
+interface as a *design demonstrator* whose presentation of XAI output is derived
+from the explanation-stability result (Section V-C), not as an evaluated
+intervention; no user study is claimed here.
 
 ![Teacher cohort dashboard: cohort KPI cards, risk watchlists, filter chips, and a sortable per-student table with a top-factors explanation column.](figures/fig2_dashboard.png)
 
@@ -307,10 +313,16 @@ stays null and the trend/index blocks are null on both courses.
 **Reading.** Engineered Twin value is *heterogeneous*: it appears only under
 forward-time prediction on a course with rich assessment structure, and disappears
 under the student-grouped regime. It is not a robust improvement. We verified that
-the single positive cell is not noise: a student-clustered bootstrap (5,000
-resamples of the held-out test students) places the 95% confidence interval of the
-mastery RMSE reduction entirely below zero. The magnitude is nonetheless sensitive
-to the out-of-time extrapolation regime, so we treat this as the one cell where
+the direction of the single positive cell is robust: a student-clustered bootstrap
+(5,000 resamples of the 559 held-out test students, seed=42) was run by
+re-executing the frozen pipeline in the current environment. Because gradient
+boosting is environment-sensitive, reproduced point estimates differ from the
+stored ones (reproduced delta −2.16 vs. stored −1.03 RMSE); the bootstrap CI
+applies to the reproduced run. The 95% CI of the mastery RMSE reduction lies
+entirely below zero ([−2.54, −1.80]; P(delta ≥ 0) = 0.000 across all 5,000
+resamples), confirming the direction is not noise. The magnitude is nonetheless
+sensitive to the out-of-time extrapolation regime, so we treat this as the one
+cell where
 Twin features clearly help, not as a stable effect size. Crucially, the OULAD
 classification target is genuinely predictive throughout (best-model F1 0.83–0.93,
 never 1.000), which is what makes this negative finding trustworthy.
@@ -461,9 +473,15 @@ controlled study with instructors is left to future work.
 **External validity.** Evidence spans two OULAD courses (one institution) and a
 second institution that cannot test the mastery ablation; this supports the
 narrower claim that feature-richness does not robustly help, not a like-for-like
-institutional replication. Explanations are not causal and not SHAP. Intervention
-and counterfactual reasoning are out of scope — the "Digital Twin" here is a
-state representation, not a simulation engine.
+institutional replication. Explanations are not causal and not SHAP.
+
+**Scope of counterfactual reasoning.** The teacher interface includes a
+lightweight what-if layer: for each factor depressing the predicted grade below
+cohort median, it estimates the grade gain achievable if that factor reached
+median, using the local SHAP contribution as a first-order approximation. This
+is a descriptive, perturbation-based counterfactual estimate — not a mechanistic
+simulation or causal claim — and is framed explicitly as such in the UI.
+Full causal intervention modelling and simulation engines are out of scope.
 
 ## VIII. Conclusion
 
