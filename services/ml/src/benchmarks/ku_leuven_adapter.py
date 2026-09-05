@@ -52,6 +52,7 @@ import math
 from dataclasses import dataclass
 from datetime import date, datetime
 from pathlib import Path
+from collections.abc import Iterable
 from typing import Any
 
 import numpy as np
@@ -62,11 +63,25 @@ import pandas as pd
 # Constants
 # ---------------------------------------------------------------------------
 
+# The dataset ships one set of files per academic year, prefixed with the year
+# key used in ``course_info.json`` (e.g. "1819_log_activity.csv"). These names
+# are templates; ``_year_files`` fills in the requested year.
 LOG_FILE = "1819_log_activity.csv"
 CONTENT_FILE = "1819_course_content.xlsx"
 PARTICIPATION_FILE = "1819_course_participation.xlsx"
 CONTRIBUTION_FILE = "1819_df_contribution.xlsx"
 CONSUMPTION_FILE = "1819_df_consumption.xlsx"
+
+
+def _year_files(year: str) -> dict[str, str]:
+    """Per-year filenames. Passing "1819" reproduces the original constants."""
+    return {
+        "log": f"{year}_log_activity.csv",
+        "content": f"{year}_course_content.xlsx",
+        "participation": f"{year}_course_participation.xlsx",
+        "contribution": f"{year}_df_contribution.xlsx",
+        "consumption": f"{year}_df_consumption.xlsx",
+    }
 
 REQUIRED_LOG_COLUMNS: tuple[str, ...] = (
     "ACTION_ID",
@@ -168,9 +183,10 @@ def build_weekly_engagement_snapshots(
     course_calendar = _load_course_calendar(course_info_path, year)
 
     # --- load small files ------------------------------------------------------
-    participation = _load_participation(data_dir / PARTICIPATION_FILE)
-    content_lookup = _load_content_lookup(data_dir / CONTENT_FILE)
-    contribution = _load_contribution(data_dir / CONTRIBUTION_FILE)
+    files = _year_files(year)
+    participation = _load_participation(data_dir / files["participation"])
+    content_lookup = _load_content_lookup(data_dir / files["content"])
+    contribution = _load_contribution(data_dir / files["contribution"])
 
     row_counts: dict[str, int] = {
         "participation": int(participation.shape[0]),
@@ -178,12 +194,15 @@ def build_weekly_engagement_snapshots(
         "forum_contribution": int(contribution.shape[0]),
     }
 
+    # Parallel sections ("Global economics 1"/"2") inherit the base calendar.
+    course_calendar = _expand_calendar_aliases(course_calendar, participation["COURSE_ID"])
+
     # --- build per-course course-material set and forum weekly aggregates ------
     # These are small; pre-build per course before the chunked log pass.
     forum_weekly = _build_forum_weekly(contribution, course_calendar)
 
     # --- chunked log aggregation -----------------------------------------------
-    log_path = data_dir / LOG_FILE
+    log_path = data_dir / files["log"]
     weekly_agg, log_row_count = _aggregate_log_chunked(
         log_path,
         content_lookup=content_lookup,
@@ -251,6 +270,31 @@ def _load_course_calendar(
             "n_semester": n_semester,
         }
     return calendar
+
+
+def _expand_calendar_aliases(
+    calendar: dict[str, dict[str, Any]],
+    observed_courses: Iterable[str],
+) -> dict[str, dict[str, Any]]:
+    """Attach calendar entries to course names that vary from ``course_info.json``.
+
+    In 2020-21 the dataset splits one course into parallel sections
+    ("Global economics" becomes "Global economics 1" and "Global economics 2")
+    while ``course_info.json`` still carries a single calendar for the base
+    course. Sections share the base course's semester dates, so each observed
+    course name is matched to the LONGEST calendar key that is a prefix of it.
+    Unmatched course names are returned unchanged (the caller drops them), and
+    exact matches are never overridden.
+    """
+    expanded = dict(calendar)
+    for course in sorted({str(c).strip() for c in observed_courses}):
+        if course in expanded:
+            continue
+        candidates = [key for key in calendar if course.startswith(key)]
+        if not candidates:
+            continue
+        expanded[course] = calendar[max(candidates, key=len)]
+    return expanded
 
 
 def _load_participation(path: Path) -> pd.DataFrame:

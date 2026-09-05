@@ -167,3 +167,18 @@ def test_target_balance(snapshots_result):
         f"n_total={n_total}, n_passed={n_passed}. "
         "This may indicate a join error or wrong year/course filter."
     )
+
+
+def test_expand_calendar_aliases_maps_parallel_sections_to_base_course():
+    """2020-21 splits "Global economics" into sections 1 and 2; both inherit its calendar."""
+    from src.benchmarks.ku_leuven_adapter import _expand_calendar_aliases
+
+    base = {"Global economics": {"n_semester": 15}, "Accountancy": {"n_semester": 13}}
+    out = _expand_calendar_aliases(
+        base, ["Accountancy", "Global economics 1", "Global economics 2", "Unrelated course"]
+    )
+    assert out["Global economics 1"]["n_semester"] == 15
+    assert out["Global economics 2"]["n_semester"] == 15
+    assert out["Accountancy"]["n_semester"] == 13
+    assert "Unrelated course" not in out  # unmatched names stay dropped
+    assert base == {"Global economics": {"n_semester": 15}, "Accountancy": {"n_semester": 13}}

@@ -51,3 +51,11 @@ data/application/
 *.tsbuildinfo
 # Playwright MCP scratch
 .playwright-mcp/
+
+# UKZN raw dataset (Zenodo 14810607, 316MB; downloaded locally, never committed)
+datasets/ukzn/
+
+# Zambia CS1 raw dataset (Zenodo 21292883; downloaded locally, never committed)
+datasets/zambia/
+# Candidate datasets under evaluation
+datasets/_candidates/
