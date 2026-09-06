@@ -85,6 +85,79 @@ def rankings(X_tr, y_tr, X_ev, y_ev, seed: int) -> dict[str, list[str]]:
     return {"permutation": _order(perm), "shap": _order(shap_scores), "drop_column": _order(drop)}
 
 
+def ranking_scores(X_tr, y_tr, X_ev, y_ev, seed: int) -> tuple[dict[str, list[str]], dict[str, np.ndarray]]:
+    """rankings(), plus the raw scores, so dead features can be counted.
+
+    A feature scoring zero or below contributes nothing the estimator can order,
+    and an estimator that kills half the feature set is not measuring the model.
+    """
+    model = build_classification_model(MODEL, seed=seed).fit(X_tr, y_tr)
+    perm = permutation_importance(
+        model, X_ev, y_ev, scoring="roc_auc", n_repeats=tb.IMPORTANCE_REPEATS, random_state=seed
+    ).importances_mean
+    shap_values = shap.TreeExplainer(model).shap_values(X_ev)
+    if shap_values.ndim == 3:
+        shap_values = shap_values[..., -1]
+    shap_scores = np.abs(shap_values).mean(axis=0)
+    base = roc_auc_score(y_ev, model.predict_proba(X_ev)[:, 1])
+    drop = np.empty(X_tr.shape[1])
+    for j in range(X_tr.shape[1]):
+        keep = [k for k in range(X_tr.shape[1]) if k != j]
+        refit = build_classification_model(MODEL, seed=seed).fit(X_tr[:, keep], y_tr)
+        drop[j] = base - roc_auc_score(y_ev, refit.predict_proba(X_ev[:, keep])[:, 1])
+    scores = {"permutation": perm, "shap": shap_scores, "drop_column": drop}
+    return {k: _order(v) for k, v in scores.items()}, scores
+
+
+def cohort_health(cohort: tb.Cohort, seeds: int) -> list[dict]:
+    """Per-estimator dead-feature count, and agreement with itself across seeds."""
+    X, y = cohort.X("raw"), cohort.y
+    per_seed: dict[int, dict[str, list[str]]] = {}
+    dead: list[dict] = []
+    for seed in range(seeds):
+        try:
+            tr, ev = train_test_split(
+                np.arange(len(y)), test_size=1 / 3, stratify=y, random_state=seed
+            )
+        except ValueError:
+            continue
+        if min(len(set(y[tr])), len(set(y[ev]))) < 2:
+            continue
+        if len(ev) > EVAL_CAP:
+            ev = ev[:EVAL_CAP]
+        ranks, scores = ranking_scores(X[tr], y[tr], X[ev], y[ev], seed)
+        per_seed[seed] = ranks
+        for est, s in scores.items():
+            dead.append(
+                {
+                    "cohort_id": cohort.cohort_id,
+                    "seed": seed,
+                    "estimator": est,
+                    "dead_features": int((np.asarray(s) <= 0).sum()),
+                    "n_features": len(tb.CANON),
+                }
+            )
+    rows = []
+    for est in ("permutation", "shap", "drop_column"):
+        taus = [
+            kendall_tau(per_seed[a][est], per_seed[b][est])
+            for a, b in itertools.combinations(sorted(per_seed), 2)
+        ]
+        if taus:
+            rows.append(
+                {
+                    "cohort_id": cohort.cohort_id,
+                    "estimator": est,
+                    "self_agreement_tau": float(np.mean(taus)),
+                    "dead_features": float(
+                        np.mean([d["dead_features"] for d in dead if d["estimator"] == est])
+                    ),
+                    "n_features": len(tb.CANON),
+                }
+            )
+    return rows
+
+
 def cohort_agreement(cohort: tb.Cohort, seed: int) -> list[dict]:
     X, y = cohort.X("raw"), cohort.y
     try:
@@ -126,9 +199,11 @@ def main() -> None:
     print(f"cohorts: {len(cohorts)}", flush=True)
 
     rows: list[dict] = []
+    health_rows: list[dict] = []
     for i, cohort in enumerate(cohorts, 1):
         for seed in range(args.seeds):
             rows.extend(cohort_agreement(cohort, seed))
+        health_rows.extend(cohort_health(cohort, args.seeds))
         if i % 10 == 0:
             print(f"  {i}/{len(cohorts)} cohorts done", flush=True)
 
@@ -145,13 +220,33 @@ def main() -> None:
     )
     by_institution = frame.groupby(["institution", "pair"])["tau"].mean().unstack().reset_index()
 
-    tb.write_outputs(OUT / args.run, pairs=frame, summary=summary, by_institution=by_institution)
+    health = (
+        pd.DataFrame(health_rows)
+        .groupby("estimator")
+        .agg(
+            cohorts=("cohort_id", "size"),
+            self_agreement_tau=("self_agreement_tau", "mean"),
+            dead_features=("dead_features", "mean"),
+            n_features=("n_features", "max"),
+        )
+        .reset_index()
+    )
+
+    tb.write_outputs(
+        OUT / args.run,
+        pairs=frame,
+        summary=summary,
+        by_institution=by_institution,
+        estimator_health=health,
+    )
     print("\n=== agreement BETWEEN explanation methods, same model, same data ===")
     print(summary.round(3).to_string(index=False))
     print("\n=== reference points from the ladder and exp_018 ===")
     print("  same estimator, two models on disjoint halves of one cohort : tau 0.338")
     print("  transferred model vs local, another institution             : tau 0.034")
     print("  two independent random rankings                             : tau 0.000")
+    print("\n=== estimator health: dead features and agreement with itself ===")
+    print(health.round(3).to_string(index=False))
     print("\n=== by institution ===")
     print(by_institution.round(3).to_string(index=False))
 

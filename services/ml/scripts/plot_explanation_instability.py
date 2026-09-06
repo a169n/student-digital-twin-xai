@@ -1,10 +1,11 @@
-"""Figure 1 for the explanation-instability paper: every comparison on one scale.
+"""Figure 1: every explanation-agreement comparison in the paper, on one axis.
 
-The paper's argument is an ordering, so the figure has to put all of it on a
-single axis: the noise floor, the two ceilings, the three explainer pairs, the
-three transfer rungs, and the random baseline. A reader should be able to see in
-one glance that switching the explanation method lands below switching the
-training cohort.
+An agreement number between two feature rankings means nothing without bounds,
+so the figure carries all of them together: the noise floor, the attainable
+ceiling, the three estimator pairs, the three cohort separations, and the
+analytic random baseline. The two bars involving the drop-column estimator are
+starred because that estimator is degenerate on this collinear feature set; the
+caption, not the plot, carries the explanation.
 
 Usage (from services/ml):
     uv run python scripts/plot_explanation_instability.py
@@ -25,7 +26,7 @@ REPO = Path(__file__).resolve().parents[3]
 ART = REPO / "data" / "artifacts" / "experiments"
 FIG = REPO / "docs" / "dissertation" / "figures" / "side2026"
 
-# Colour encodes WHAT was changed, which is the paper's independent variable.
+# Colour encodes WHAT was changed between the two rankings being compared.
 FAMILY = {
     "reference": "#8a8a8a",
     "explainer": "#b7791f",
@@ -41,7 +42,13 @@ LABEL = {
 
 plt.rcParams.update(
     {
+        # Times matches the IEEE body text; fonttype 42 embeds real TrueType
+        # outlines, which the conference requires ("embedded fonts") and which
+        # matplotlib's default Type 3 export does not give.
+        "pdf.fonttype": 42,
+        "ps.fonttype": 42,
         "font.family": "serif",
+        "font.serif": ["Times New Roman", "Nimbus Roman", "DejaVu Serif"],
         "font.size": 8.5,
         "axes.spines.top": False,
         "axes.spines.right": False,
@@ -51,10 +58,15 @@ plt.rcParams.update(
 
 
 def collect() -> pd.DataFrame:
-    ceiling = pd.read_csv(ART / "exp_018_explanation_ceiling" / "f33" / "summary.csv").set_index("reference")
-    explainer = pd.read_csv(ART / "exp_022_explainer_agreement" / "f33" / "summary.csv").set_index("pair")
+    ceiling = pd.read_csv(
+        ART / "exp_018_explanation_ceiling" / "f33" / "summary.csv"
+    ).set_index("reference")
+    explainer = pd.read_csv(
+        ART / "exp_022_explainer_agreement" / "f33" / "summary.csv"
+    ).set_index("pair")
     pairs = pd.read_csv(ART / "exp_014_transfer_ladder" / "f33" / "pairs.csv")
     overlap = pd.read_csv(ART / "exp_017_contamination" / "f33" / "pair_overlap.csv")
+
     gbm = pairs[(pairs.model == "gradient_boosting") & (pairs.representation == "raw")].merge(
         overlap[["source", "target", "is_clean"]], on=["source", "target"], how="left"
     )
@@ -65,23 +77,35 @@ def collect() -> pd.DataFrame:
         return float(clean.loc[clean.distance == distance, "explanation_tau"].mean())
 
     rows = [
-        ("Same model, only the random seed differs", ceiling.loc["floor (same model, reseeded)", "tau"], "reference"),
-        ("Two models, halves of one cohort", ceiling.loc["ceiling, ladder-matched evaluation set", "tau"], "sample"),
+        (
+            "Same model, only the random seed differs",
+            ceiling.loc["floor (same model, reseeded)", "tau"],
+            "reference",
+        ),
+        (
+            "Two models, halves of one cohort",
+            ceiling.loc["ceiling, ladder-matched evaluation set", "tau"],
+            "sample",
+        ),
         ("Permutation vs SHAP", explainer.loc["permutation vs shap", "tau"], "explainer"),
-        ("Permutation vs drop-column", explainer.loc["drop_column vs permutation", "tau"], "explainer"),
+        (
+            "Permutation vs drop-column *",
+            explainer.loc["drop_column vs permutation", "tau"],
+            "explainer",
+        ),
         ("Same course, next year's students", rung("D1_same_module"), "sample"),
-        ("SHAP vs drop-column", explainer.loc["drop_column vs shap", "tau"], "explainer"),
+        ("SHAP vs drop-column *", explainer.loc["drop_column vs shap", "tau"], "explainer"),
         ("Another course, same institution", rung("D2_other_module"), "institution"),
         ("Another institution", rung("D3_other_institution"), "institution"),
         ("Two independent random rankings", 0.0, "reference"),
     ]
-    return pd.DataFrame(rows, columns=["label", "tau", "family"]).sort_values("tau", ascending=True)
+    return pd.DataFrame(rows, columns=["label", "tau", "family"]).sort_values("tau")
 
 
 def main() -> None:
     d = collect()
     FIG.mkdir(parents=True, exist_ok=True)
-    fig, ax = plt.subplots(figsize=(6.6, 3.4), dpi=220)
+    fig, ax = plt.subplots(figsize=(6.6, 3.2), dpi=220)
 
     ys = np.arange(len(d))
     ax.barh(ys, d["tau"], height=0.62, color=[FAMILY[f] for f in d["family"]])
@@ -94,7 +118,10 @@ def main() -> None:
     ax.set_xlim(0, 0.82)
     ax.axvline(0.0, color="#c8c8c8", lw=0.8)
 
-    handles = [plt.Rectangle((0, 0), 1, 1, color=FAMILY[k]) for k in ("explainer", "sample", "institution", "reference")]
+    handles = [
+        plt.Rectangle((0, 0), 1, 1, color=FAMILY[k])
+        for k in ("explainer", "sample", "institution", "reference")
+    ]
     ax.legend(
         handles,
         [LABEL[k] for k in ("explainer", "sample", "institution", "reference")],
@@ -103,11 +130,11 @@ def main() -> None:
         loc="lower right",
     )
     fig.tight_layout()
-    for ext in (".png", ".svg"):
+    for ext in (".png", ".svg", ".pdf"):
         fig.savefig(FIG / f"fig1_explanation_instability{ext}", bbox_inches="tight")
     plt.close(fig)
     print(d.to_string(index=False))
-    print("\nwritten to", FIG / "fig1_explanation_instability.png")
+    print("\nwritten to", FIG / "fig1_explanation_instability.pdf")
 
 
 if __name__ == "__main__":

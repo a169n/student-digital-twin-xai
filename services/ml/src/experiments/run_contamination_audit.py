@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 import itertools
+from collections import Counter
 from pathlib import Path
 
 import pandas as pd
@@ -118,12 +119,20 @@ def main() -> None:
     summary = summarise(overlap)
 
     distinct = len(set().union(*ids.values()))
+    rows = sum(len(v) for v in ids.values())
+    # Per-student cohort membership, so the share of STUDENTS who recur can be
+    # reported without being mistaken for the share of rows that are repeats.
+    appearances = Counter(sid for members in ids.values() for sid in members)
+    multi = sum(1 for n in appearances.values() if n > 1)
     counts = pd.DataFrame(
         [
             {
-                "cohort_rows_summed": sum(len(v) for v in ids.values()),
+                "cohort_rows_summed": rows,
                 "distinct_students": distinct,
-                "duplication_rate": 1 - distinct / sum(len(v) for v in ids.values()),
+                "duplication_rate": 1 - distinct / rows,
+                "students_in_multiple_cohorts": multi,
+                "share_of_students_recurring": multi / distinct,
+                "max_cohorts_per_student": max(appearances.values()),
             }
         ]
     )

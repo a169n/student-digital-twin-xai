@@ -23,7 +23,10 @@ from pathlib import Path
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[3]
-PAPER = REPO / "docs" / "dissertation" / "side2026_paper.md"
+# The LaTeX submission is the manuscript of record. The Markdown draft is kept
+# for history and deliberately not checked: a stale second copy would hide the
+# very contradictions this script exists to surface.
+PAPERS = [REPO / "docs" / "dissertation" / "side2026_submission" / "main.tex"]
 ART = REPO / "data" / "artifacts" / "experiments"
 LADDER = ART / "exp_014_transfer_ladder" / "f33"
 DIST = ["D0_within_cohort", "D1_same_module", "D2_other_module", "D3_other_institution"]
@@ -127,6 +130,65 @@ def build_claims() -> list[tuple[str, float]]:
     for _, row in thr.iterrows():
         claims.append((f"threshold {row['representation']}/{row['rule']} f1_fail", float(row["f1_fail"])))
 
+    health = pd.read_csv(
+        ART / "exp_022_explainer_agreement" / "f33" / "estimator_health.csv"
+    ).set_index("estimator")
+    cond = pd.read_csv(
+        ART / "exp_024_estimator_conditional" / "f33" / "summary.csv"
+    ).set_index("estimator")
+    for est in ("shap", "permutation", "drop_column"):
+        claims += [
+            (f"{est}: self-agreement, same cohort", float(health.loc[est, "self_agreement_tau"])),
+            (f"{est}: dead features of 7", float(health.loc[est, "dead_features"])),
+            (f"{est}: agreement between years", float(cond.loc[est, "tau"])),
+            (
+                f"{est}: cost of one year",
+                float(health.loc[est, "self_agreement_tau"] - cond.loc[est, "tau"]),
+            ),
+        ]
+    reliable = ["shap", "permutation"]
+    claims += [
+        ("estimator spread between years", float(cond.loc[reliable, "tau"].max()
+                                                 - cond.loc[reliable, "tau"].min())),
+        (
+            "mean cost of one year, reliable estimators",
+            float(
+                sum(health.loc[e, "self_agreement_tau"] - cond.loc[e, "tau"] for e in reliable) / 2
+            ),
+        ),
+        ("course-year pairs in Table II", float(cond.loc["shap", "observations"] / 3)),
+    ]
+
+    spread = pd.read_csv(ART / "exp_023_cohort_intervals" / "f33" / "cohort_auc.csv")
+    grand = spread["auc"].mean()
+    between = sum(
+        len(g) * (g["auc"].mean() - grand) ** 2 for _, g in spread.groupby("institution")
+    )
+    claims += [
+        ("cohort AUC min", float(spread["auc"].min())),
+        ("cohort AUC max", float(spread["auc"].max())),
+        ("cohorts covering chance", float(spread["covers_chance"].sum())),
+        ("cohorts entirely below chance", float(spread["below_chance"].sum())),
+        ("institution share of AUC variance (%)", float(100 * between / ((spread["auc"] - grand) ** 2).sum())),
+        ("corr(AUC, cohort size)", float(spread["auc"].corr(spread["n_students"]))),
+        ("OULAD cohort AUC min", float(spread.loc[spread.institution == "OULAD", "auc"].min())),
+        ("OULAD cohort AUC max", float(spread.loc[spread.institution == "OULAD", "auc"].max())),
+        ("median OULAD cohort size", float(spread.loc[spread.institution == "OULAD", "n_students"].median())),
+        ("median cohort size ratio, OULAD over Oviedo", float(
+            spread.loc[spread.institution == "OULAD", "n_students"].median()
+            / spread.loc[spread.institution == "Oviedo", "n_students"].median()
+        )),
+    ]
+    for inst, g in spread.groupby("institution"):
+        # Table I prints a pass-rate range per institution. It went unchecked
+        # until a review asked what the column meant, and OULAD's low end was
+        # wrong by 0.11 the whole time.
+        claims.append((f"{inst} pass rate min", float(g["pass_rate"].min())))
+        claims.append((f"{inst} pass rate max", float(g["pass_rate"].max())))
+        claims.append((f"{inst} mean within-cohort AUC", float(g["auc"].mean())))
+        claims.append((f"{inst} cohort count", float(len(g))))
+        claims.append((f"{inst} students", float(g["n_students"].sum())))
+
     shift = pd.read_csv(ART / "exp_016_shift_analysis" / "f33" / "regression.csv")
     shift = shift[shift.model == "gradient_boosting"].set_index("representation")
     for rep in ("raw", "percentile"):
@@ -138,10 +200,12 @@ def build_claims() -> list[tuple[str, float]]:
 
 
 def main() -> int:
-    text = PAPER.read_text(encoding="utf-8")
+    text = "\n".join(p.read_text(encoding="utf-8") for p in PAPERS if p.exists())
     # Every number the manuscript states, as a set for membership testing.
+    # The en-dash in a LaTeX range (0.34--0.73) has to go first, or the
+    # second endpoint parses as a negative number and never matches.
     stated = {
-        float(m) for m in re.findall(r"(?<![\w.])[-+]?\d+(?:[.,]\d+)?(?![\w])", text.replace(",", ""))
+        float(m) for m in re.findall(r"(?<![\w.])[-+]?\d+(?:[.,]\d+)?(?![\w])", text.replace("{,}", "").replace(",", "").replace("--", " "))
     }
 
     failures = 0
@@ -151,8 +215,20 @@ def main() -> int:
         if pd.isna(value):
             print(f"{label:46s} {'nan':>11s}  SKIP (not computed)")
             continue
+        # The two-decimal fallback exists for values the paper quotes to two
+        # decimals. It must not let a three-decimal claim match a different
+        # three-decimal number that happens to round the same way.
+        def quoted_at(places: int) -> set[float]:
+            scale = 10**places
+            return {s for s in stated if abs(s * scale - round(s * scale)) < 1e-9}
+
+        # A value quoted to fewer decimals matches only if it rounds exactly.
+        # Without the exactness the fallback let a recomputed 0.410 pass against
+        # a stated 0.408, which is how one stale number survived a whole pass.
         hit = any(abs(value - s) <= TOL for s in stated) or any(
-            abs(round(value, 2) - s) <= 0.005 for s in stated
+            abs(round(value, places) - s) <= 1e-9
+            for places in (2, 1)
+            for s in quoted_at(places)
         )
         status = "PASS" if hit else "ABSENT from text"
         if not hit:

@@ -81,9 +81,17 @@ def canonical_from_weekly(frame: pd.DataFrame) -> pd.DataFrame:
 
 
 def cutoff_rows(canon: pd.DataFrame, fraction: float) -> pd.DataFrame:
-    """One row per student at week = max(1, round(fraction * n_weeks)) of its own course."""
+    """One row per student at week = max(1, round(fraction * n_weeks)) of its own course.
+
+    The dedup is not cosmetic. A student enrolled in two parallel sections of the
+    same course arrives twice, and both copies then land in training and in
+    evaluation of the same cohort. It is 12 rows of 45,170 here, all in KU Leuven
+    Accountancy, but the guard belongs on the shared path rather than in one
+    adapter, because any source with sections can do this.
+    """
     target_week = np.maximum(1, np.rint(fraction * canon["n_weeks"]).astype(int))
-    return canon.loc[canon["week_number"] == target_week].reset_index(drop=True)
+    rows = canon.loc[canon["week_number"] == target_week]
+    return rows.drop_duplicates(subset="student_id", keep="first").reset_index(drop=True)
 
 
 def represent(x: pd.DataFrame, representation: str) -> np.ndarray:

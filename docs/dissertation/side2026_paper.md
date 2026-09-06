@@ -1,3 +1,11 @@
+> **Superseded, 6 September 2026.** The manuscript of record is
+> `side2026_submission/main.tex`, with `SIDe2026_submission.docx` as its Word
+> rendering. This Markdown was the drafting master through the review rounds and
+> is kept for that history only. Its numbers predate two corrections made in the
+> submission: the per-cohort AUC spread now comes from exp_023 rather than from
+> institution means, and Section V-B reports the Swamy et al. replication as
+> failing rather than succeeding. Do not cite numbers from this file.
+
 # A Five-Institution Benchmark for Student-Risk Models, and What It Says About Measuring Explanation Stability
 
 *Anonymous submission — SIDe 2026, Track 1 (Computational Intelligence).*
