@@ -1,6 +1,9 @@
 % SIDe 2026 submission — IEEE double-column conference template.
-% Blind review: no author names, affiliations, acknowledgements or repository
-% URL appear anywhere. Replace the anonymised repository line after acceptance.
+% ANONYMITY: set \blindtrue below for a double-blind submission and the author
+% block collapses to one anonymous line. It is currently \blindfalse, so names,
+% affiliations, ORCIDs and emails appear. The Reproducibility section still
+% promises an anonymised repository link; replace that with the real URL
+% whenever the names are shown.
 %
 % Reference audit, 6 Sep 2026: [5] Boujmiraz, [12] Schwerter and [18] Phiri
 % were each verified against Crossref/arXiv/DataCite and are correct as cited.
@@ -26,12 +29,34 @@
 % IEEEtran wants no page numbers in the submitted PDF.
 \pagestyle{empty}
 
+\newif\ifblind
+\blindfalse  % \blindtrue for anonymous review
+
 \begin{document}
 
 \title{A Five-Institution Benchmark for Student-Risk Models, and the Reference Points Explanation-Stability Claims Need}
 
-\author{\IEEEauthorblockN{Anonymous submission}
-\IEEEauthorblockA{Paper ID: (assigned by CMT)}}
+\ifblind
+\author{\IEEEauthorblockN{Anonymous submission}}
+\else
+\author{
+\IEEEauthorblockN{A. S. Talgatov}
+\IEEEauthorblockA{\textit{Master degree student} \\
+\textit{School of Software Engineering} \\
+\textit{Astana IT University} \\
+Astana, Kazakhstan \\
+ORCID: 0009-0006-3463-4644 \\
+a1byn.talgat05@gmail.com}
+\and
+\IEEEauthorblockN{S. A. Nurgaliyeva*}
+\IEEEauthorblockA{\textit{PhD in computer science} \\
+\textit{School of Software Engineering} \\
+\textit{Astana IT University} \\
+Astana, Kazakhstan \\
+ORCID: 0009-0009-5880-6166 \\
+symbat.nurgaliyeva@astanait.edu.kz}
+}
+\fi
 
 \maketitle
 \thispagestyle{empty}
@@ -234,7 +259,7 @@ not a reliable estimator, and 0.127 should be read as evidence about that estima
 % 4 pt. Spanning both columns is the only way this figure stays readable.
 \begin{figure*}[t]
 \centering
-\includegraphics[width=0.78\textwidth]{fig1_explanation_instability.pdf}
+\includegraphics[width=0.70\textwidth]{fig1_explanation_instability.pdf}
 \caption{Every agreement comparison in this paper on one scale, with its bounds; colour marks what differed between the two rankings. The floor and ceiling bars are measured under permutation importance and carry its scale, so a bar above them is not above a universal ceiling; each estimator's own reference is in Table~\ref{tab:cond}. Starred bars involve drop-column, degenerate here --- 3.2 of 7 features receive zero or negative importance, self-agreement 0.173.}
 \label{fig:instability}
 \end{figure*}
@@ -313,7 +338,7 @@ results. Within-cohort predictability spans 0.384 to 0.953 across those cohorts,
 
 \section*{Reproducibility}
 
-We release the five institution adapters, the cohort definitions, the experiment code and the frozen result files, together with a script that recomputes every number in this paper from those files. We do not redistribute the underlying student data: each source is published by its own institution under its own licence, and the adapters read those releases in place. An anonymised repository is linked from the submission record; the permanent link replaces this note in the camera-ready version.
+We release the five institution adapters, the cohort definitions, the experiment code and the frozen result files, together with a script that recomputes every number in this paper from those files. We do not redistribute the underlying student data: each source is published by its own institution under its own licence, and the adapters read those releases in place. \ifblind An anonymised repository is linked from the submission record; the permanent link replaces this note in the camera-ready version.\else Everything named here is at \texttt{<repository URL>}.\fi
 
 \section*{Ethics}
 

@@ -57,7 +57,7 @@ def main() -> None:
     d = pd.read_csv(SRC).sort_values("auc").reset_index(drop=True)
     FIG.mkdir(parents=True, exist_ok=True)
 
-    fig, ax = plt.subplots(figsize=(3.4, 3.5), dpi=220)
+    fig, ax = plt.subplots(figsize=(3.4, 2.9), dpi=220)
     ys = np.arange(len(d))
     for y, r in zip(ys, d.itertuples()):
         c = COLOUR.get(r.institution, "#555555")

@@ -61,9 +61,22 @@ SYMBOLS = {
 
 
 def _strip_comments(tex: str) -> str:
-    return "\n".join(
-        line for line in tex.split("\n") if not line.lstrip().startswith("%")
-    )
+    """Drop LaTeX comments, whole-line and trailing alike.
+
+    Trailing ones matter: the line that sets the anonymity switch carries
+    "% \\blindtrue for anonymous review" after it, and a parser that reads only
+    whole-line comments finds that token and builds the wrong author block.
+    An escaped \\% is a literal percent sign and is left alone.
+    """
+    out = []
+    for line in tex.split("\n"):
+        cut = re.search(r"(?<!\\)%", line)
+        if cut is not None:
+            line = line[: cut.start()].rstrip()
+            if not line:
+                continue
+        out.append(line)
+    return "\n".join(out)
 
 
 def collect_labels(tex: str) -> dict[str, str]:
@@ -116,7 +129,7 @@ def inline(text: str, labels: dict[str, str], cites: dict[str, int]) -> list[tup
         str(cites.get(k.strip(), "?")) for k in m.group(1).split(",")) + "]", t)
     t = re.sub(r"\\ref\{([^}]*)\}", lambda m: labels.get(m.group(1), "?"), t)
     t = re.sub(r"\\tfrac\{(\d+)\}\{(\d+)\}", r"\1/\2", t)
-    t = re.sub(r"\\text\{([^}]*)\}", r"\1", t)
+    t = re.sub(r"\\text(?:tt)?\{([^}]*)\}", r"\1", t)
     for k, v in SYMBOLS.items():
         t = t.replace(k, v)
     for k, v in ACCENTS.items():
@@ -129,10 +142,10 @@ def inline(text: str, labels: dict[str, str], cites: dict[str, int]) -> list[tup
 
     parts: list[tuple[str, bool, bool]] = []
     pos = 0
-    for m in re.finditer(r"\\(emph|textbf)\{([^{}]*)\}", t):
+    for m in re.finditer(r"\\(emph|textit|textbf)\{([^{}]*)\}", t):
         if m.start() > pos:
             parts.append((t[pos:m.start()], False, False))
-        parts.append((m.group(2), m.group(1) == "textbf", m.group(1) == "emph"))
+        parts.append((m.group(2), m.group(1) == "textbf", m.group(1) != "textbf"))
         pos = m.end()
     if pos < len(t):
         parts.append((t[pos:], False, False))
@@ -262,8 +275,91 @@ def add_figure(doc, block: str, number: str, labels, cites) -> None:
          inline(caption, labels, cites), size=8)
 
 
+def resolve_blind(tex: str) -> str:
+    """Take the branch of every \\ifblind ... \\else ... \\fi that LaTeX would take.
+
+    The manuscript carries an anonymous and a named variant of the author block
+    and of the repository sentence. Word has no conditionals, so the choice has
+    to be made here, from the same \\blindtrue / \\blindfalse the .tex sets --- or
+    the two formats disagree about whether the paper is anonymous.
+    """
+    switch = re.search(r"\\blind(true|false)\b", tex)
+    anonymous = bool(switch) and switch.group(1) == "true"
+    # The declaration goes first: \newif\ifblind contains the token \ifblind, so
+    # leaving it in makes the conditional match start there and swallow the
+    # title along with everything else up to the first \else.
+    tex = re.sub(r"\\newif\\ifblind|\\blind(?:true|false)\b", "", tex)
+    return re.sub(
+        r"\\ifblind(.*?)\\else(.*?)\\fi",
+        lambda m: m.group(1) if anonymous else m.group(2),
+        tex,
+        flags=re.S,
+    )
+
+
+def parse_authors(tex: str) -> list[tuple[str, list[str]]]:
+    """(name, affiliation lines) for each author in the \\author block."""
+    start = tex.index("\\author")
+    chosen = braced(tex, tex.index("{", start))
+
+    authors: list[tuple[str, list[str]]] = []
+    for m in re.finditer(r"\\IEEEauthorblock([NA])\{", chosen):
+        body = braced(chosen, m.end() - 1)
+        if m.group(1) == "N":
+            authors.append((body.strip(), []))
+        elif authors:
+            authors[-1][1].extend(
+                line.strip() for line in body.split("\\\\") if line.strip()
+            )
+    return authors
+
+
+def braced(text: str, open_at: int) -> str:
+    """The argument starting at the brace in text[open_at], braces balanced.
+
+    A regex cannot do this: an author block contains \\textit{...}, and a
+    non-greedy {(.*?)} stops at that inner closing brace, which is how the first
+    version of this parser silently found no authors at all.
+    """
+    assert text[open_at] == "{", "expected a brace"
+    depth = 0
+    for i in range(open_at, len(text)):
+        if text[i] == "{":
+            depth += 1
+        elif text[i] == "}":
+            depth -= 1
+            if depth == 0:
+                return text[open_at + 1 : i]
+    raise ValueError("unbalanced braces in the author block")
+
+
+def add_authors(doc, tex: str) -> None:
+    authors = parse_authors(tex)
+    if not authors:
+        raise ValueError("no author block found in main.tex")
+    if len(authors) == 1 and not authors[0][1]:
+        text_para(doc, authors[0][0], size=11, align=WD_ALIGN_PARAGRAPH.CENTER,
+                  space_after=10)
+        return
+
+    table = doc.add_table(rows=1, cols=len(authors))
+    table.autofit = True
+    for cell, (name, lines) in zip(table.rows[0].cells, authors):
+        cell.text = ""
+        p = cell.paragraphs[0]
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p.paragraph_format.space_after = Pt(0)
+        runs(p, [(name, False, False)], size=11)
+        for line in lines:
+            q = cell.add_paragraph()
+            q.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            q.paragraph_format.space_after = Pt(0)
+            runs(q, inline(line, {}, {}), size=9.5)
+    para(doc, space_after=10)
+
+
 def build() -> Path:
-    tex = _strip_comments(TEX.read_text(encoding="utf-8"))
+    tex = resolve_blind(_strip_comments(TEX.read_text(encoding="utf-8")))
     labels = collect_labels(tex)
     cites = collect_citations(tex)
 
@@ -283,9 +379,7 @@ def build() -> Path:
     title = re.search(r"\\title\{(.*?)\}\s*\n", tex, re.S).group(1)
     runs(para(doc, align=WD_ALIGN_PARAGRAPH.CENTER, space_after=10),
          inline(title, labels, cites), size=20)
-    text_para(doc, "Anonymous submission", size=11, align=WD_ALIGN_PARAGRAPH.CENTER, space_after=0)
-    text_para(doc, "Paper ID: assigned by CMT \u2014 blind review", size=11, italic=True,
-              align=WD_ALIGN_PARAGRAPH.CENTER, space_after=10)
+    add_authors(doc, tex)
 
     two = doc.add_section(WD_SECTION.CONTINUOUS)
     two.page_width, two.page_height = Inches(8.5), Inches(11)

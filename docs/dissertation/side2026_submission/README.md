@@ -30,8 +30,13 @@ labels `fig:spread` and `fig:instability` are the reliable handles.
 - [ ] Page count is 4–6 including references (conference rule counts everything).
       If it runs over, cut in this order: Related Work paragraph 2, the
       Sensitivity subsection, then the second and third controls.
-- [ ] Blind review: no author names, affiliations, acknowledgements, funding, or
-      repository URL anywhere. The Reproducibility note is already anonymised.
+- [ ] Decide anonymity BEFORE building. `main.tex` sets `lindfalse`, so the
+      current PDF and .docx carry author names, affiliations, ORCIDs and emails.
+      If SIDe 2026 reviews double-blind, change that one line to `lindtrue`,
+      rebuild both, and check the front page and the Reproducibility sentence:
+      both switch together, and the .docx builder reads the same flag.
+- [ ] With names shown, replace `<repository URL>` in Reproducibility with the
+      real link before submitting.
 - [ ] Upload the anonymised repository and link it from the submission record.
       The Reproducibility section promises the adapters, cohort definitions,
       experiment code, frozen results and the verification script.
