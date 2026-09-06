@@ -1,4 +1,4 @@
-# Discrimination Transfers, Calibration Does Not, and Explanations Were Never Stable: An Early-Warning Transfer Benchmark Across Five Institutions
+# A Five-Institution Benchmark for Student-Risk Models, and What It Says About Measuring Explanation Stability
 
 *Anonymous submission — SIDe 2026, Track 1 (Computational Intelligence).*
 
@@ -6,96 +6,78 @@
 
 ## Abstract
 
-Early-warning models that flag students at risk of failing a course are almost always trained and evaluated inside one course, so what survives when such a model is moved is unknown. We release a public transfer benchmark of 63 cohorts from five universities on five learning-management platforms in four countries, covering 35,529 distinct students under one seven-feature engagement schema and a cutoff at one third of each course, and evaluate every ordered pair of cohorts. Four results follow, and two of them are negative. First, the signal itself is institution-specific: within-cohort ROC-AUC ranges from 0.845 at the Open University to 0.527 at the University of Zambia, so a single-dataset study reports a property of its dataset. Second, transfer separates cleanly along the lines the clinical prediction-model literature would predict: discrimination degrades gradually, from 0.691 within cohort to 0.597 across institutions, while calibration collapses, with calibration-in-the-large moving from -0.008 to +0.119 and the Brier score from 0.197 to 0.361. A within-cohort percentile representation, computed without target labels, restores calibration-in-the-large almost exactly (-0.009) and improves the Brier score, so it is a recalibration device rather than a performance fix. Third, and negatively, it does not improve the decision: at a realistic 20 % flag budget, recall of failing students is 0.272 raw and 0.274 under the transform, and every rule we tested — including a source-rate threshold — loses on F1 to simply alerting everyone. Fourth, the explanation finding that motivated this work does not survive a baseline: two models trained on disjoint halves of the same cohort agree at Kendall tau 0.338, against 0.026 across institutions and 0.303 expected from random rankings, so permutation-importance rankings over these features are weakly identified before transfer is considered. We also report two methodological hazards found while auditing our own pipeline: F1 computed on the passing class flatters every model, and 72 of 78 same-course transfer pairs share students between training and evaluation, up to 94 % of the target cohort. Disaggregating by published attributes, transfer harms the worst-served group most: at UKZN, recall for the lowest school-quintile group falls from 0.65 locally to 0.18 after transfer.
+Studies of student-risk models are almost always run on one dataset, and studies of their explanations on one importance estimator. We release a benchmark that removes the first restriction and use it to show why the second one matters. The benchmark covers 63 cohorts from five universities on five learning-management platforms in four countries, 35,529 distinct students, harmonised to one seven-feature schema with adapters and frozen results released. Three findings follow. First, predictability is a property of the institution, not of the task: within-cohort ROC-AUC ranges from 0.845 at the Open University to 0.527 at the University of Zambia, and 19 of 63 cohorts have intervals covering chance, so a single-dataset result describes its dataset. Second, we replicate on this population the finding of Swamy et al. that the choice of explainer dominates the interpretation of a student model, extending it from five MOOC courses and one network to 63 cohorts, five institutions and three model families, and supplying the reference points their design could not: a noise floor of Kendall tau 0.707, an attainable ceiling of 0.338 between two models fitted to disjoint halves of one cohort, and an analytic random baseline. Third, and consequently, we show that a single-estimator stability study reports a conclusion conditional on an undeclared choice: measuring how much a year of retraining costs a feature ranking gives tau 0.238 under permutation importance and 0.520 under SHAP, a spread more than twice the 0.128 effect being measured. We also report two measurement hazards found by auditing our own pipeline — a majority-class F1 that flatters every model, and 72 of 78 same-course transfer pairs sharing students between training and evaluation — and a zero-training baseline that gradient boosting fails to beat in 38 of 63 cohorts.
 
-**Keywords** — learning analytics; early warning; model portability; external validation; calibration; explainable AI; trustworthy AI; fairness.
+**Keywords** — benchmark; learning analytics; explainable AI; feature importance; replication; trustworthy AI.
 
 ---
 
 ## I. Introduction
 
-Predicting course failure from learning-management-system activity is one of the most replicated tasks in learning analytics, and the standard experiment trains and tests on a held-out split of a single course presentation. That is not how such a model is used. An institution applies it to the cohort it is teaching now, to courses that did not exist when it was built, and, if the system is a product, at other institutions whose platform records activity on a different scale.
+Two habits shape the empirical literature on student-risk prediction. Models are developed and evaluated on a single dataset, usually one institution's. Explanations are computed with a single importance estimator, usually whichever library the authors reached for. Neither habit is examined, because examining either requires resources most studies do not have: many institutions, or many estimators applied to the same models.
 
-Three distinct things can break in that move: the model's ability to rank students, the calibration that turns a score into a decision, and the explanation a teacher is shown. The learning-analytics literature reports the first and rarely separates the second, which is unfortunate, because the clinical prediction-model literature has known for two decades that a transported model routinely keeps its discrimination while its calibration fails, and has a settled vocabulary and a repair procedure for exactly that [11], [12], [13].
+This paper supplies both and reports what they show. It is a resource paper with a measurement result attached, and it is deliberately not a methods paper: we propose no new model, no new explainer, and no new transfer technique. Three of our own candidate methods were tested during this work and discarded when controls showed they did not beat far simpler alternatives; those controls are reported in Section V-D because they bound how the rest should be read.
 
-This paper contributes:
+Contributions:
 
-1. **A public five-institution benchmark**, 63 cohorts and 35,529 distinct students across five platforms and four countries, with adapters and frozen results released (Section III).
-2. **A separation of three failure modes** along a transfer-distance ladder, in the external-validation vocabulary: discrimination, calibration, and explanation agreement degrade at very different rates (Section V-B, V-C).
-3. **Two honest negative results.** A label-free cohort-relative representation restores calibration but does not improve the decision at a fixed flag budget; and the explanation instability we set out to attribute to transfer is largely present within a single cohort (Section V-D, V-E).
-4. **Two methodological hazards** that we found by auditing our own pipeline and that are easy to reproduce accidentally: a majority-class F1 that flatters every model, and shared students that contaminate within-institution transfer evaluation (Section V-G).
-5. **A fairness disaggregation** showing that transfer costs the worst-served group more than the average (Section V-F).
-
-We do not propose a new algorithm. We report what a competent, ordinary early-warning model does when it leaves home, using metrics that cannot hide the answer.
+1. **A public five-institution benchmark** — 63 cohorts, 35,529 distinct students, five platforms, four countries, one harmonised schema, with adapters, cohort definitions and frozen results released (Section III).
+2. **The spread of predictability across institutions**, which a single-dataset study cannot observe (Section V-A).
+3. **A replication and extension** of the finding that explainer choice dominates the interpretation of a student model [8], on a population five times larger and structurally different, with the floor, ceiling and random baselines that make the numbers interpretable (Section V-B).
+4. **A methodological consequence**: single-estimator stability studies report conclusions conditional on an undeclared choice, and we quantify by how much (Section V-C).
+5. **Two measurement hazards and a baseline audit** that changed our own conclusions mid-project (Section V-D).
 
 ---
 
 ## II. Related Work
 
-**Prediction on public LMS data.** Gradient boosting or random forests over weekly features, with post-hoc explanations attached, is the standard configuration, and reviews catalogue hundreds of such models [4]–[6]. The reporting unit is one configuration on one cohort.
+**Prediction on public LMS data.** Gradient boosting or random forests over weekly activity features, with post-hoc explanations attached, is the standard configuration, and reviews catalogue hundreds of such systems [4]–[6]. The reporting unit is one configuration on one cohort.
 
-**Portability within learning analytics.** López-Zambrano, Lara and Romero found that decision-tree models port between Moodle courses only when the courses are structurally similar [7], and later improved portability with an ontology of actions [8]. Gardner et al. transferred across four US universities and reported that zero-shot transfer can approach local performance, on harmonised institutional data that is not public [9]. Schwerter et al. found degradation across institutions with different base rates [10]. Riestra-González et al. predicted course-agnostic performance across 532 Moodle courses at one university [14]. Swamy, Marras and Käser used meta-transfer over 26 MOOCs [15]. Two things are absent from this line: public data spanning more than a handful of institutions, and any separation of calibration from discrimination.
+**Cross-institution work.** Transfer of student models is well studied: López-Zambrano et al. across 24 Moodle courses [9], [10]; Gardner et al. across four US universities on private data [11]; Schwerter et al. across two universities [12]; Riestra-González et al. across 532 courses at one institution [13]; Jayaprakash et al. ported an early-alert model between partner institutions as early as 2014 [14]. What is missing is not the question but a public artifact: a harmonised, multi-platform corpus another group can run against. That is the gap this benchmark fills.
 
-**External validation, borrowed.** In clinical prediction modelling, transporting a model to a new hospital is a named experimental design with a standard reporting checklist [11], a calibration hierarchy that distinguishes calibration-in-the-large from weaker and stronger forms [12], and a closed-testing ladder that tries intercept-only recalibration before refitting anything [13]. Label-free prior correction has existed since Saerens, Latinne and Decaestecker [16]. We adopt this vocabulary rather than reinventing it, and Section V-D reports what happens when the ladder's cheapest rung is skipped.
-
-**Explanation stability.** Tiukhova et al. showed with SHAP that feature importances of student-success models shift across cohorts of one programme [17]. Independently, Hooker, Mentch and Zhou showed that permutation importance evaluated outside the data manifold is unreliable and that a defensible variable-importance estimate needs refitting [18]. Section V-E measures both the noise floor and the attainable ceiling before making any claim about transfer, which is what those two results together demand.
-
-**Data scarcity.** A 2026 census hand-coded 1,125 LAK, EDM and AIED papers and published its annotated inventory of 172 datasets [19]. Our own filtering of that public inventory finds very few datasets carrying timestamped per-student activity, a course outcome, and a key joining them; the figure is ours, not the census authors'. Meanwhile the largest cross-course study in the field publishes code and withholds data [15].
+**Explanation stability.** Tiukhova et al. showed with SHAP that importance rankings of student-success models shift across cohorts and years of one programme [7]. Swamy et al. compared five explainers on Bidirectional LSTM models over five MOOCs and concluded that "the choice of explainer is an important decision and is in fact paramount to the interpretation of the predictive results, even more so than the course the model is trained on" [8]. Their conclusion is the one we replicate; we claim neither priority for it nor a contradiction of it. Their design established the ordering structurally — principal-component scatter and per-course heatmaps — but could not put the two sources of variation on a common numeric scale, because their importance vectors have course-specific lengths. A harmonised schema removes that obstacle, which is the extension we contribute. Outside education, Hooker, Mentch and Zhou show permutation importance evaluates a model off its own data manifold and argue a defensible estimate requires refitting [15]; Krishna et al. document disagreement between explanation methods generally [16]; and Verdinelli and Wasserman prove that SHAP and leave-one-covariate-out target genuinely different estimands [17], which we treat as the correct interpretation of part of our result rather than as a competing explanation of it.
 
 ---
 
-## III. Data and Canonical Schema
+## III. The Benchmark
 
 ### A. Five institutions, five platforms
 
-| Institution | Platform | Country | Cohorts | Students | Outcome |
-|---|---|---|---|---|---|
-| Open University — OULAD [1] | OU VLE | UK | 19 | 30,059 | Pass/Distinction = 1; Fail/Withdrawn = 0 |
-| Universidad de Oviedo [14] | Moodle 2.x | Spain | 20 | 3,789 | Gradebook course total ≥ 50 % |
-| Univ. of KwaZulu-Natal [3] | Moodle | South Africa | 16 | 7,254 | Result code beginning P |
-| KU Leuven [2] | Toledo | Belgium | 6 | 3,951 | PASSED |
-| Univ. of Zambia [20] | Moodle | Zambia | 2 | 117 | Final exam mark ≥ 50 |
-| **Total** | | | **63** | **35,529 distinct** | |
+| Institution | Platform | Country | Cohorts | Students |
+|---|---|---|---|---|
+| Open University — OULAD [1] | OU VLE | UK | 19 | 30,059 |
+| Universidad de Oviedo [13] | Moodle 2.x | Spain | 20 | 3,789 |
+| Univ. of KwaZulu-Natal [3] | Moodle | South Africa | 16 | 7,254 |
+| KU Leuven [2] | Toledo | Belgium | 6 | 3,951 |
+| Univ. of Zambia [18] | Moodle | Zambia | 2 | 117 |
+| **Total** | | | **63** | **35,529 distinct** |
 
-Cohort rows sum to 45,158, but only 35,529 students are distinct: 21 % appear in more than one cohort. Section V-G shows why that matters. A cohort is admitted with at least 50 students and 15 in the rarer class. Oviedo contributes 20 of its 94 eligible courses, the largest by minority class, so that the mean over pairs is not an Oviedo statistic.
+A cohort is one course, one academic period, one institution, admitted with at least 50 students and at least 15 in the rarer outcome class. Cohort sizes sum to 45,170, but only 35,529 students are distinct: 21 % appear in more than one cohort, which Section V-D shows is not a bookkeeping detail. Outcome definitions differ across institutions and are perfectly collinear with institution, so no analysis here separates a label effect from an institution effect; OULAD in particular counts withdrawal as failure, which a clickstream predicts almost by construction.
 
-Outcome semantics differ by institution, and we do not claim otherwise: OULAD counts withdrawal as failure, Oviedo's label is a gradebook total rather than a registrar decision, and the other three are examination or registrar outcomes. Label definition and institution are perfectly collinear here, so no analysis in this paper can separate a label effect from an institution effect. This is a property of the available public data, and it bounds every cross-institution number we report.
+### B. Schema, calendars and corrections
 
-### B. Enrolment, calendars, and one correction
+Each adapter emits four weekly counters per student — clicks, active days, content clicks, social clicks — from which seven leakage-safe features are derived identically: four cumulative counters, current-week clicks, active weeks so far, and weeks since last activity. No demographic or assessment feature enters the models; three institutions publish none. Course lengths run from 14 to 46 weeks, so the prediction point is relative: one row per student at week ⌈⅓ × length⌉, repeated at ¼ and ½.
 
-For the three Moodle institutions, enrolment is the intersection of the outcome table and the activity log. None publishes a course calendar, so the active span is inferred as the first to the last week in which at least 10 % of enrolled students were active. The Zambia release records one final examination mark per student with no sitting year; assigning that mark to every year in which the student appears would leak a later outcome backwards, so each student is assigned to their last active year. This removed one Zambia cohort from the benchmark, and we report the smaller benchmark rather than the leaked one.
-
-### C. Canonical schema and cutoff
-
-Each adapter emits four weekly counters — clicks, active days, content clicks, social clicks — from which seven leakage-safe features are derived identically: four cumulative counters, current-week clicks, active weeks so far, and weeks since last activity. No demographic or assessment features enter the model. Course lengths range from 14 to 46 weeks, so the prediction point is relative: one row per student at week ⌈⅓ × length⌉, with the ladder rerun at ¼ and ½.
+The three Moodle institutions publish no course calendar, so an active span is inferred from the log as the first to the last week in which at least 10 % of enrolled students were active. Building the benchmark surfaced two data defects worth recording for reusers: one release stores its academic years under identical filenames, so a naive loader silently returns the same year three times; and another records a single final examination mark per student with no sitting year, so assigning it to every year in which a student appears leaks a later outcome backwards. Fixing the second cost one cohort, and we report the smaller benchmark rather than the leaked one.
 
 ---
 
 ## IV. Method
 
-### A. Transfer-distance ladder
+**Models.** A fixed gradient-boosting classifier [19] (200 trees, depth 3, learning rate 0.05) is the primary model, with logistic regression and a random forest as robustness checks. Nothing is tuned per cohort: the object of study is what an ordinary model does.
 
-For an ordered pair (S, T): **D0** if S = T, scored by 5-fold stratified cross-validation; **D1** the same course in another year; **D2** another course at the same institution; **D3** another institution. All 3,969 ordered pairs are evaluated for three representations and three model families. Because the four classes average over different sets of target cohorts, headline tables restrict to the 40 targets present at all four distances and we state plainly that this restriction excludes Oviedo, which has one academic year, and Zambia, which has one course; all-target figures are reported alongside.
+**Explainers.** Three importance estimators are applied to the same fitted model on the same held-out students: *permutation* importance (three repeats, AUC scoring); *SHAP*, the mean absolute TreeSHAP value per feature [20]; and *drop-column*, refitting without each feature and measuring the AUC lost, which is what [15] argues a defensible estimate requires.
 
-### B. Representations
+**Agreement.** Kendall tau over the seven features and Jaccard overlap of the top three. Because such numbers are meaningless without bounds, we measure three: a **noise floor** (one fitted model, two permutation seeds), an **attainable ceiling** (two models fitted to disjoint halves of one cohort), and an analytic **random baseline** (expected tau 0.000, expected top-3 Jaccard 0.303).
 
-**raw** counts; **z-score** and **percentile**, both computed within the cohort being scored, at the cutoff week, using no labels.
-
-### C. Metrics
-
-Discrimination is ROC-AUC. Calibration is the Brier score and calibration-in-the-large, the mean predicted failure probability minus the observed failure rate. Decision quality is recall and precision of failing students inside a fixed 20 % flag budget, which is what an institution with finite advising capacity actually sets. F1 is reported on the **failing** class, always beside the F1 of alerting everyone. Explanation agreement is Kendall tau and top-3 Jaccard between the transferred model's permutation-importance ranking on the target and a locally trained model's, with the floor, ceiling and random baseline of Section V-E.
-
-### D. Disclosed compute settings
-
-Permutation-importance rankings are computed for the primary model only, with three repeats and targets subsampled to 1,500 rows. None affects a reported AUC, calibration or decision metric.
+**Cohort separations.** Cohort pairs are labelled by what differs: the same course in another year, another course at the same institution, or another institution. All 3,969 ordered pairs are evaluated.
 
 ---
 
 ## V. Results
 
-### A. The signal is a property of the institution
+### A. Predictability belongs to the institution
 
-| Institution | Cohorts | D0 AUC | Range |
+| Institution | Cohorts | Within-cohort AUC | Range |
 |---|---|---|---|
 | OULAD | 19 | 0.845 | 0.709–0.897 |
 | UKZN | 16 | 0.667 | 0.536–0.814 |
@@ -103,89 +85,64 @@ Permutation-importance rankings are computed for the primary model only, with th
 | Oviedo | 20 | 0.606 | 0.384–0.953 |
 | Zambia | 2 | 0.527 | 0.455–0.598 |
 
-Clickstream engagement predicts course outcome well at the Open University and near chance at Zambia. A single-dataset study measures one point of this range and reports it as the state of the art.
+Nineteen of the 63 cohorts have a within-cohort interval covering 0.5, and one is reliably anti-predictive. A study reporting 0.85 and a study reporting 0.55 may be equally competent and equally correct about their own data. This is the first quantity the benchmark supplies that a single-dataset design cannot.
 
-### B. Discrimination degrades gradually
+### B. Reference points for explanation agreement, and a replication
 
-Across all 63 targets, gradient boosting falls from 0.691 within cohort to 0.597 across institutions; on the paired 40 the figures are 0.746 and 0.614 (Table II, Fig. 2a). The gap is 0.09 to 0.13 depending on the estimator, and we report both rather than the flattering one. Random forest is the most robust family under raw features and gradient boosting the least, which qualifies the report that linear models transfer best [10]: that ordering appears only after the representation is fixed.
-
-### C. Calibration collapses, and a label-free transform restores it
-
-| Gradient boosting, all 63 targets | D0 | D3 raw | D3 percentile |
-|---|---|---|---|
-| ROC-AUC | 0.691 | 0.597 | 0.617 |
-| Brier score | 0.197 | 0.361 | 0.322 |
-| Calibration-in-the-large | −0.008 | **+0.119** | **−0.009** |
-
-A transferred model over-predicts failure risk by 12 percentage points, and the within-cohort percentile representation removes that bias almost exactly, at every rung, without a single target label. In the vocabulary of [12] this is calibration-in-the-large restored while weaker calibration remains imperfect, and it is what the clinical updating ladder [13] would attempt first.
-
-The mechanism is not the one we initially assumed. A regression of per-pair AUC loss on measured shift shows the correlation with click-scale shift essentially unchanged under the transform (0.067 to 0.077); what falls is the correlation with distribution-shape shift, from 0.283 to 0.189, and the explained variance from 0.116 to 0.062. Prevalence shift, the largest component at D3, survives the transform untouched — which is precisely why it repairs calibration-in-the-large and nothing else.
-
-### D. Negative result: the transform does not improve the decision
-
-At a 20 % flag budget the transform is worth nothing: recall of failing students is 0.272 raw and 0.274 percentile at D3, against 0.326 within cohort. Lift over random flagging falls from 1.63 to 1.36. On F1 over the failing class the transform is actively worse (0.421 raw, 0.348 percentile), and a source-rate threshold — flagging the share of the target that the source cohort had failing — recovers percentile to 0.415 while leaving raw at 0.406.
-
-All four rules lose to alerting everyone, which scores 0.546, and none beats it in more than 27 % of pairs. F1 on a class with prevalence near 0.4 is dominated by the trivial rule, so it should not be reported in this setting without that baseline beside it. What survives is the flag-budget result: a transferred model still finds 36 % more failing students than random selection, and that, not F1, is the honest deployment number.
-
-### E. Negative result: the explanations were never stable
-
-| Reference point (gradient boosting) | Kendall tau | top-3 Jaccard |
+| Reference point | tau | top-3 Jaccard |
 |---|---|---|
-| Same model, reseeded (noise floor) | 0.707 | 0.744 |
-| Two models, disjoint halves of the same cohort (ceiling) | 0.338 | 0.487 |
-| Transferred model vs local, other institution | 0.026 | 0.323 |
+| Same model, only the permutation seed differs | 0.707 | 0.744 |
+| Two models, disjoint halves of one cohort, ranked on the full cohort | 0.338 | 0.487 |
+| The same, ranked on a held-out third | 0.198 | 0.415 |
 | Independent random rankings | 0.000 | 0.303 |
 
-We set out to show that transfer destroys explanations. It does not, because there was little to destroy: two models trained on disjoint halves of the *same* cohort, ranked on the same data, agree at 0.338. Cross-institution agreement of 0.026 sits barely above the random baseline, and the percentile transform does not help (0.018). Agreement declines monotonically with distance — 0.207 at D1, 0.102 at D2, 0.026 at D3 — but the correct statement is that permutation-importance rankings over these seven correlated features are weakly identified in the first place, consistent with [18], and transfer moves them from weakly identified to indistinguishable from chance. A teacher-facing panel showing such a ranking is not made trustworthy by keeping the model local.
+Two models differing only in which half of one cohort they saw agree at 0.338. That is the most agreement any comparison in this paper can attain, and it is far below what a teacher-facing factor list implicitly promises.
 
-### F. Transfer costs the worst-served group most
+Against those bounds, the estimator comparison. Applied to one fitted model on one set of students, permutation importance and SHAP agree at tau 0.408, permutation and drop-column at 0.258, SHAP and drop-column at 0.123. The qualitative conclusion — that the explainer is a first-order determinant of the resulting factor list — is that of Swamy et al. [8], reproduced here on 63 cohorts across five institutions and three model families rather than five MOOCs and one network.
 
-Sensitive attributes are used only to evaluate, never as features. At a 20 % flag budget:
+One arm requires a caveat we report rather than hide. Four of the seven features are cumulative counters of the same behaviour, and removing one leaves near-duplicates behind, so drop-column importance is zero or negative for 3.2 of 7 features on average, against 2.1 for permutation. Its agreement with itself across resamples of one cohort is 0.181 — lower than its agreement with permutation on identical data. On collinear behavioural features, drop-column is not a reliable estimator, and the 0.123 figure should be read as evidence about that estimator in this setting rather than as the headline. The defensible headline figure is the permutation-versus-SHAP agreement of 0.408, which sits above the 0.338 ceiling and is therefore not evidence that the explainer matters more than the training sample.
 
-| Attribute | Gap, local | Gap, transferred | Worst group recall, local → transferred |
-|---|---|---|---|
-| Deprivation index (OULAD) | 0.182 | 0.164 | 0.285 → 0.209 |
-| School quintile (UKZN) | 0.125 | 0.160 | 0.654 → 0.182 |
-| Race (UKZN) | 0.102 | 0.154 | 0.526 → 0.205 |
-| Gender (OULAD) | 0.035 | 0.038 | 0.392 → 0.275 |
+### C. A single-estimator stability study measures its own estimator
 
-Deprivation produces the widest disparity even locally. Transfer widens the gap on the two South African attributes and lowers the worst-served group's recall in every case. The UKZN local figures rest on few cohorts and should be read as indicative; the transferred figures do not. A click-volume risk score is partly a device-and-connectivity score, and this is what that looks like at the point of decision.
+The practical consequence is sharper than the comparison above. Take a question the literature does ask — how much does retraining on the next year's students change a model's feature ranking? — and answer it three times, changing only the estimator:
 
-### G. Two hazards we created and then found
+| Estimator | Agreement between years |
+|---|---|
+| SHAP | 0.520 |
+| Permutation importance | 0.238 |
+| Drop-column | degenerate here (§V-B) |
 
-**A majority-class F1 flatters every model.** Our first implementation scored F1 with the default positive label, which is *passing*. Every configuration then looked healthy while losing to a trivial rule on the class that matters. The check that catches this costs one line: print the trivial baseline beside every F1.
+The two reliable estimators differ by 0.282 on the same 78 course-year pairs and the same fitted models. The effect being measured — retraining, against the 0.338 ceiling — is 0.128. The choice of estimator moves the answer by more than twice the size of the phenomenon under study.
 
-**Within-institution transfer is contaminated by shared students.** 72 of 78 same-course pairs and 324 of 916 other-course pairs share students between training and evaluation, up to 94 % of the target cohort. Cross-institution pairs are effectively clean: 78 of 2,912 show any overlap at all, and never more than 1.5 %. Removing contaminated pairs lowers D1 from 0.715 to 0.656 and, with it, removes the artefact by which same-course transfer appeared to *beat* within-cohort performance. Any ladder of this shape must report per-pair overlap.
+A stability study that fixes one estimator therefore reports a number that is as much a property of that choice as of the data, and none that we are aware of declares this. The recommendation is concrete and cheap: report agreement under at least two estimators, and report the ceiling for the design, since without it a tau has no scale.
 
-### H. Sensitivity
+### D. Three controls that changed our own conclusions
 
-Rerunning the ladder at one quarter and one half of course length moves every level and no conclusion (gradient boosting, all 63 cohorts):
+**A zero-training baseline.** Ranking students by cumulative active days — no model, no training, no labels — reaches AUC 0.713 against 0.692 for a locally trained gradient-boosting model, beating it in 38 of 63 cohorts; logistic regression reaches 0.717. At OULAD, where intermediate assessment scores exist, a model using them reaches 0.839 against the rule's 0.757. Behavioural counters carry roughly what a single attendance counter already carries; the value of a model here scales with what it knows beyond attendance.
 
-| Cutoff | D0 AUC | D3 AUC raw | D3 AUC pct | D3 calibration raw | D3 calibration pct | D3 recall@20 raw | D3 recall@20 pct | D3 tau |
-|---|---|---|---|---|---|---|---|---|
-| 1/4 | 0.669 | 0.587 | 0.616 | +0.120 | −0.001 | 0.265 | 0.271 | 0.038 |
-| 1/3 | 0.691 | 0.597 | 0.617 | +0.119 | −0.009 | 0.272 | 0.274 | 0.026 |
-| 1/2 | 0.723 | 0.624 | 0.654 | +0.125 | −0.000 | 0.293 | 0.301 | 0.029 |
+**A majority-class metric.** Our first implementation computed F1 with the default positive label, which is *passing*. Every configuration looked healthy while losing, on the class an alerting system acts upon, to a rule that alerts everyone. The check costs one line: print the trivial rule beside every score [21].
 
-A later cutoff sees more activity and predicts better everywhere. What does not move is the structure: the cross-institution discrimination gap stays between 0.082 and 0.099, the calibration bias stays near +0.12 and is removed to within 0.01 at every cutoff, the flag-budget gain from the transform stays under 0.01, and explanation agreement stays between 0.026 and 0.038. All four results are properties of the transfer, not of where the alarm is raised.
+**Contamination.** 72 of 78 same-course pairs and 324 of 916 other-course pairs share students between training and evaluation, up to 94 % of the target cohort; cross-institution pairs are clean at under 1.5 %. Uncorrected, same-course transfer appears to *beat* within-cohort performance. Any evaluation of this shape must report per-pair overlap.
+
+### E. Sensitivity
+
+Repeating the analysis at ¼ and ½ of course length changes every level and no ordering: cross-institution explanation agreement is 0.038, 0.034 and 0.029 at the three cutoffs, and accuracy rises with the later cutoff.
 
 ---
 
 ## VI. Discussion and Limitations
 
-The useful way to read these results is that early-warning models fail in the way transported clinical risk models fail, and should be reported the same way. Discrimination is the property that travels; calibration is the property that breaks; and the cheapest repair in the clinical updating ladder — adjust the intercept, change nothing else — is what our percentile transform turns out to be, arrived at by a different route. An institution deploying a borrowed model should recalibrate before it does anything else, and should not expect recalibration to make the model better at finding students.
+The benchmark's value is in what it makes cheap. Any group can now run a proposed model, representation or explainer against 63 cohorts from five platforms and report the same reference points we do. That is a modest contribution and a real one: the field's recurring difficulty, visible in Section V-A, is that results describe datasets, and the only remedy is more datasets in one place.
 
-Two of our own hypotheses did not survive contact with the right baselines, and we report them as results rather than removing them. That is the point of releasing the benchmark: the same ladder can now be used against a proposed fix by someone else.
+The measurement result is a caution rather than a discovery. Swamy et al. established that the explainer dominates [8]; we confirm it on a different and larger population and add the bounds that let a reader judge magnitude. Section V-C is the part we believe is new and the part practitioners should act on: a stability number without a declared estimator and a measured ceiling is not interpretable, and the literature currently reports such numbers routinely.
 
-**Limitations.** Label semantics differ across institutions and are perfectly collinear with institution, so no analysis here separates the two. Course calendars for the three Moodle institutions are inferred from activity, not published. Zambia contributes two small cohorts and its numbers should be read as indicative. Oviedo is capped at 20 of 94 eligible courses. The headline paired estimator excludes Oviedo and Zambia structurally, which is why all-target figures are given beside it. Bootstrap intervals resample pairs, which share target cohorts, so they are narrower than a fully clustered interval would be. Everything here is correlational: the feature rankings are not causal accounts of failure, and Section V-E is an argument against reading them that way at all.
+**Limitations.** Seven behavioural features are strongly correlated, which is exactly the setting in which importance is least identifiable, and in which drop-column degenerates; richer feature sets may behave differently and we cannot test that where assessment data is unpublished. Three estimators are not exhaustive. Outcome semantics differ across institutions and are collinear with institution. Course calendars for three institutions are inferred rather than published. Zambia contributes two small cohorts whose intervals cover chance. Bootstrap intervals resample pairs that share target cohorts and are narrower than fully clustered intervals; the estimator spread in Section V-C is reported without a significance test and rests on 78 pairs from six course families. Everything here is correlational, and Section V-B is an argument against reading any of these rankings causally.
 
 ---
 
 ## VII. Conclusion
 
-On a public benchmark of 63 cohorts from five institutions, an ordinary early-warning model loses about 0.1 ROC-AUC when it crosses an institutional boundary, over-predicts risk by 12 percentage points, and produces a feature ranking indistinguishable from random. A within-cohort percentile representation, requiring no target labels, removes the calibration bias entirely and improves nothing else. At a fixed flag budget the transferred model still finds a third more failing students than random selection, and that modest number is the honest case for deploying one.
-
-Two of our three original claims did not survive their own baselines, and the reasons generalise. F1 on the majority class makes any model look adequate. Permutation-importance rankings over correlated engagement features are unstable before any transfer occurs. And a cross-course evaluation inside one institution can share almost all of its students between training and test. We release the benchmark, five institution adapters, and the frozen results so that the next proposed fix can be measured against the same ladder, including the parts of it that defeated ours.
+We release a benchmark of 63 student cohorts from five universities, five platforms and four countries, harmonised to one schema, with adapters and frozen results. On it, within-cohort predictability ranges from 0.845 to 0.527, so a single-dataset result is a statement about that dataset. We reproduce, on this population, the finding that the choice of importance estimator dominates a student model's explanation, and we supply the noise floor, attainable ceiling and random baseline that such numbers require to be interpretable. The consequence we would most like read is narrow: asking how stable an explanation is, with one estimator and no ceiling, produces an answer that moves by more than the effect under study when the estimator changes. Reporting two estimators and a ceiling costs one additional run and makes the answer mean something.
 
 ---
 
@@ -197,18 +154,18 @@ Two of our three original claims did not survive their own baselines, and the re
 [4] A. Bettahi, F.-Z. Belouadha, and H. Harroud, "A modular and explainable machine learning pipeline for student dropout prediction in higher education," *Algorithms*, vol. 18, no. 10, art. 662, 2025, doi: 10.3390/a18100662.
 [5] S. Boujmiraz, H. Darhmaoui, and A. Drissi el Maliani, "Predicting student performance: a comprehensive review of machine learning, deep learning, and explainable AI approaches," *Computers and Education: Artificial Intelligence*, vol. 10, art. 100548, 2026, doi: 10.1016/j.caeai.2026.100548.
 [6] R. Guevara-Reyes, I. Ortiz-Garcés, R. Andrade, F. Cox-Riquetti, and W. Villegas-Ch, "Machine learning models for academic performance prediction: interpretability and application in educational decision-making," *Frontiers in Education*, vol. 10, art. 1632315, 2025, doi: 10.3389/feduc.2025.1632315.
-[7] J. López-Zambrano, J. A. Lara, and C. Romero, "Towards portability of models for predicting students' final performance in university courses starting from Moodle logs," *Applied Sciences*, vol. 10, no. 1, art. 354, 2020, doi: 10.3390/app10010354.
-[8] J. López-Zambrano, J. A. Lara, and C. Romero, "Improving the portability of predicting students' performance models by using ontologies," *Journal of Computing in Higher Education*, vol. 34, pp. 1–19, 2022, doi: 10.1007/s12528-021-09273-3.
-[9] J. Gardner, R. Yu, Q. Nguyen, C. Brooks, and R. Kizilcec, "Cross-institutional transfer learning for educational models: implications for model performance, fairness, and equity," in *Proc. ACM Conf. Fairness, Accountability, and Transparency (FAccT)*, 2023.
-[10] J. Schwerter et al., "Cross-course generalizability of SRL-aligned predictive models using digital learning traces," arXiv:2604.22812, 2026.
-[11] G. S. Collins, K. G. M. Moons, P. Dhiman, and R. D. Riley, "TRIPOD+AI statement: updated guidance for reporting clinical prediction models that use regression or machine learning methods," *BMJ*, vol. 385, art. e078378, 2024, doi: 10.1136/bmj-2023-078378.
-[12] B. Van Calster, D. J. McLernon, M. van Smeden, et al., "Calibration: the Achilles heel of predictive analytics," *BMC Medicine*, vol. 17, art. 230, 2019, doi: 10.1186/s12916-019-1466-7.
-[13] Y. Vergouwe, D. Nieboer, R. Oostenbrink, and T. P. A. Debray, "A closed testing procedure to select an appropriate method for updating prediction models," *Statistics in Medicine*, vol. 36, pp. 4529–4539, 2016, doi: 10.1002/sim.7179.
-[14] M. Riestra-González, M. del P. Paule-Ruíz, and F. Ortin, "Massive LMS log data analysis for the early prediction of course-agnostic student performance," *Computers & Education*, vol. 163, art. 104108, 2021, doi: 10.1016/j.compedu.2020.104108.
-[15] V. Swamy, M. Marras, and T. Käser, "Meta transfer learning for early success prediction in MOOCs," in *Proc. 9th ACM Conf. Learning @ Scale (L@S)*, 2022.
-[16] M. Saerens, P. Latinne, and C. Decaestecker, "Adjusting the outputs of a classifier to new a priori probabilities: a simple procedure," *Neural Computation*, vol. 14, no. 1, pp. 21–41, 2002, doi: 10.1162/089976602753284446.
-[17] E. Tiukhova et al., "Explainable learning analytics: assessing the stability of student success prediction models by means of explainable AI," *Decision Support Systems*, vol. 182, art. 114229, 2024, doi: 10.1016/j.dss.2024.114229.
-[18] G. Hooker, L. Mentch, and S. Zhou, "Unrestricted permutation forces extrapolation: variable importance requires at least one more model, or there is no free variable importance," *Statistics and Computing*, vol. 31, art. 82, 2021, doi: 10.1007/s11222-021-10057-z.
-[19] V. Švábenský, B. Flanagan, C. López Zapata, and A. Shimada, "Open datasets in learning analytics: trends, challenges, and best practice," *ACM Trans. Knowledge Discovery from Data*, 2026, doi: 10.1145/3798096.
-[20] L. Phiri, "A multi-source dataset for CS1 failure prediction in a sub-Saharan African context," Zenodo, 2026, doi: 10.5281/zenodo.21292883.
-[21] J. H. Friedman, "Greedy function approximation: a gradient boosting machine," *Annals of Statistics*, vol. 29, no. 5, pp. 1189–1232, 2001.
+[7] E. Tiukhova et al., "Explainable learning analytics: assessing the stability of student success prediction models by means of explainable AI," *Decision Support Systems*, vol. 182, art. 114229, 2024, doi: 10.1016/j.dss.2024.114229.
+[8] V. Swamy, B. Radmehr, N. Krco, M. Marras, and T. Käser, "Evaluating the explainers: black-box explainable machine learning for student success prediction in MOOCs," in *Proc. 15th Int. Conf. Educational Data Mining (EDM)*, 2022, doi: 10.5281/zenodo.6852964.
+[9] J. López-Zambrano, J. A. Lara, and C. Romero, "Towards portability of models for predicting students' final performance in university courses starting from Moodle logs," *Applied Sciences*, vol. 10, no. 1, art. 354, 2020, doi: 10.3390/app10010354.
+[10] J. López-Zambrano, J. A. Lara, and C. Romero, "Improving the portability of predicting students' performance models by using ontologies," *Journal of Computing in Higher Education*, vol. 34, pp. 1–19, 2022, doi: 10.1007/s12528-021-09273-3.
+[11] J. Gardner, R. Yu, Q. Nguyen, C. Brooks, and R. Kizilcec, "Cross-institutional transfer learning for educational models: implications for model performance, fairness, and equity," in *Proc. ACM Conf. Fairness, Accountability, and Transparency (FAccT)*, 2023.
+[12] J. Schwerter et al., "Cross-course generalizability of SRL-aligned predictive models using digital learning traces," arXiv:2604.22812, 2026.
+[13] M. Riestra-González, M. del P. Paule-Ruíz, and F. Ortin, "Massive LMS log data analysis for the early prediction of course-agnostic student performance," *Computers & Education*, vol. 163, art. 104108, 2021, doi: 10.1016/j.compedu.2020.104108.
+[14] S. M. Jayaprakash, E. W. Moody, E. J. M. Lauría, J. R. Regan, and J. D. Baron, "Early alert of academically at-risk students: an open source analytics initiative," *Journal of Learning Analytics*, vol. 1, no. 1, pp. 6–47, 2014, doi: 10.18608/jla.2014.11.3.
+[15] G. Hooker, L. Mentch, and S. Zhou, "Unrestricted permutation forces extrapolation: variable importance requires at least one more model, or there is no free variable importance," *Statistics and Computing*, vol. 31, art. 82, 2021, doi: 10.1007/s11222-021-10057-z.
+[16] S. Krishna et al., "The disagreement problem in explainable machine learning: a practitioner's perspective," arXiv:2202.01602, 2022.
+[17] I. Verdinelli and L. Wasserman, "Feature importance: a closer look at Shapley values and LOCO," *Statistical Science*, vol. 39, no. 4, 2024, doi: 10.1214/24-STS937.
+[18] L. Phiri, "A multi-source dataset for CS1 failure prediction in a sub-Saharan African context," Zenodo, 2026, doi: 10.5281/zenodo.21292883.
+[19] J. H. Friedman, "Greedy function approximation: a gradient boosting machine," *Annals of Statistics*, vol. 29, no. 5, pp. 1189–1232, 2001.
+[20] S. M. Lundberg and S.-I. Lee, "A unified approach to interpreting model predictions," in *Advances in Neural Information Processing Systems (NeurIPS)*, 2017.
+[21] N. Bosch and L. Paquette, "Metrics for discrete student models: chance levels, comparisons, and use cases," *Journal of Learning Analytics*, vol. 5, no. 2, pp. 86–104, 2018, doi: 10.18608/jla.2018.52.6.

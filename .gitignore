@@ -59,3 +59,6 @@ datasets/ukzn/
 datasets/zambia/
 # Candidate datasets under evaluation
 datasets/_candidates/
+
+# Word manuscripts kept on disk but out of version control (moved 2026-09-06)
+_local/

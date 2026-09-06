@@ -109,6 +109,19 @@ def build_claims() -> list[tuple[str, float]]:
         claims.append((f"ceiling: {row['reference']}", float(row["tau"])))
         claims.append((f"ceiling jaccard: {row['reference']}", float(row["jaccard_top3"])))
 
+    explainer = pd.read_csv(ART / "exp_022_explainer_agreement" / "f33" / "summary.csv")
+    for _, row in explainer.iterrows():
+        claims.append((f"explainer {row['pair']} tau", float(row["tau"])))
+        claims.append((f"explainer {row['pair']} jaccard", float(row["jaccard_top3"])))
+
+    trivial = pd.read_csv(ART / "exp_021_trivial_baseline" / "comparison.csv")
+    trivial = trivial[trivial["cutoff"] == "f33"]
+    claims += [
+        ("rule AUC (cum_active_days)", float(trivial["rule_days_auc"].mean())),
+        ("local model AUC vs rule arm", float(trivial["local_auc"].mean())),
+        ("cohorts where rule beats local", float((trivial["local_gain_over_rule"] < 0).sum())),
+    ]
+
     thr = pd.read_csv(ART / "exp_019_threshold_transfer" / "f33" / "summary.csv")
     thr = thr[thr.distance == "D3_other_institution"]
     for _, row in thr.iterrows():
