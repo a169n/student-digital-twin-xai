@@ -9,6 +9,7 @@ So this reads main.tex and converts it, and there is exactly one manuscript.
 
 It handles the LaTeX subset the paper actually uses --- sectioning, enumerate,
 booktabs tabulars, figures, thebibliography, and inline \\emph, \\textbf, \\cite,
+\\url,
 \\ref and a handful of maths and accents. Anything outside that subset raises
 rather than being silently dropped, because a paper that quietly loses a sentence
 on the way to Word is worse than one that fails to build.
@@ -129,7 +130,7 @@ def inline(text: str, labels: dict[str, str], cites: dict[str, int]) -> list[tup
         str(cites.get(k.strip(), "?")) for k in m.group(1).split(",")) + "]", t)
     t = re.sub(r"\\ref\{([^}]*)\}", lambda m: labels.get(m.group(1), "?"), t)
     t = re.sub(r"\\tfrac\{(\d+)\}\{(\d+)\}", r"\1/\2", t)
-    t = re.sub(r"\\text(?:tt)?\{([^}]*)\}", r"\1", t)
+    t = re.sub(r"\\(?:url|text(?:tt)?)\{([^}]*)\}", r"\1", t)
     for k, v in SYMBOLS.items():
         t = t.replace(k, v)
     for k, v in ACCENTS.items():
@@ -342,9 +343,14 @@ def add_authors(doc, tex: str) -> None:
                   space_after=10)
         return
 
-    table = doc.add_table(rows=1, cols=len(authors))
+    # Six authors in one row leaves ~1.2 in per cell, which breaks the emails
+    # across four lines. Wrap at three per row, as \linebreakand does in the .tex.
+    per_row = min(len(authors), 3)
+    rows = -(-len(authors) // per_row)
+    table = doc.add_table(rows=rows, cols=per_row)
     table.autofit = True
-    for cell, (name, lines) in zip(table.rows[0].cells, authors):
+    cells = [c for row in table.rows for c in row.cells]
+    for cell, (name, lines) in zip(cells, authors):
         cell.text = ""
         p = cell.paragraphs[0]
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER

@@ -2,8 +2,8 @@
 % ANONYMITY: set \blindtrue below for a double-blind submission and the author
 % block collapses to one anonymous line. It is currently \blindfalse, so names,
 % affiliations, ORCIDs and emails appear. The Reproducibility section still
-% promises an anonymised repository link; replace that with the real URL
-% whenever the names are shown.
+% promises an anonymised repository link; the named branch carries the real
+% URL, so switching to \blindtrue swaps it back out for that promise.
 %
 % Reference audit, 6 Sep 2026: [5] Boujmiraz, [12] Schwerter and [18] Phiri
 % were each verified against Crossref/arXiv/DataCite and are correct as cited.
@@ -28,6 +28,13 @@
 
 % IEEEtran wants no page numbers in the submitted PDF.
 \pagestyle{empty}
+
+% IEEEtran puts all \and-separated authors in one row, which overflows at six.
+% \linebreakand closes the current row and opens the next one.
+\makeatletter
+\newcommand{\linebreakand}{%
+  \end{@IEEEauthorhalign}\hfill\mbox{}\par\mbox{}\hfill\begin{@IEEEauthorhalign}}
+\makeatother
 
 \newif\ifblind
 \blindfalse  % \blindtrue for anonymous review
@@ -55,6 +62,36 @@ a1byn.talgat05@gmail.com}
 Astana, Kazakhstan \\
 ORCID: 0009-0009-5880-6166 \\
 symbat.nurgaliyeva@astanait.edu.kz}
+\and
+\IEEEauthorblockN{Z. Basheyeva}
+\IEEEauthorblockA{\textit{School of Software Engineering} \\
+\textit{Astana IT University} \\
+Astana, Kazakhstan \\
+ORCID: 0000-0001-9605-2101 \\
+zhuldyz.basheyeva@astanait.edu.kz}
+\linebreakand
+\IEEEauthorblockN{A. Sakhipov}
+\IEEEauthorblockA{\textit{PhD, Assistant Professor} \\
+\textit{IEEE Senior Member} \\
+\textit{School of Software Engineering} \\
+\textit{Astana IT University} \\
+Astana, Kazakhstan \\
+ORCID: 0000-0003-1045-4199 \\
+aivar.sakhipov@astanait.edu.kz}
+\and
+\IEEEauthorblockN{N. Turysbek}
+\IEEEauthorblockA{\textit{School of Cybersecurity} \\
+\textit{Astana IT University} \\
+Astana, Kazakhstan \\
+ORCID: 0009-0000-0932-3525 \\
+n.turysbek@astanait.edu.kz}
+\and
+\IEEEauthorblockN{M. Kali}
+\IEEEauthorblockA{\textit{School of Cybersecurity} \\
+\textit{Astana IT University} \\
+Astana, Kazakhstan \\
+ORCID: 0000-0001-5588-8164 \\
+marzhan.kali@astanait.edu.kz}
 }
 \fi
 
@@ -338,7 +375,7 @@ results. Within-cohort predictability spans 0.384 to 0.953 across those cohorts,
 
 \section*{Reproducibility}
 
-We release the five institution adapters, the cohort definitions, the experiment code and the frozen result files, together with a script that recomputes every number in this paper from those files. We do not redistribute the underlying student data: each source is published by its own institution under its own licence, and the adapters read those releases in place. \ifblind An anonymised repository is linked from the submission record; the permanent link replaces this note in the camera-ready version.\else Everything named here is at \texttt{<repository URL>}.\fi
+We release the five institution adapters, the cohort definitions, the experiment code and the frozen result files, together with a script that recomputes every number in this paper from those files. We redistribute none of the student data. All five releases are published openly by their originating institutions, four of them under a DOI, and the repository records for each the source, the licence and the path an adapter expects, so the adapters read a copy the reuser downloads. \ifblind An anonymised repository is linked from the submission record; the permanent link replaces this note in the camera-ready version.\else Everything named here is at \url{https://github.com/a169n/student-digital-twin-xai}.\fi
 
 \section*{Ethics}
 

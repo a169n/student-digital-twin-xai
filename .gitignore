@@ -27,9 +27,21 @@ services/ml/.tmp_test_runs/
 # Data / artifacts
 *.parquet
 *.csv
-!data/artifacts/experiments/exp_*/*.csv
-# Large external dataset archive (downloaded locally, never committed)
-datasets/ku_leuven/dataset.zip
+# Frozen result files backing the paper. The old rule matched one level only,
+# so per-cutoff results (exp_014_transfer_ladder/f33/pairs.csv) stayed ignored
+# and verify_paper_claims.py could not run from a fresh clone.
+!data/artifacts/experiments/**/*.csv
+# ...except the per-student OULAD snapshots, 15-24 MB each. The adapter rebuilds
+# them from the raw release; they are an intermediate, not a result.
+data/artifacts/experiments/*/oulad_weekly_snapshots.csv
+
+# Raw dataset releases: downloaded locally, never committed. How to get each one
+# is in datasets/PROVENANCE.md. The rule here used to name
+# datasets/ku_leuven/dataset.zip, but the archive is called dataset_full.zip, so
+# 75 MB was tracked for months without anyone noticing.
+datasets/oulad/
+datasets/ku_leuven/*
+!datasets/ku_leuven/*.json
 *.pkl
 *.joblib
 *.onnx

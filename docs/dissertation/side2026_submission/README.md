@@ -35,16 +35,19 @@ labels `fig:spread` and `fig:instability` are the reliable handles.
       If SIDe 2026 reviews double-blind, change that one line to `lindtrue`,
       rebuild both, and check the front page and the Reproducibility sentence:
       both switch together, and the .docx builder reads the same flag.
-- [ ] With names shown, replace `<repository URL>` in Reproducibility with the
-      real link before submitting.
+- [x] With names shown, replace `<repository URL>` in Reproducibility with the
+      real link before submitting. Done: the named branch carries the real URL.
 - [ ] Upload the anonymised repository and link it from the submission record.
       The Reproducibility section promises the adapters, cohort definitions,
       experiment code, frozen results and the verification script.
-- [ ] Decide how the frozen results get released. `.gitignore` ignores `*.csv`,
-      so they are currently untracked. Verification needs 14 files, about
-      9.8 MB, the largest being exp_014/f33/pairs.csv at 9.4 MB. Either
-      force-add those, or narrow the ignore rule to the directories that hold
-      raw data rather than results.
+- [ ] Regenerate the frozen results. The ignore rule no longer hides them
+      (`!data/artifacts/experiments/**/*.csv` now reaches the per-cutoff
+      subdirectories), but the files themselves are absent: `exp_014/f33`,
+      `exp_023/f33` and `exp_024/f33` hold only `run_metadata.json`, and
+      exp_016, exp_017, exp_018, exp_019 and exp_022 do not exist at all.
+      `verify_paper_claims.py` cannot run until the runners in
+      `services/ml/src/experiments/` are rerun and the 14 result files
+      (about 9.8 MB, the largest exp_014/f33/pairs.csv at 9.4 MB) committed.
 - [ ] Export a searchable PDF with embedded fonts (the conference requires both).
       Every font in the PDF must carry a subset prefix; check with
       `pdffonts main.pdf`, or in Python with `fitz` if pdffonts is unavailable.
