@@ -218,6 +218,26 @@ enters the models; three institutions publish none. Course lengths run from 14 t
 $\lceil \tfrac{1}{3} \times \text{length} \rceil$, repeated at $\tfrac{1}{4}$ and
 $\tfrac{1}{2}$.
 
+\textbf{Terminology.} This per-student weekly state is often called a digital
+twin of the learner, and the term is graded. Kritzinger et al.\ separate its
+levels by data flow: a \emph{digital model} exchanges nothing automatically, a
+\emph{digital shadow} carries an automated one-way flow from the object to its
+representation, and a \emph{digital twin} closes the loop with a flow back
+\cite{kritzinger2018}; Addanki and Corrin apply the two-way requirement to
+learners specifically \cite{addanki2023}. Our schema is one-way by construction
+--- logs advance the representation and nothing is written back to the student
+--- so it is a digital shadow of the learner, and we claim no simulation,
+counterfactual or intervention capability. Systems that do close the loop keep a
+human inside it: mobile formative-assessment designs route model-scored
+responses through a teacher who can inspect and override them before feedback
+reaches the student \cite{yerniyazov2026}. That review step is the safeguard our
+correlational evidence cannot supply on its own. The distinction is load-bearing
+here rather than pedantic. Closing the loop means acting on the representation, and
+acting on it means reading its feature attributions causally --- which is
+precisely what Section~\ref{sec:agree} argues against, since the attributions
+move more between estimators than the effect under study. A representation whose
+explanations are this unstable has no warrant to write back.
+
 The three Moodle institutions publish no course calendar, so an active span is
 inferred from the log as the first to the last week in which at least 10\,\% of
 enrolled students were active. Building the benchmark surfaced two data defects
@@ -478,6 +498,20 @@ interpreting model predictions,'' in \emph{Adv. Neural Inf. Process. Syst.
 \bibitem{bosch2018} N. Bosch and L. Paquette, ``Metrics for discrete student
 models: chance levels, comparisons, and use cases,'' \emph{J. Learn. Anal.}, vol.
 5, no. 2, pp. 86--104, 2018.
+
+\bibitem{kritzinger2018} W. Kritzinger, M. Karner, G. Traar, J. Henjes, and W.
+Sihn, ``Digital Twin in manufacturing: a categorical literature review and
+classification,'' \emph{IFAC-PapersOnLine}, vol. 51, no. 11, pp. 1016--1022,
+2018.
+
+\bibitem{addanki2023} K. Addanki and L. Corrin, ``Unveiling the potential of
+Digital Twin technology for Higher Education,'' in \emph{Proc. ASCILITE 2023:
+People, Partnerships and Pedagogies}, ASCILITE Publications, 2023.
+
+\bibitem{yerniyazov2026} A. Yerniyazov, B. Bakayeva, Z. Iztayev, P.
+Kozhabekova, and S. Nurgaliyeva, ``A mobile system for formative assessment and
+teacher-reviewed feedback,'' \emph{Int. J. Interact. Mobile Technol.}, vol. 20,
+no. 15, pp. 37--50, 2026.
 
 \end{thebibliography}
 
