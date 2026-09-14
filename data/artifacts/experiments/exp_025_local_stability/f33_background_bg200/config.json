@@ -1,0 +1,12 @@
+{
+  "model": "gradient_boosting",
+  "vary": "background",
+  "fraction": 0.33,
+  "seed": 0,
+  "repeats": 5,
+  "background_size": 200,
+  "eval_cap": 400,
+  "top_k": 3,
+  "gate_tau": 0.8,
+  "flag_rate": 0.2
+}
