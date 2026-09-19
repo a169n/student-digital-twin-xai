@@ -223,7 +223,11 @@ def paragraphs(block: str) -> list[str]:
 
 def add_table(doc, block: str, number: str, labels, cites) -> None:
     caption = re.search(r"\\caption\{(.*?)\}\s*\n", block, re.S).group(1)
-    tabular = re.search(r"\\begin\{tabular\}\{[^}]*\}(.*?)\\end\{tabular\}", block, re.S).group(1)
+    # The column spec nests braces ({@{}lccc@{}}), so "[^}]*" stopped at the
+    # first "}" and the rest of the spec leaked into the header's first cell.
+    tabular = re.search(
+        r"\\begin\{tabular\}\{(?:[^{}]|\{[^{}]*\})*\}(.*?)\\end\{tabular\}", block, re.S
+    ).group(1)
     rows = []
     for line in tabular.split("\\\\"):
         line = re.sub(r"\\(top|mid|bottom)rule", "", line).strip()

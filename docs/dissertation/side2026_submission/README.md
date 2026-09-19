@@ -34,6 +34,21 @@ V-C) come from `services/ml/scripts/estimator_intervals.py`, which writes
 scripts. It needs `exp_022_explainer_agreement/f33/estimator_health_by_cohort.csv`,
 which exp_022 writes since the revision.
 
+## Revision upload (CMT, deadline 22 Sep 2026)
+
+    revision/Manuscript_237.zip     LaTeX bundle: clean and highlighted PDFs, both sources
+                                    (anonymised, no \ifblind branch), figures, README
+    revision/Response_237.docx      built from response_to_reviewers.md by
+                                    scripts/build_side2026_response_docx.py
+
+The highlighted copy is `latexdiff -t CFONT --no-del` between the submitted
+main.tex (commit 7f0323c) and the revised one, with the blind branch resolved
+in both first; latexdiff markup is stripped inside tabulars (it breaks
+`\multicolumn`) and Tables II and III are coloured blue as a whole instead. The
+sans-serif and figure-frame defaults were removed so the marked copy keeps the
+clean copy's line breaks and stays at six pages. Upload both files through
+"Upload Revision" under paper 237.
+
 ## Round-1 revision, what changed and why
 
 Reviewer 4's eight points are answered in `response_to_reviewers.md`. The one

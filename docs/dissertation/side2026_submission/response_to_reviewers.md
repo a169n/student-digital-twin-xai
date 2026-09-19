@@ -1,6 +1,8 @@
 # Response to reviewers
 
-Paper: *Reference Points for Explanation-Stability Claims: A Five-Institution Student-Risk Benchmark* (SIDe 2026)
+Paper ID 237, SIDe 2026. Reference Points for Explanation-Stability Claims: A Five-Institution Student-Risk Benchmark.
+
+In the revised manuscript, text added or changed since the submitted version is set in blue; the two tables that are new or rewritten (Tables II and III) are blue throughout, and all three figures are new or redrawn.
 
 We thank both reviewers. Every point raised by Reviewer 4 led to a change in the manuscript; the changes are listed below, point by point, with the section or figure where they appear. One of them (point 6) exposed an error in our own Table (now Table III), which we have corrected and describe in full.
 
