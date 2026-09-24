@@ -1,0 +1,2145 @@
+{
+  "schemaVersion": "teacher_review_v1",
+  "generatedFrom": {
+    "experiment": "exp_027_local_estimator_matrix/f33_background",
+    "fraction": 0.33,
+    "model": "gradient_boosting",
+    "seed": 0,
+    "repeats": 5,
+    "background": 50
+  },
+  "selectionRule": "Per institution (OULAD, KU Leuven, UKZN, Oviedo): among flagged students (top 20 % risk of the cohort), the students closest to the 90th, 65th, 35th and 10th percentiles of self_tau; plus, from the lower half of the course's risk ranking, the student closest to the 75th percentile. Risk ranks use midranks for ties; self_tau ties are broken by a seeded shuffle (seed 0). Students without a defined self_tau are never picked, nor are students from courses where the model ranks no better than chance (AUC <= 0.5).",
+  "scaleContext": {
+    "threshold": 0.8,
+    "coverage": 0.5553,
+    "retainedAgreement": 0.411,
+    "noGateAgreement": 0.3476,
+    "source": "data/artifacts/experiments/exp_026_gate_calibration/exp027_f33_background__cross_tau/summary.csv"
+  },
+  "featureLabels": {
+    "cum_clicks": "Total clicks so far",
+    "cum_active_days": "Active days so far",
+    "cum_content_clicks": "Course-material clicks so far",
+    "cum_social": "Forum activity so far",
+    "cur_clicks": "Clicks this week",
+    "active_weeks": "Active weeks so far",
+    "weeks_since_active": "Weeks since last activity"
+  },
+  "cases": [
+    {
+      "caseId": "OU-1",
+      "displayName": "Student OU-1",
+      "institution": "OULAD",
+      "source": {
+        "cohortId": "oulad_CCC_2014B",
+        "studentRow": 1198
+      },
+      "context": {
+        "course": "CCC",
+        "week": 12,
+        "nWeeks": 35,
+        "cohortSize": 1936,
+        "rankedStudents": 400,
+        "passRate": 0.3425,
+        "modelAuc": 0.8782
+      },
+      "risk": 0.9938,
+      "riskRankPct": 0.8512,
+      "riskBelowPct": 0.735,
+      "riskTiedPct": 0.2325,
+      "flagged": true,
+      "factors": [
+        {
+          "feature": "weeks_since_active",
+          "label": "Weeks since last activity",
+          "value": 12.0,
+          "courseMedian": 2.0,
+          "direction": "raises_risk",
+          "share": 0.5
+        },
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 0.0,
+          "courseMedian": 297.5,
+          "direction": "raises_risk",
+          "share": 0.1984
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 0.0,
+          "courseMedian": 122.5,
+          "direction": "lowers_risk",
+          "share": 0.1209
+        }
+      ],
+      "reliability": {
+        "selfTau": 1.0,
+        "threshold": 0.8,
+        "verdict": "stable",
+        "recomputations": [
+          {
+            "feature": "weeks_since_active",
+            "label": "Weeks since last activity",
+            "count": 5
+          }
+        ]
+      },
+      "features": [
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 0.0,
+          "courseMedian": 297.5
+        },
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 0.0,
+          "courseMedian": 19.0
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 0.0,
+          "courseMedian": 122.5
+        },
+        {
+          "feature": "cum_social",
+          "label": "Forum activity so far",
+          "value": 0.0,
+          "courseMedian": 11.0
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 0.0,
+          "courseMedian": 0.0
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 0.0,
+          "courseMedian": 8.0
+        },
+        {
+          "feature": "weeks_since_active",
+          "label": "Weeks since last activity",
+          "value": 12.0,
+          "courseMedian": 2.0
+        }
+      ]
+    },
+    {
+      "caseId": "OU-2",
+      "displayName": "Student OU-2",
+      "institution": "OULAD",
+      "source": {
+        "cohortId": "oulad_FFF_2013J",
+        "studentRow": 2159
+      },
+      "context": {
+        "course": "FFF",
+        "week": 13,
+        "nWeeks": 39,
+        "cohortSize": 2283,
+        "rankedStudents": 400,
+        "passRate": 0.4796,
+        "modelAuc": 0.8641
+      },
+      "risk": 0.9866,
+      "riskRankPct": 0.8287,
+      "riskBelowPct": 0.8275,
+      "riskTiedPct": 0.0025,
+      "flagged": true,
+      "factors": [
+        {
+          "feature": "weeks_since_active",
+          "label": "Weeks since last activity",
+          "value": 10.0,
+          "courseMedian": 0.0,
+          "direction": "raises_risk",
+          "share": 0.6459
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 3.0,
+          "courseMedian": 11.0,
+          "direction": "raises_risk",
+          "share": 0.1288
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 0.0,
+          "courseMedian": 4.5,
+          "direction": "raises_risk",
+          "share": 0.0825
+        }
+      ],
+      "reliability": {
+        "selfTau": 0.9238,
+        "threshold": 0.8,
+        "verdict": "stable",
+        "recomputations": [
+          {
+            "feature": "weeks_since_active",
+            "label": "Weeks since last activity",
+            "count": 5
+          }
+        ]
+      },
+      "features": [
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 384.0,
+          "courseMedian": 755.0
+        },
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 9.0,
+          "courseMedian": 33.0
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 234.0,
+          "courseMedian": 483.0
+        },
+        {
+          "feature": "cum_social",
+          "label": "Forum activity so far",
+          "value": 113.0,
+          "courseMedian": 147.0
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 0.0,
+          "courseMedian": 4.5
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 3.0,
+          "courseMedian": 11.0
+        },
+        {
+          "feature": "weeks_since_active",
+          "label": "Weeks since last activity",
+          "value": 10.0,
+          "courseMedian": 0.0
+        }
+      ]
+    },
+    {
+      "caseId": "OU-3",
+      "displayName": "Student OU-3",
+      "institution": "OULAD",
+      "source": {
+        "cohortId": "oulad_FFF_2014B",
+        "studentRow": 981
+      },
+      "context": {
+        "course": "FFF",
+        "week": 12,
+        "nWeeks": 35,
+        "cohortSize": 1500,
+        "rankedStudents": 400,
+        "passRate": 0.436,
+        "modelAuc": 0.8841
+      },
+      "risk": 0.9783,
+      "riskRankPct": 0.8337,
+      "riskBelowPct": 0.8325,
+      "riskTiedPct": 0.0025,
+      "flagged": true,
+      "factors": [
+        {
+          "feature": "weeks_since_active",
+          "label": "Weeks since last activity",
+          "value": 7.0,
+          "courseMedian": 0.0,
+          "direction": "raises_risk",
+          "share": 0.2819
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 0.0,
+          "courseMedian": 6.0,
+          "direction": "raises_risk",
+          "share": 0.1733
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 5.0,
+          "courseMedian": 10.0,
+          "direction": "raises_risk",
+          "share": 0.1633
+        }
+      ],
+      "reliability": {
+        "selfTau": 0.8667,
+        "threshold": 0.8,
+        "verdict": "stable",
+        "recomputations": [
+          {
+            "feature": "weeks_since_active",
+            "label": "Weeks since last activity",
+            "count": 5
+          }
+        ]
+      },
+      "features": [
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 469.0,
+          "courseMedian": 656.5
+        },
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 16.0,
+          "courseMedian": 31.0
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 368.0,
+          "courseMedian": 411.5
+        },
+        {
+          "feature": "cum_social",
+          "label": "Forum activity so far",
+          "value": 43.0,
+          "courseMedian": 107.0
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 0.0,
+          "courseMedian": 6.0
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 5.0,
+          "courseMedian": 10.0
+        },
+        {
+          "feature": "weeks_since_active",
+          "label": "Weeks since last activity",
+          "value": 7.0,
+          "courseMedian": 0.0
+        }
+      ]
+    },
+    {
+      "caseId": "OU-4",
+      "displayName": "Student OU-4",
+      "institution": "OULAD",
+      "source": {
+        "cohortId": "oulad_BBB_2013J",
+        "studentRow": 1016
+      },
+      "context": {
+        "course": "BBB",
+        "week": 13,
+        "nWeeks": 39,
+        "cohortSize": 2237,
+        "rankedStudents": 400,
+        "passRate": 0.4792,
+        "modelAuc": 0.8509
+      },
+      "risk": 0.989,
+      "riskRankPct": 0.9862,
+      "riskBelowPct": 0.985,
+      "riskTiedPct": 0.0025,
+      "flagged": true,
+      "factors": [
+        {
+          "feature": "weeks_since_active",
+          "label": "Weeks since last activity",
+          "value": 11.0,
+          "courseMedian": 2.0,
+          "direction": "raises_risk",
+          "share": 0.7053
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 2.0,
+          "courseMedian": 7.0,
+          "direction": "raises_risk",
+          "share": 0.1141
+        },
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 203.0,
+          "courseMedian": 149.5,
+          "direction": "raises_risk",
+          "share": 0.0499
+        }
+      ],
+      "reliability": {
+        "selfTau": 0.7905,
+        "threshold": 0.8,
+        "verdict": "unstable",
+        "recomputations": [
+          {
+            "feature": "weeks_since_active",
+            "label": "Weeks since last activity",
+            "count": 5
+          }
+        ]
+      },
+      "features": [
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 203.0,
+          "courseMedian": 149.5
+        },
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 8.0,
+          "courseMedian": 13.0
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 74.0,
+          "courseMedian": 73.0
+        },
+        {
+          "feature": "cum_social",
+          "label": "Forum activity so far",
+          "value": 129.0,
+          "courseMedian": 43.0
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 0.0,
+          "courseMedian": 0.0
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 2.0,
+          "courseMedian": 7.0
+        },
+        {
+          "feature": "weeks_since_active",
+          "label": "Weeks since last activity",
+          "value": 11.0,
+          "courseMedian": 2.0
+        }
+      ]
+    },
+    {
+      "caseId": "OU-5",
+      "displayName": "Student OU-5",
+      "institution": "OULAD",
+      "source": {
+        "cohortId": "oulad_AAA_2013J",
+        "studentRow": 290
+      },
+      "context": {
+        "course": "AAA",
+        "week": 13,
+        "nWeeks": 39,
+        "cohortSize": 383,
+        "rankedStudents": 128,
+        "passRate": 0.7258,
+        "modelAuc": 0.7088
+      },
+      "risk": 0.0788,
+      "riskRankPct": 0.3477,
+      "riskBelowPct": 0.3438,
+      "riskTiedPct": 0.0078,
+      "flagged": false,
+      "factors": [
+        {
+          "feature": "cum_social",
+          "label": "Forum activity so far",
+          "value": 112.0,
+          "courseMedian": 84.0,
+          "direction": "raises_risk",
+          "share": 0.3137
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 12.0,
+          "courseMedian": 11.0,
+          "direction": "lowers_risk",
+          "share": 0.2651
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 393.0,
+          "courseMedian": 516.0,
+          "direction": "lowers_risk",
+          "share": 0.1478
+        }
+      ],
+      "reliability": {
+        "selfTau": 0.8857,
+        "threshold": 0.8,
+        "verdict": "stable",
+        "recomputations": [
+          {
+            "feature": "active_weeks",
+            "label": "Active weeks so far",
+            "count": 3
+          },
+          {
+            "feature": "cum_social",
+            "label": "Forum activity so far",
+            "count": 2
+          }
+        ]
+      },
+      "features": [
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 506.0,
+          "courseMedian": 622.0
+        },
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 34.0,
+          "courseMedian": 34.5
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 393.0,
+          "courseMedian": 516.0
+        },
+        {
+          "feature": "cum_social",
+          "label": "Forum activity so far",
+          "value": 112.0,
+          "courseMedian": 84.0
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 2.0,
+          "courseMedian": 4.0
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 12.0,
+          "courseMedian": 11.0
+        },
+        {
+          "feature": "weeks_since_active",
+          "label": "Weeks since last activity",
+          "value": 0.0,
+          "courseMedian": 0.0
+        }
+      ]
+    },
+    {
+      "caseId": "KU-1",
+      "displayName": "Student KU-1",
+      "institution": "KU Leuven",
+      "source": {
+        "cohortId": "ku_Accountancy_1920",
+        "studentRow": 341
+      },
+      "context": {
+        "course": "Accountancy",
+        "week": 4,
+        "nWeeks": 13,
+        "cohortSize": 705,
+        "rankedStudents": 235,
+        "passRate": 0.6823,
+        "modelAuc": 0.6038
+      },
+      "risk": 0.6401,
+      "riskRankPct": 0.9234,
+      "riskBelowPct": 0.9149,
+      "riskTiedPct": 0.017,
+      "flagged": true,
+      "factors": [
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 0.0,
+          "courseMedian": 137.0,
+          "direction": "raises_risk",
+          "share": 0.4226
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 0.0,
+          "courseMedian": 61.0,
+          "direction": "raises_risk",
+          "share": 0.24
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 0.0,
+          "courseMedian": 3.0,
+          "direction": "lowers_risk",
+          "share": 0.1249
+        }
+      ],
+      "reliability": {
+        "selfTau": 0.9238,
+        "threshold": 0.8,
+        "verdict": "stable",
+        "recomputations": [
+          {
+            "feature": "cum_content_clicks",
+            "label": "Course-material clicks so far",
+            "count": 5
+          }
+        ]
+      },
+      "features": [
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 0.0,
+          "courseMedian": 162.0
+        },
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 0.0,
+          "courseMedian": 8.0
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 0.0,
+          "courseMedian": 137.0
+        },
+        {
+          "feature": "cum_social",
+          "label": "Forum activity so far",
+          "value": 0.0,
+          "courseMedian": 0.0
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 0.0,
+          "courseMedian": 61.0
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 0.0,
+          "courseMedian": 3.0
+        },
+        {
+          "feature": "weeks_since_active",
+          "label": "Weeks since last activity",
+          "value": 4.0,
+          "courseMedian": 0.0
+        }
+      ]
+    },
+    {
+      "caseId": "KU-2",
+      "displayName": "Student KU-2",
+      "institution": "KU Leuven",
+      "source": {
+        "cohortId": "ku_Accountancy_1819",
+        "studentRow": 198
+      },
+      "context": {
+        "course": "Accountancy",
+        "week": 4,
+        "nWeeks": 13,
+        "cohortSize": 752,
+        "rankedStudents": 251,
+        "passRate": 0.7021,
+        "modelAuc": 0.5516
+      },
+      "risk": 0.8308,
+      "riskRankPct": 0.994,
+      "riskBelowPct": 0.992,
+      "riskTiedPct": 0.004,
+      "flagged": true,
+      "factors": [
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 15.0,
+          "courseMedian": 103.0,
+          "direction": "raises_risk",
+          "share": 0.7398
+        },
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 7.0,
+          "courseMedian": 9.0,
+          "direction": "raises_risk",
+          "share": 0.1397
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 5.0,
+          "courseMedian": 35.0,
+          "direction": "lowers_risk",
+          "share": 0.0448
+        }
+      ],
+      "reliability": {
+        "selfTau": 0.8857,
+        "threshold": 0.8,
+        "verdict": "stable",
+        "recomputations": [
+          {
+            "feature": "cum_content_clicks",
+            "label": "Course-material clicks so far",
+            "count": 5
+          }
+        ]
+      },
+      "features": [
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 21.0,
+          "courseMedian": 128.0
+        },
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 7.0,
+          "courseMedian": 9.0
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 15.0,
+          "courseMedian": 103.0
+        },
+        {
+          "feature": "cum_social",
+          "label": "Forum activity so far",
+          "value": 0.0,
+          "courseMedian": 0.0
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 5.0,
+          "courseMedian": 35.0
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 4.0,
+          "courseMedian": 4.0
+        },
+        {
+          "feature": "weeks_since_active",
+          "label": "Weeks since last activity",
+          "value": 0.0,
+          "courseMedian": 0.0
+        }
+      ]
+    },
+    {
+      "caseId": "KU-3",
+      "displayName": "Student KU-3",
+      "institution": "KU Leuven",
+      "source": {
+        "cohortId": "ku_Globaleconom_2021",
+        "studentRow": 328
+      },
+      "context": {
+        "course": "Globaleconom",
+        "week": 5,
+        "nWeeks": 15,
+        "cohortSize": 335,
+        "rankedStudents": 112,
+        "passRate": 0.5134,
+        "modelAuc": 0.5857
+      },
+      "risk": 0.9072,
+      "riskRankPct": 0.9241,
+      "riskBelowPct": 0.9196,
+      "riskTiedPct": 0.0089,
+      "flagged": true,
+      "factors": [
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 5.0,
+          "courseMedian": 16.5,
+          "direction": "raises_risk",
+          "share": 0.2951
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 197.0,
+          "courseMedian": 249.0,
+          "direction": "raises_risk",
+          "share": 0.2523
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 65.0,
+          "courseMedian": 70.5,
+          "direction": "raises_risk",
+          "share": 0.2274
+        }
+      ],
+      "reliability": {
+        "selfTau": 0.8286,
+        "threshold": 0.8,
+        "verdict": "stable",
+        "recomputations": [
+          {
+            "feature": "cum_active_days",
+            "label": "Active days so far",
+            "count": 4
+          },
+          {
+            "feature": "cur_clicks",
+            "label": "Clicks this week",
+            "count": 1
+          }
+        ]
+      },
+      "features": [
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 209.0,
+          "courseMedian": 299.5
+        },
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 5.0,
+          "courseMedian": 16.5
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 197.0,
+          "courseMedian": 249.0
+        },
+        {
+          "feature": "cum_social",
+          "label": "Forum activity so far",
+          "value": 0.0,
+          "courseMedian": 0.0
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 65.0,
+          "courseMedian": 70.5
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 3.0,
+          "courseMedian": 5.0
+        },
+        {
+          "feature": "weeks_since_active",
+          "label": "Weeks since last activity",
+          "value": 0.0,
+          "courseMedian": 0.0
+        }
+      ]
+    },
+    {
+      "caseId": "KU-4",
+      "displayName": "Student KU-4",
+      "institution": "KU Leuven",
+      "source": {
+        "cohortId": "ku_Globaleconom_1920",
+        "studentRow": 573
+      },
+      "context": {
+        "course": "Globaleconom",
+        "week": 5,
+        "nWeeks": 15,
+        "cohortSize": 681,
+        "rankedStudents": 227,
+        "passRate": 0.7548,
+        "modelAuc": 0.6146
+      },
+      "risk": 0.4082,
+      "riskRankPct": 0.8216,
+      "riskBelowPct": 0.8194,
+      "riskTiedPct": 0.0044,
+      "flagged": true,
+      "factors": [
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 25.0,
+          "courseMedian": 55.0,
+          "direction": "raises_risk",
+          "share": 0.6854
+        },
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 12.0,
+          "courseMedian": 11.0,
+          "direction": "raises_risk",
+          "share": 0.1395
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 5.0,
+          "courseMedian": 5.0,
+          "direction": "lowers_risk",
+          "share": 0.0814
+        }
+      ],
+      "reliability": {
+        "selfTau": 0.7524,
+        "threshold": 0.8,
+        "verdict": "unstable",
+        "recomputations": [
+          {
+            "feature": "cur_clicks",
+            "label": "Clicks this week",
+            "count": 5
+          }
+        ]
+      },
+      "features": [
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 195.0,
+          "courseMedian": 254.0
+        },
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 12.0,
+          "courseMedian": 11.0
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 170.0,
+          "courseMedian": 230.0
+        },
+        {
+          "feature": "cum_social",
+          "label": "Forum activity so far",
+          "value": 0.0,
+          "courseMedian": 0.0
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 25.0,
+          "courseMedian": 55.0
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 5.0,
+          "courseMedian": 5.0
+        },
+        {
+          "feature": "weeks_since_active",
+          "label": "Weeks since last activity",
+          "value": 0.0,
+          "courseMedian": 0.0
+        }
+      ]
+    },
+    {
+      "caseId": "KU-5",
+      "displayName": "Student KU-5",
+      "institution": "KU Leuven",
+      "source": {
+        "cohortId": "ku_Accountancy_1920",
+        "studentRow": 274
+      },
+      "context": {
+        "course": "Accountancy",
+        "week": 4,
+        "nWeeks": 13,
+        "cohortSize": 705,
+        "rankedStudents": 235,
+        "passRate": 0.6823,
+        "modelAuc": 0.6038
+      },
+      "risk": 0.2138,
+      "riskRankPct": 0.4489,
+      "riskBelowPct": 0.4468,
+      "riskTiedPct": 0.0043,
+      "flagged": false,
+      "factors": [
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 35.0,
+          "courseMedian": 61.0,
+          "direction": "lowers_risk",
+          "share": 0.4207
+        },
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 133.0,
+          "courseMedian": 162.0,
+          "direction": "raises_risk",
+          "share": 0.2037
+        },
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 8.0,
+          "courseMedian": 8.0,
+          "direction": "raises_risk",
+          "share": 0.1805
+        }
+      ],
+      "reliability": {
+        "selfTau": 0.8667,
+        "threshold": 0.8,
+        "verdict": "stable",
+        "recomputations": [
+          {
+            "feature": "cur_clicks",
+            "label": "Clicks this week",
+            "count": 5
+          }
+        ]
+      },
+      "features": [
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 133.0,
+          "courseMedian": 162.0
+        },
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 8.0,
+          "courseMedian": 8.0
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 98.0,
+          "courseMedian": 137.0
+        },
+        {
+          "feature": "cum_social",
+          "label": "Forum activity so far",
+          "value": 0.0,
+          "courseMedian": 0.0
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 35.0,
+          "courseMedian": 61.0
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 3.0,
+          "courseMedian": 3.0
+        },
+        {
+          "feature": "weeks_since_active",
+          "label": "Weeks since last activity",
+          "value": 0.0,
+          "courseMedian": 0.0
+        }
+      ]
+    },
+    {
+      "caseId": "UK-1",
+      "displayName": "Student UK-1",
+      "institution": "UKZN",
+      "source": {
+        "cohortId": "ukzn_ISTN3ND_2019",
+        "studentRow": 65
+      },
+      "context": {
+        "course": "ISTN3ND",
+        "week": 6,
+        "nWeeks": 19,
+        "cohortSize": 223,
+        "rankedStudents": 75,
+        "passRate": 0.8027,
+        "modelAuc": 0.5683
+      },
+      "risk": 0.7112,
+      "riskRankPct": 0.94,
+      "riskBelowPct": 0.9333,
+      "riskTiedPct": 0.0133,
+      "flagged": true,
+      "factors": [
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 95.0,
+          "courseMedian": 164.0,
+          "direction": "raises_risk",
+          "share": 0.3021
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 3.0,
+          "courseMedian": 13.0,
+          "direction": "raises_risk",
+          "share": 0.2301
+        },
+        {
+          "feature": "cum_social",
+          "label": "Forum activity so far",
+          "value": 11.0,
+          "courseMedian": 30.0,
+          "direction": "raises_risk",
+          "share": 0.2075
+        }
+      ],
+      "reliability": {
+        "selfTau": 0.9429,
+        "threshold": 0.8,
+        "verdict": "stable",
+        "recomputations": [
+          {
+            "feature": "cum_clicks",
+            "label": "Total clicks so far",
+            "count": 5
+          }
+        ]
+      },
+      "features": [
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 95.0,
+          "courseMedian": 164.0
+        },
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 10.0,
+          "courseMedian": 15.0
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 1.0,
+          "courseMedian": 3.0
+        },
+        {
+          "feature": "cum_social",
+          "label": "Forum activity so far",
+          "value": 11.0,
+          "courseMedian": 30.0
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 3.0,
+          "courseMedian": 13.0
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 6.0,
+          "courseMedian": 6.0
+        },
+        {
+          "feature": "weeks_since_active",
+          "label": "Weeks since last activity",
+          "value": 0.0,
+          "courseMedian": 0.0
+        }
+      ]
+    },
+    {
+      "caseId": "UK-2",
+      "displayName": "Student UK-2",
+      "institution": "UKZN",
+      "source": {
+        "cohortId": "ukzn_ISTN103_2019",
+        "studentRow": 674
+      },
+      "context": {
+        "course": "ISTN103",
+        "week": 6,
+        "nWeeks": 19,
+        "cohortSize": 1113,
+        "rankedStudents": 371,
+        "passRate": 0.7305,
+        "modelAuc": 0.5865
+      },
+      "risk": 0.505,
+      "riskRankPct": 0.8369,
+      "riskBelowPct": 0.8356,
+      "riskTiedPct": 0.0027,
+      "flagged": true,
+      "factors": [
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 19.0,
+          "courseMedian": 21.0,
+          "direction": "raises_risk",
+          "share": 0.333
+        },
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 6.0,
+          "courseMedian": 9.0,
+          "direction": "raises_risk",
+          "share": 0.2649
+        },
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 44.0,
+          "courseMedian": 44.0,
+          "direction": "lowers_risk",
+          "share": 0.179
+        }
+      ],
+      "reliability": {
+        "selfTau": 0.8667,
+        "threshold": 0.8,
+        "verdict": "stable",
+        "recomputations": [
+          {
+            "feature": "cum_content_clicks",
+            "label": "Course-material clicks so far",
+            "count": 5
+          }
+        ]
+      },
+      "features": [
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 44.0,
+          "courseMedian": 44.0
+        },
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 6.0,
+          "courseMedian": 9.0
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 19.0,
+          "courseMedian": 21.0
+        },
+        {
+          "feature": "cum_social",
+          "label": "Forum activity so far",
+          "value": 0.0,
+          "courseMedian": 0.0
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 0.0,
+          "courseMedian": 5.0
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 3.0,
+          "courseMedian": 5.0
+        },
+        {
+          "feature": "weeks_since_active",
+          "label": "Weeks since last activity",
+          "value": 2.0,
+          "courseMedian": 0.0
+        }
+      ]
+    },
+    {
+      "caseId": "UK-3",
+      "displayName": "Student UK-3",
+      "institution": "UKZN",
+      "source": {
+        "cohortId": "ukzn_ISTN101_2020",
+        "studentRow": 234
+      },
+      "context": {
+        "course": "ISTN101",
+        "week": 12,
+        "nWeeks": 35,
+        "cohortSize": 978,
+        "rankedStudents": 326,
+        "passRate": 0.9499,
+        "modelAuc": 0.6645
+      },
+      "risk": 0.1469,
+      "riskRankPct": 0.9371,
+      "riskBelowPct": 0.9356,
+      "riskTiedPct": 0.0031,
+      "flagged": true,
+      "factors": [
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 16.0,
+          "courseMedian": 14.0,
+          "direction": "raises_risk",
+          "share": 0.2522
+        },
+        {
+          "feature": "weeks_since_active",
+          "label": "Weeks since last activity",
+          "value": 5.0,
+          "courseMedian": 1.0,
+          "direction": "raises_risk",
+          "share": 0.2265
+        },
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 231.0,
+          "courseMedian": 184.0,
+          "direction": "raises_risk",
+          "share": 0.2127
+        }
+      ],
+      "reliability": {
+        "selfTau": 0.7714,
+        "threshold": 0.8,
+        "verdict": "unstable",
+        "recomputations": [
+          {
+            "feature": "cum_active_days",
+            "label": "Active days so far",
+            "count": 5
+          }
+        ]
+      },
+      "features": [
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 231.0,
+          "courseMedian": 184.0
+        },
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 16.0,
+          "courseMedian": 14.0
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 69.0,
+          "courseMedian": 57.0
+        },
+        {
+          "feature": "cum_social",
+          "label": "Forum activity so far",
+          "value": 1.0,
+          "courseMedian": 3.0
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 0.0,
+          "courseMedian": 0.0
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 5.0,
+          "courseMedian": 7.0
+        },
+        {
+          "feature": "weeks_since_active",
+          "label": "Weeks since last activity",
+          "value": 5.0,
+          "courseMedian": 1.0
+        }
+      ]
+    },
+    {
+      "caseId": "UK-4",
+      "displayName": "Student UK-4",
+      "institution": "UKZN",
+      "source": {
+        "cohortId": "ukzn_ISTN103_2019",
+        "studentRow": 152
+      },
+      "context": {
+        "course": "ISTN103",
+        "week": 6,
+        "nWeeks": 19,
+        "cohortSize": 1113,
+        "rankedStudents": 371,
+        "passRate": 0.7305,
+        "modelAuc": 0.5865
+      },
+      "risk": 0.574,
+      "riskRankPct": 0.8774,
+      "riskBelowPct": 0.876,
+      "riskTiedPct": 0.0027,
+      "flagged": true,
+      "factors": [
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 21.0,
+          "courseMedian": 44.0,
+          "direction": "raises_risk",
+          "share": 0.328
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 8.0,
+          "courseMedian": 5.0,
+          "direction": "raises_risk",
+          "share": 0.3034
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 8.0,
+          "courseMedian": 21.0,
+          "direction": "raises_risk",
+          "share": 0.1629
+        }
+      ],
+      "reliability": {
+        "selfTau": 0.6571,
+        "threshold": 0.8,
+        "verdict": "unstable",
+        "recomputations": [
+          {
+            "feature": "cum_clicks",
+            "label": "Total clicks so far",
+            "count": 3
+          },
+          {
+            "feature": "cur_clicks",
+            "label": "Clicks this week",
+            "count": 2
+          }
+        ]
+      },
+      "features": [
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 21.0,
+          "courseMedian": 44.0
+        },
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 9.0,
+          "courseMedian": 9.0
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 8.0,
+          "courseMedian": 21.0
+        },
+        {
+          "feature": "cum_social",
+          "label": "Forum activity so far",
+          "value": 0.0,
+          "courseMedian": 0.0
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 8.0,
+          "courseMedian": 5.0
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 4.0,
+          "courseMedian": 5.0
+        },
+        {
+          "feature": "weeks_since_active",
+          "label": "Weeks since last activity",
+          "value": 0.0,
+          "courseMedian": 0.0
+        }
+      ]
+    },
+    {
+      "caseId": "UK-5",
+      "displayName": "Student UK-5",
+      "institution": "UKZN",
+      "source": {
+        "cohortId": "ukzn_ISTN212_2019",
+        "studentRow": 134
+      },
+      "context": {
+        "course": "ISTN212",
+        "week": 6,
+        "nWeeks": 19,
+        "cohortSize": 264,
+        "rankedStudents": 88,
+        "passRate": 0.8409,
+        "modelAuc": 0.7114
+      },
+      "risk": 0.0098,
+      "riskRankPct": 0.1875,
+      "riskBelowPct": 0.1818,
+      "riskTiedPct": 0.0114,
+      "flagged": false,
+      "factors": [
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 11.0,
+          "courseMedian": 10.0,
+          "direction": "lowers_risk",
+          "share": 0.3286
+        },
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 44.0,
+          "courseMedian": 68.5,
+          "direction": "lowers_risk",
+          "share": 0.1907
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 21.0,
+          "courseMedian": 32.0,
+          "direction": "raises_risk",
+          "share": 0.1831
+        }
+      ],
+      "reliability": {
+        "selfTau": 0.8667,
+        "threshold": 0.8,
+        "verdict": "stable",
+        "recomputations": [
+          {
+            "feature": "cum_active_days",
+            "label": "Active days so far",
+            "count": 5
+          }
+        ]
+      },
+      "features": [
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 44.0,
+          "courseMedian": 68.5
+        },
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 11.0,
+          "courseMedian": 10.0
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 21.0,
+          "courseMedian": 32.0
+        },
+        {
+          "feature": "cum_social",
+          "label": "Forum activity so far",
+          "value": 1.0,
+          "courseMedian": 1.0
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 3.0,
+          "courseMedian": 9.5
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 6.0,
+          "courseMedian": 5.0
+        },
+        {
+          "feature": "weeks_since_active",
+          "label": "Weeks since last activity",
+          "value": 0.0,
+          "courseMedian": 0.0
+        }
+      ]
+    },
+    {
+      "caseId": "OV-1",
+      "displayName": "Student OV-1",
+      "institution": "Oviedo",
+      "source": {
+        "cohortId": "oviedo_C2271_1415",
+        "studentRow": 531
+      },
+      "context": {
+        "course": "C2271",
+        "week": 8,
+        "nWeeks": 23,
+        "cohortSize": 596,
+        "rankedStudents": 199,
+        "passRate": 0.5856,
+        "modelAuc": 0.596
+      },
+      "risk": 0.6651,
+      "riskRankPct": 0.8015,
+      "riskBelowPct": 0.799,
+      "riskTiedPct": 0.005,
+      "flagged": true,
+      "factors": [
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 1.0,
+          "courseMedian": 23.0,
+          "direction": "raises_risk",
+          "share": 0.3578
+        },
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 48.0,
+          "courseMedian": 67.0,
+          "direction": "raises_risk",
+          "share": 0.2635
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 14.0,
+          "courseMedian": 22.0,
+          "direction": "lowers_risk",
+          "share": 0.1575
+        }
+      ],
+      "reliability": {
+        "selfTau": 0.9619,
+        "threshold": 0.8,
+        "verdict": "stable",
+        "recomputations": [
+          {
+            "feature": "cur_clicks",
+            "label": "Clicks this week",
+            "count": 5
+          }
+        ]
+      },
+      "features": [
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 48.0,
+          "courseMedian": 67.0
+        },
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 9.0,
+          "courseMedian": 12.0
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 14.0,
+          "courseMedian": 22.0
+        },
+        {
+          "feature": "cum_social",
+          "label": "Forum activity so far",
+          "value": 0.0,
+          "courseMedian": 1.0
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 1.0,
+          "courseMedian": 23.0
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 6.0,
+          "courseMedian": 6.0
+        },
+        {
+          "feature": "weeks_since_active",
+          "label": "Weeks since last activity",
+          "value": 0.0,
+          "courseMedian": 0.0
+        }
+      ]
+    },
+    {
+      "caseId": "OV-2",
+      "displayName": "Student OV-2",
+      "institution": "Oviedo",
+      "source": {
+        "cohortId": "oviedo_C1112_1415",
+        "studentRow": 82
+      },
+      "context": {
+        "course": "C1112",
+        "week": 8,
+        "nWeeks": 24,
+        "cohortSize": 199,
+        "rankedStudents": 67,
+        "passRate": 0.4573,
+        "modelAuc": 0.7357
+      },
+      "risk": 0.8975,
+      "riskRankPct": 0.8433,
+      "riskBelowPct": 0.8358,
+      "riskTiedPct": 0.0149,
+      "flagged": true,
+      "factors": [
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 117.0,
+          "courseMedian": 111.0,
+          "direction": "raises_risk",
+          "share": 0.4647
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 25.0,
+          "courseMedian": 8.0,
+          "direction": "raises_risk",
+          "share": 0.1932
+        },
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 20.0,
+          "courseMedian": 15.0,
+          "direction": "lowers_risk",
+          "share": 0.1664
+        }
+      ],
+      "reliability": {
+        "selfTau": 0.9048,
+        "threshold": 0.8,
+        "verdict": "stable",
+        "recomputations": [
+          {
+            "feature": "cum_clicks",
+            "label": "Total clicks so far",
+            "count": 5
+          }
+        ]
+      },
+      "features": [
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 117.0,
+          "courseMedian": 111.0
+        },
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 20.0,
+          "courseMedian": 15.0
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 55.0,
+          "courseMedian": 47.0
+        },
+        {
+          "feature": "cum_social",
+          "label": "Forum activity so far",
+          "value": 5.0,
+          "courseMedian": 2.0
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 25.0,
+          "courseMedian": 8.0
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 7.0,
+          "courseMedian": 7.0
+        },
+        {
+          "feature": "weeks_since_active",
+          "label": "Weeks since last activity",
+          "value": 0.0,
+          "courseMedian": 0.0
+        }
+      ]
+    },
+    {
+      "caseId": "OV-3",
+      "displayName": "Student OV-3",
+      "institution": "Oviedo",
+      "source": {
+        "cohortId": "oviedo_C3029_1415",
+        "studentRow": 200
+      },
+      "context": {
+        "course": "C3029",
+        "week": 15,
+        "nWeeks": 45,
+        "cohortSize": 231,
+        "rankedStudents": 77,
+        "passRate": 0.671,
+        "modelAuc": 0.5208
+      },
+      "risk": 0.9197,
+      "riskRankPct": 0.961,
+      "riskBelowPct": 0.9481,
+      "riskTiedPct": 0.026,
+      "flagged": true,
+      "factors": [
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 8.0,
+          "courseMedian": 0.0,
+          "direction": "raises_risk",
+          "share": 0.2186
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 15.0,
+          "courseMedian": 4.0,
+          "direction": "raises_risk",
+          "share": 0.1874
+        },
+        {
+          "feature": "cum_social",
+          "label": "Forum activity so far",
+          "value": 71.0,
+          "courseMedian": 2.0,
+          "direction": "raises_risk",
+          "share": 0.1859
+        }
+      ],
+      "reliability": {
+        "selfTau": 0.8095,
+        "threshold": 0.8,
+        "verdict": "stable",
+        "recomputations": [
+          {
+            "feature": "cur_clicks",
+            "label": "Clicks this week",
+            "count": 5
+          }
+        ]
+      },
+      "features": [
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 737.0,
+          "courseMedian": 59.0
+        },
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 67.0,
+          "courseMedian": 6.0
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 167.0,
+          "courseMedian": 4.0
+        },
+        {
+          "feature": "cum_social",
+          "label": "Forum activity so far",
+          "value": 71.0,
+          "courseMedian": 2.0
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 8.0,
+          "courseMedian": 0.0
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 15.0,
+          "courseMedian": 4.0
+        },
+        {
+          "feature": "weeks_since_active",
+          "label": "Weeks since last activity",
+          "value": 0.0,
+          "courseMedian": 3.0
+        }
+      ]
+    },
+    {
+      "caseId": "OV-4",
+      "displayName": "Student OV-4",
+      "institution": "Oviedo",
+      "source": {
+        "cohortId": "oviedo_C2271_1415",
+        "studentRow": 465
+      },
+      "context": {
+        "course": "C2271",
+        "week": 8,
+        "nWeeks": 23,
+        "cohortSize": 596,
+        "rankedStudents": 199,
+        "passRate": 0.5856,
+        "modelAuc": 0.596
+      },
+      "risk": 0.8343,
+      "riskRankPct": 0.9322,
+      "riskBelowPct": 0.9296,
+      "riskTiedPct": 0.005,
+      "flagged": true,
+      "factors": [
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 17.0,
+          "courseMedian": 67.0,
+          "direction": "raises_risk",
+          "share": 0.4337
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 0.0,
+          "courseMedian": 23.0,
+          "direction": "raises_risk",
+          "share": 0.2789
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 2.0,
+          "courseMedian": 22.0,
+          "direction": "lowers_risk",
+          "share": 0.1597
+        }
+      ],
+      "reliability": {
+        "selfTau": 0.6952,
+        "threshold": 0.8,
+        "verdict": "unstable",
+        "recomputations": [
+          {
+            "feature": "cum_clicks",
+            "label": "Total clicks so far",
+            "count": 5
+          }
+        ]
+      },
+      "features": [
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 17.0,
+          "courseMedian": 67.0
+        },
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 3.0,
+          "courseMedian": 12.0
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 2.0,
+          "courseMedian": 22.0
+        },
+        {
+          "feature": "cum_social",
+          "label": "Forum activity so far",
+          "value": 0.0,
+          "courseMedian": 1.0
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 0.0,
+          "courseMedian": 23.0
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 3.0,
+          "courseMedian": 6.0
+        },
+        {
+          "feature": "weeks_since_active",
+          "label": "Weeks since last activity",
+          "value": 1.0,
+          "courseMedian": 0.0
+        }
+      ]
+    },
+    {
+      "caseId": "OV-5",
+      "displayName": "Student OV-5",
+      "institution": "Oviedo",
+      "source": {
+        "cohortId": "oviedo_C2271_1415",
+        "studentRow": 96
+      },
+      "context": {
+        "course": "C2271",
+        "week": 8,
+        "nWeeks": 23,
+        "cohortSize": 596,
+        "rankedStudents": 199,
+        "passRate": 0.5856,
+        "modelAuc": 0.596
+      },
+      "risk": 0.1001,
+      "riskRankPct": 0.103,
+      "riskBelowPct": 0.1005,
+      "riskTiedPct": 0.005,
+      "flagged": false,
+      "factors": [
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 103.0,
+          "courseMedian": 67.0,
+          "direction": "lowers_risk",
+          "share": 0.4037
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 4.0,
+          "courseMedian": 22.0,
+          "direction": "lowers_risk",
+          "share": 0.1943
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 22.0,
+          "courseMedian": 23.0,
+          "direction": "lowers_risk",
+          "share": 0.1906
+        }
+      ],
+      "reliability": {
+        "selfTau": 0.8857,
+        "threshold": 0.8,
+        "verdict": "stable",
+        "recomputations": [
+          {
+            "feature": "cum_clicks",
+            "label": "Total clicks so far",
+            "count": 5
+          }
+        ]
+      },
+      "features": [
+        {
+          "feature": "cum_clicks",
+          "label": "Total clicks so far",
+          "value": 103.0,
+          "courseMedian": 67.0
+        },
+        {
+          "feature": "cum_active_days",
+          "label": "Active days so far",
+          "value": 23.0,
+          "courseMedian": 12.0
+        },
+        {
+          "feature": "cum_content_clicks",
+          "label": "Course-material clicks so far",
+          "value": 4.0,
+          "courseMedian": 22.0
+        },
+        {
+          "feature": "cum_social",
+          "label": "Forum activity so far",
+          "value": 0.0,
+          "courseMedian": 1.0
+        },
+        {
+          "feature": "cur_clicks",
+          "label": "Clicks this week",
+          "value": 22.0,
+          "courseMedian": 23.0
+        },
+        {
+          "feature": "active_weeks",
+          "label": "Active weeks so far",
+          "value": 7.0,
+          "courseMedian": 6.0
+        },
+        {
+          "feature": "weeks_since_active",
+          "label": "Weeks since last activity",
+          "value": 0.0,
+          "courseMedian": 0.0
+        }
+      ]
+    }
+  ]
+}

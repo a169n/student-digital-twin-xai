@@ -20,6 +20,9 @@ class Settings(BaseSettings):
     research_demo_payload_path: str = str(
         REPO_ROOT / "data" / "artifacts" / "research_demo" / "oulad_research_demo_payload.json"
     )
+    review_payload_path: str = str(
+        REPO_ROOT / "data" / "artifacts" / "research_demo" / "teacher_review_payload.json"
+    )
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 

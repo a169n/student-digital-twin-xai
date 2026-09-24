@@ -9,7 +9,8 @@
     "lint": "next lint",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "test:research-demo": "node --test tests/research-demo.test.js"
+    "test:research-demo": "node --test tests/research-demo.test.js",
+    "test:review": "node --test tests/review.test.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",

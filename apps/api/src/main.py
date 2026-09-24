@@ -4,7 +4,7 @@ from fastapi import FastAPI
 
 from src.api.router import api_router
 from src.core.config import get_settings
-from src.domain.platform.bootstrap import initialize_platform_store
+from src.domain.platform.bootstrap import initialize_platform_store, initialize_review_store
 
 settings = get_settings()
 
@@ -12,6 +12,7 @@ settings = get_settings()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     initialize_platform_store()
+    initialize_review_store()
     yield
 
 

@@ -1569,6 +1569,11 @@ h4 {
     padding: 10px 14px;
   }
 
+  .app-nav__links {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
   .student-table table {
     font-size: 12px;
   }
@@ -1809,5 +1814,513 @@ h4 {
   }
   html {
     @apply font-sans;
+  }
+}
+
+/* ---------- Explanation review (practice week 6) ---------- */
+
+.review-layout {
+  display: grid;
+  gap: 24px;
+  align-items: start;
+}
+
+.review-list__items,
+.factor-list,
+.decision-history {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.review-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.review-filters a {
+  padding: 4px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+}
+
+.review-filters a[aria-current] {
+  border-color: var(--text);
+  background: var(--text);
+  color: var(--surface);
+}
+
+.review-list__items {
+  display: grid;
+  gap: 2px;
+  margin-top: 12px;
+}
+
+.review-list__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 12px;
+  padding: 10px 12px;
+  border-left: 3px solid transparent;
+  border-radius: 8px;
+  color: var(--text);
+}
+
+.review-list__item:hover {
+  background: rgba(15, 23, 42, 0.04);
+}
+
+.review-list__item[aria-current="page"] {
+  border-left-color: var(--primary);
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+.review-list__name {
+  font-weight: 600;
+}
+
+.review-list__risk {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.review-list__meta,
+.review-list__decided {
+  color: var(--app-muted);
+  font-size: 13px;
+}
+
+.review-list__meta,
+.review-list__status {
+  grid-column: 1 / -1;
+}
+
+.review-list__status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.verdict-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.verdict-chip::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.verdict-chip.is-stable {
+  background: var(--teal-soft);
+  color: var(--teal);
+}
+
+.verdict-chip.is-unstable {
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+
+.review-main {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+
+.review-card {
+  display: grid;
+  gap: 32px;
+  padding: 24px 28px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.review-card__head h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.review-card__where,
+.review-card__context {
+  margin: 4px 0 0;
+  max-width: 70ch;
+  color: var(--app-muted);
+}
+
+.review-card__risk {
+  margin: 16px 0 0;
+  font-size: 20px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.review-section h3 {
+  margin: 0;
+  font-size: 17px;
+}
+
+.review-section__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.review-section__lede {
+  margin: 6px 0 0;
+  max-width: 70ch;
+}
+
+/* The scale is the screen's one bold element: two zones split at the gate,
+   the student's needle on top. Colour marks the zone, text names it too. */
+.reliability-scale {
+  position: relative;
+  margin: 40px 0 4px;
+}
+
+.reliability-scale__track {
+  display: flex;
+  height: 36px;
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+}
+
+.reliability-scale__zone {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.reliability-scale__zone.is-unstable {
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+
+.reliability-scale__zone.is-stable {
+  flex: 1;
+  justify-content: flex-end;
+  background: var(--teal-soft);
+  color: var(--teal);
+}
+
+.reliability-scale__cut {
+  position: absolute;
+  top: 0;
+  height: 36px;
+  border-left: 2px dashed var(--text);
+}
+
+.reliability-scale__cut > span {
+  position: absolute;
+  top: 40px;
+  left: 0;
+  transform: translateX(-50%);
+  color: var(--app-muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.reliability-scale__needle {
+  position: absolute;
+  top: -10px;
+  height: 46px;
+  border-left: 3px solid var(--text);
+}
+
+.reliability-scale__needle > span {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  transform: translate(-50%, -2px);
+  padding: 1px 8px;
+  border-radius: 6px;
+  color: var(--surface);
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.reliability-scale__needle.align-start > span {
+  transform: translate(0, -2px);
+}
+
+.reliability-scale__needle.align-end > span {
+  transform: translate(-100%, -2px);
+}
+
+.reliability-scale__needle.is-stable > span {
+  background: var(--teal);
+}
+
+.reliability-scale__needle.is-unstable > span {
+  background: var(--warn);
+}
+
+.reliability-scale__ends {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  color: var(--app-muted);
+  font-size: 12px;
+}
+
+.review-caution {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border-left: 3px solid var(--warn);
+  border-radius: 6px;
+  background: var(--warn-soft);
+  color: #78350f;
+}
+
+.review-details {
+  margin-top: 14px;
+}
+
+.review-details summary {
+  color: var(--primary);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.review-details p {
+  max-width: 70ch;
+  margin: 8px 0 0;
+}
+
+.factor-list {
+  display: grid;
+  margin-top: 12px;
+}
+
+.factor-list__row {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) 160px;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+}
+
+.factor-list__arrow {
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.factor-list__arrow.is-lowers_risk,
+.factor-list__arrow.is-no_effect {
+  color: var(--app-muted);
+}
+
+.factor-list__label,
+.factor-list__detail {
+  display: block;
+}
+
+.factor-list__label {
+  font-weight: 600;
+}
+
+.factor-list__detail {
+  color: var(--app-muted);
+  font-size: 14px;
+}
+
+.factor-list__weight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.factor-list__bar {
+  flex: 1;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--muted);
+}
+
+.factor-list__bar > span {
+  display: block;
+  height: 100%;
+  background: var(--primary);
+}
+
+.factor-list__share {
+  width: 40px;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.factor-list.is-unsettled .factor-list__bar > span {
+  background: var(--app-muted);
+}
+
+.factor-list__note {
+  margin: 8px 0 0;
+  color: var(--app-muted);
+  font-size: 13px;
+}
+
+.decision-form {
+  display: grid;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.decision-form__actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.decision-form__option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.decision-form__option:has(input:checked) {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.decision-form__field {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.decision-form__field select,
+.decision-form__field textarea {
+  padding: 8px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  background: var(--surface);
+  font: inherit;
+  font-weight: 400;
+}
+
+.decision-form__submit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.decision-form__error,
+.decision-form__saved {
+  margin: 0;
+}
+
+.decision-form__error {
+  color: var(--danger);
+}
+
+.decision-form__saved {
+  color: var(--success);
+}
+
+.decision-history__title {
+  margin: 22px 0 6px;
+  font-size: 14px;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.decision-history {
+  display: grid;
+  gap: 6px;
+}
+
+.decision-history li {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: 2px 12px;
+  font-size: 14px;
+}
+
+.decision-history time {
+  color: var(--app-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.decision-history__note {
+  grid-column: 2;
+  color: var(--app-muted);
+}
+
+.review-filters a:focus-visible,
+.review-list__item:focus-visible,
+.review-details summary:focus-visible,
+.decision-form__option:focus-within {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+@media (min-width: 1024px) {
+  .review-layout {
+    grid-template-columns: 300px minmax(0, 1fr);
+  }
+
+  .review-list {
+    position: sticky;
+    top: 16px;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .review-card {
+    padding: 18px 16px;
+  }
+
+  .factor-list__row {
+    grid-template-columns: 24px minmax(0, 1fr);
+  }
+
+  .factor-list__weight {
+    grid-column: 2;
+  }
+
+  .decision-history li {
+    grid-template-columns: 1fr;
+  }
+
+  .decision-history__note {
+    grid-column: 1;
   }
 }

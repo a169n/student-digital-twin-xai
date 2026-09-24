@@ -111,3 +111,42 @@ class ExplanationContributionRecord(Base):
     reference_median: Mapped[float | None] = mapped_column(Float)
 
     case: Mapped[ExplanationCaseRecord] = relationship(back_populates="contributions")
+
+
+class ReviewMetadataRecord(Base):
+    """Payload-level context for the review screen (scale context, labels, provenance)."""
+
+    __tablename__ = "review_metadata"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, default=1)
+    payload_json: Mapped[str] = mapped_column(Text, nullable=False)
+
+
+class ReviewCaseRecord(Base):
+    """One precomputed teacher-review case, stored as the exporter wrote it."""
+
+    __tablename__ = "review_cases"
+
+    case_id: Mapped[str] = mapped_column(String(16), primary_key=True)
+    institution: Mapped[str] = mapped_column(String(64), nullable=False)
+    position: Mapped[int] = mapped_column(Integer, nullable=False)
+    payload_json: Mapped[str] = mapped_column(Text, nullable=False)
+
+
+class ReviewDecisionRecord(Base):
+    """A teacher's decision on a case. Append-only; survives a re-import of the cases.
+
+    case_id is a position-based pseudonym that a re-export can hand to another
+    student, so each decision also records which source student it was about
+    and is only shown while the case still points at that student.
+    """
+
+    __tablename__ = "review_decisions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    case_id: Mapped[str] = mapped_column(String(16), nullable=False, index=True)
+    source_key: Mapped[str] = mapped_column(String(128), nullable=False)
+    action: Mapped[str] = mapped_column(String(32), nullable=False)
+    factor: Mapped[str | None] = mapped_column(String(64))
+    note: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)

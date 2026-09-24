@@ -6,6 +6,7 @@ from src.core.config import get_settings
 from src.db import init_db
 from src.db.session import get_sessionmaker
 from src.importer.research_payload import import_research_payload
+from src.importer.review_payload import import_review_payload
 
 
 def main() -> None:
@@ -20,6 +21,11 @@ def main() -> None:
         f"{summary.snapshot_count} weekly snapshots, "
         f"{summary.explanation_case_count} explanation cases"
     )
+    review_path = Path(settings.review_payload_path)
+    if review_path.exists():
+        with get_sessionmaker()() as session:
+            count = import_review_payload(session, payload_path=review_path)
+        print(f"Imported teacher-review cases: {count}")
 
 
 if __name__ == "__main__":

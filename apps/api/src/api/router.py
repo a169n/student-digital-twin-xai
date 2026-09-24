@@ -7,6 +7,7 @@ from src.domain.interventions.router import router as interventions_router
 from src.domain.platform.router import router as platform_router
 from src.domain.predictions.router import router as predictions_router
 from src.domain.research.router import router as research_router
+from src.domain.review.router import router as review_router
 from src.domain.students.router import router as students_router
 from src.domain.twins.router import router as twins_router
 
@@ -20,3 +21,4 @@ api_router.include_router(predictions_router, prefix="/predictions", tags=["pred
 api_router.include_router(interventions_router, prefix="/interventions", tags=["interventions"])
 api_router.include_router(explanations_router, prefix="/explanations", tags=["explanations"])
 api_router.include_router(research_router, prefix="/research", tags=["research"])
+api_router.include_router(review_router, prefix="/review", tags=["review"])
