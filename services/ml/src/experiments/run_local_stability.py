@@ -23,6 +23,10 @@ Outputs, per student: self-agreement of each estimator across background draws,
 cross-estimator agreement, and the covariates a confidence gate could key on
 (distance to the flag threshold, length of active history).
 
+The estimators are pluggable (ESTIMATORS) so exp_027 can ask whether the
+shap-occlusion agreement is a property of that one pair. The default pair and
+its output columns are exp_025's, unchanged.
+
 Usage (from services/ml):
     uv run python -m src.experiments.run_local_stability --fraction 0.33
 """
@@ -31,11 +35,13 @@ from __future__ import annotations
 
 import argparse
 import itertools
+from collections.abc import Callable
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import shap
+from lime.lime_tabular import LimeTabularExplainer
 from sklearn.model_selection import train_test_split
 
 from src.experiments import transfer_benchmark as tb
@@ -47,7 +53,7 @@ from src.experiments.run_transfer_ladder import (
     load_ukzn,
     load_zambia,
 )
-from src.experiments.stability import jaccard_topk, kendall_tau
+from src.experiments.stability import jaccard_topk, kendall_tau, kendall_tau_scores
 
 REPO = Path(__file__).resolve().parents[4]
 OUT = REPO / "data" / "artifacts" / "experiments" / "exp_025_local_stability"
@@ -94,6 +100,57 @@ def _occlusion_matrix(model, x_eval: np.ndarray, background: np.ndarray) -> np.n
     return out
 
 
+def _lime_matrix(model, x_eval: np.ndarray, background: np.ndarray, seed: int) -> np.ndarray:
+    """LIME with library defaults: a local linear surrogate on quartile-discretised samples.
+
+    Unlike TreeSHAP and occlusion, LIME has randomness of its own (the 5000
+    perturbation samples per student). Its random_state is the same fixed value
+    in every repeat, so that — on the principle stated in _occlusion_matrix — it
+    is deterministic given (model, background) and only the declared source of
+    variation moves. Its own sampling noise is measured apart (lime_seed_tau).
+    """
+    explainer = LimeTabularExplainer(
+        background, feature_names=list(tb.CANON), mode="classification", random_state=seed
+    )
+    out = np.zeros_like(x_eval, dtype=float)
+    for i, x in enumerate(x_eval):
+        explanation = explainer.explain_instance(
+            x, model.predict_proba, labels=(1,), num_features=len(tb.CANON)
+        )
+        for j, weight in explanation.as_map()[1]:
+            out[i, j] = weight
+    return out
+
+
+def _kernelshap_prob_matrix(model, x_eval: np.ndarray, background: np.ndarray) -> np.ndarray:
+    """Exact interventional Shapley values of the predicted probability — a control.
+
+    With 7 features nsamples="auto" enumerates all 2^7 - 2 coalitions, so this
+    is not an approximation. On the log-odds it would reproduce "shap" and add
+    nothing; on the probability it differs from "shap" only by the output space.
+    It is therefore not a third method: it isolates how much of the
+    shap-occlusion disagreement is the link function, since occlusion works in
+    probability space.
+
+    l1_reg=False because shap's default ("num_features(10)") still runs a LARS
+    feature selection under full enumeration, and it can drop a feature with a
+    small but nonzero value — which then reads as an exact zero, and as a tie.
+    """
+    explainer = shap.KernelExplainer(lambda z: model.predict_proba(z)[:, 1], background)
+    return np.asarray(explainer.shap_values(x_eval, nsamples="auto", l1_reg=False, silent=True))
+
+
+# name -> (model, x_eval, background, seed) -> (n_students, n_features) attributions.
+# Only LIME consumes the seed; the others are deterministic given model and background.
+ESTIMATORS: dict[str, Callable[..., np.ndarray]] = {
+    "shap": lambda model, x, bg, seed: _shap_matrix(model, x, bg),
+    "occlusion": lambda model, x, bg, seed: _occlusion_matrix(model, x, bg),
+    "lime": _lime_matrix,
+    "kernelshap_prob": lambda model, x, bg, seed: _kernelshap_prob_matrix(model, x, bg),
+}
+DEFAULT_ESTIMATORS: tuple[str, ...] = ("shap", "occlusion")  # exp_025's pair
+
+
 def _mean_pairwise_tau(orders: list[list[str]]) -> float | None:
     taus = []
     for a, b in itertools.combinations(range(len(orders)), 2):
@@ -110,8 +167,26 @@ def _mean_pairwise_jaccard(orders: list[list[str]]) -> float | None:
     return float(np.mean([jaccard_topk(orders[a], orders[b], TOP_K) for a, b in pairs]))
 
 
+def _mean_cross(orders_a: list[list[str]], orders_b: list[list[str]]) -> tuple[float | None, float]:
+    """Two estimators compared on the same repeat, averaged over repeats: (tau, top-k Jaccard)."""
+    taus = [t for t in map(kendall_tau, orders_a, orders_b) if t is not None]
+    jaccard = [jaccard_topk(a, b, TOP_K) for a, b in zip(orders_a, orders_b, strict=True)]
+    return (float(np.mean(taus)) if taus else None), float(np.mean(jaccard))
+
+
+def _mean_defined(values) -> float | None:
+    defined = [v for v in values if v is not None]
+    return float(np.mean(defined)) if defined else None
+
+
 def cohort_students(
-    cohort: tb.Cohort, *, seed: int, repeats: int, background: int, vary: str = "background"
+    cohort: tb.Cohort,
+    *,
+    seed: int,
+    repeats: int,
+    background: int,
+    vary: str = "background",
+    estimators: tuple[str, ...] = DEFAULT_ESTIMATORS,
 ) -> list[dict]:
     """Per-student stability under one source of variation.
 
@@ -131,9 +206,25 @@ def cohort_students(
 
     The evaluation split never moves, in any mode — the students have to be the
     same ones across repeats for a per-student statistic to mean anything.
+
+    ``estimators`` other than exp_025's default pair add self_tau_<e> /
+    self_jaccard_<e> per estimator and cross_tau_<a>__<b> /
+    cross_jaccard_top3_<a>__<b> per pair; the legacy shap-occlusion columns stay
+    whenever both are present. With "lime", lime_seed_tau is LIME's noise floor:
+    repeat 0 against a rerun on the same model and background with seed + 1.
+
+    Those tau columns compare factor LISTS, so exact ties in |attribution| —
+    common for occlusion, whose perturbation often crosses no split — are
+    broken by feature index. Each also gets a tie-aware twin on the |attribution|
+    vectors (self_taub_<e>, cross_taub_<a>__<b>; a repeat with a constant vector
+    is skipped), plus tied_<e> (share of repeats with any exact tie) and
+    zeros_<e> (mean exact zeros per repeat) to show how much there is to fix.
     """
     if vary not in VARY_MODES:
         raise ValueError(f"vary must be one of {VARY_MODES}, got {vary!r}")
+    unknown = [e for e in estimators if e not in ESTIMATORS]
+    if unknown:
+        raise ValueError(f"unknown estimators {unknown}; known: {tuple(ESTIMATORS)}")
     x_all, y = cohort.X("raw"), cohort.y
     try:
         train, evaluate = train_test_split(
@@ -149,8 +240,12 @@ def cohort_students(
     x_train, x_eval = x_all[train], x_all[evaluate]
     model = build_classification_model(MODEL, seed=seed).fit(x_train, y[train])
 
-    # The flagged set is the riskiest FLAG_RATE of the cohort; a student's
-    # distance to that cut is the first thing a gate would plausibly key on.
+    # The flagged set is meant to be the riskiest FLAG_RATE of the cohort; a
+    # student's distance to that cut is the first thing a gate would key on.
+    # TODO(ml): y is `passed`, so this is P(pass) and `flagged` marks the 20 %
+    # LEAST at risk; `p_risk` and `margin` inherit the inversion (exp_025 and
+    # exp_027 students.csv). No agreement number uses them. Fix with
+    # 1 - predict_proba[:, 1] under a new experiment id, not in place.
     risk = model.predict_proba(x_eval)[:, 1]
     threshold = float(np.quantile(risk, 1 - tb.FLAG_RATE))
 
@@ -165,7 +260,7 @@ def cohort_students(
     fixed_bg = x_train[
         np.random.default_rng(seed * 1000).choice(len(x_train), size=bg_size, replace=False)
     ]
-    per_repeat: dict[str, list[np.ndarray]] = {"shap": [], "occlusion": []}
+    per_repeat: dict[str, list[np.ndarray]] = {est: [] for est in estimators}
     for repeat in range(repeats):
         rng = np.random.default_rng(seed * 1000 + repeat)
         if vary == "model":
@@ -186,8 +281,16 @@ def cohort_students(
                 x_train[boot], y[train][boot]
             )
 
-        per_repeat["shap"].append(_shap_matrix(fitted, x_eval, bg))
-        per_repeat["occlusion"].append(_occlusion_matrix(fitted, x_eval, bg))
+        if repeat == 0:
+            first_model, first_bg = fitted, bg
+        for est in estimators:
+            per_repeat[est].append(ESTIMATORS[est](fitted, x_eval, bg, seed))
+
+    lime_floor = (
+        ESTIMATORS["lime"](first_model, x_eval, first_bg, seed + 1)
+        if "lime" in estimators
+        else None
+    )
 
     feature_idx = {name: i for i, name in enumerate(tb.CANON)}
     rows: list[dict] = []
@@ -195,36 +298,49 @@ def cohort_students(
         orders = {
             est: [_order(mats[r][i]) for r in range(repeats)] for est, mats in per_repeat.items()
         }
-        cross_tau = []
-        for r in range(repeats):
-            tau = kendall_tau(orders["shap"][r], orders["occlusion"][r])
-            if tau is not None:
-                cross_tau.append(tau)
-        cross_jaccard = [
-            jaccard_topk(orders["shap"][r], orders["occlusion"][r], TOP_K) for r in range(repeats)
-        ]
-        rows.append(
-            {
-                "cohort_id": cohort.cohort_id,
-                "institution": cohort.institution,
-                "n_students": cohort.n,
-                "vary": vary,
-                "background_n": bg_size,  # the estimator's variance depends on it; report it
-                "student_row": int(evaluate[i]),
-                "y": int(y[evaluate[i]]),
-                "p_risk": float(risk[i]),
-                "flagged": bool(risk[i] >= threshold),
-                "margin": float(abs(risk[i] - threshold)),
-                "active_weeks": float(x_eval[i, feature_idx["active_weeks"]]),
-                "weeks_since_active": float(x_eval[i, feature_idx["weeks_since_active"]]),
-                "cum_clicks": float(x_eval[i, feature_idx["cum_clicks"]]),
-                "self_tau_shap": _mean_pairwise_tau(orders["shap"]),
-                "self_tau_occlusion": _mean_pairwise_tau(orders["occlusion"]),
-                "self_jaccard_shap": _mean_pairwise_jaccard(orders["shap"]),
-                "cross_tau": float(np.mean(cross_tau)) if cross_tau else None,
-                "cross_jaccard_top3": float(np.mean(cross_jaccard)),
-            }
-        )
+        row = {
+            "cohort_id": cohort.cohort_id,
+            "institution": cohort.institution,
+            "n_students": cohort.n,
+            "vary": vary,
+            "background_n": bg_size,  # the estimator's variance depends on it; report it
+            "student_row": int(evaluate[i]),
+            "y": int(y[evaluate[i]]),
+            "p_risk": float(risk[i]),
+            "flagged": bool(risk[i] >= threshold),
+            "margin": float(abs(risk[i] - threshold)),
+            "active_weeks": float(x_eval[i, feature_idx["active_weeks"]]),
+            "weeks_since_active": float(x_eval[i, feature_idx["weeks_since_active"]]),
+            "cum_clicks": float(x_eval[i, feature_idx["cum_clicks"]]),
+        }
+        if "shap" in estimators and "occlusion" in estimators:
+            cross_tau, cross_jaccard = _mean_cross(orders["shap"], orders["occlusion"])
+            row.update(
+                self_tau_shap=_mean_pairwise_tau(orders["shap"]),
+                self_tau_occlusion=_mean_pairwise_tau(orders["occlusion"]),
+                self_jaccard_shap=_mean_pairwise_jaccard(orders["shap"]),
+                cross_tau=cross_tau,
+                cross_jaccard_top3=cross_jaccard,
+            )
+        if tuple(estimators) != DEFAULT_ESTIMATORS:
+            mag = {est: [np.abs(m[i]) for m in mats] for est, mats in per_repeat.items()}
+            for est in estimators:
+                row[f"self_tau_{est}"] = _mean_pairwise_tau(orders[est])
+                row[f"self_jaccard_{est}"] = _mean_pairwise_jaccard(orders[est])
+                row[f"self_taub_{est}"] = _mean_defined(
+                    kendall_tau_scores(u, v) for u, v in itertools.combinations(mag[est], 2)
+                )
+                row[f"tied_{est}"] = float(np.mean([len(np.unique(v)) < len(v) for v in mag[est]]))
+                row[f"zeros_{est}"] = float(np.mean([np.count_nonzero(v == 0) for v in mag[est]]))
+            for a, b in itertools.combinations(estimators, 2):
+                pair = f"{a}__{b}"
+                row[f"cross_tau_{pair}"], row[f"cross_jaccard_top3_{pair}"] = _mean_cross(
+                    orders[a], orders[b]
+                )
+                row[f"cross_taub_{pair}"] = _mean_defined(map(kendall_tau_scores, mag[a], mag[b]))
+        if lime_floor is not None:
+            row["lime_seed_tau"] = kendall_tau(orders["lime"][0], _order(lime_floor[i]))
+        rows.append(row)
     return rows
 
 
@@ -304,6 +420,13 @@ def gate_curve(frame: pd.DataFrame, *, column: str = "self_tau_shap") -> pd.Data
     return pd.DataFrame(rows)
 
 
+def load_cohorts(fraction: float) -> list[tb.Cohort]:
+    """All 63 benchmark cohorts of the five institutions, cut at ``fraction`` of the course."""
+    weekly = {**load_oulad(), **load_ku(), **load_ukzn(), **load_zambia(), **load_oviedo()}
+    canon = {cid: tb.canonical_from_weekly(f) for cid, f in weekly.items()}
+    return tb.make_cohorts(canon, fraction)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--fraction", type=float, default=0.33)
@@ -317,9 +440,7 @@ def main() -> None:
     # overwrite each other, which the registry's lifecycle rules forbid.
     run = args.run or f"f{int(round(args.fraction * 100))}_{args.vary}"
 
-    weekly = {**load_oulad(), **load_ku(), **load_ukzn(), **load_zambia(), **load_oviedo()}
-    canon = {cid: tb.canonical_from_weekly(f) for cid, f in weekly.items()}
-    cohorts = tb.make_cohorts(canon, args.fraction)
+    cohorts = load_cohorts(args.fraction)
     print(f"cohorts: {len(cohorts)}", flush=True)
 
     rows: list[dict] = []
