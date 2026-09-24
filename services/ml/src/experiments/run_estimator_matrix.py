@@ -41,6 +41,7 @@ import os
 import time
 from concurrent.futures import ProcessPoolExecutor
 from importlib.metadata import version
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -192,37 +193,41 @@ def _compare_with_exp025(frame: pd.DataFrame, run: str) -> None:
             )
 
 
-def main() -> None:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--fraction", type=float, default=0.33)
-    ap.add_argument("--seed", type=int, default=0)
-    ap.add_argument("--repeats", type=int, default=5)
-    ap.add_argument("--background", type=int, default=50)
-    ap.add_argument("--vary", choices=ls.VARY_MODES, default="background")
-    ap.add_argument("--estimators", default="shap,occlusion,lime,kernelshap_prob")
-    ap.add_argument("--workers", type=int, default=max(1, min(8, (os.cpu_count() or 1) - 2)))
-    ap.add_argument("--limit-cohorts", type=int, default=None, help="first N cohorts only")
-    ap.add_argument("--run", default=None, help="output subfolder; defaults to f<pct>_<vary>")
-    args = ap.parse_args()
-    run = args.run or f"f{int(round(args.fraction * 100))}_{args.vary}"
-    estimators = tuple(args.estimators.split(","))
-    if estimators == ls.DEFAULT_ESTIMATORS:
-        # cohort_students writes only exp_025's legacy columns for this pair.
-        ap.error("shap,occlusion alone is exp_025 (run_local_stability); add an estimator")
+def run_matrix(
+    out_dir: Path,
+    cohorts: list[tb.Cohort],
+    *,
+    fraction: float,
+    seed: int,
+    repeats: int,
+    background: int,
+    vary: str,
+    estimators: tuple[str, ...],
+    workers: int,
+    limit_cohorts: int | None,
+    model: str = ls.MODEL,
+    experiment: str = OUT.name,
+    extra: dict | None = None,
+) -> dict[str, pd.DataFrame]:
+    """Compute one run over ``cohorts`` and write its file set into ``out_dir``.
 
-    cohorts = ls.load_cohorts(args.fraction)[: args.limit_cohorts]
-    print(f"cohorts: {len(cohorts)}, estimators: {estimators}, workers: {args.workers}", flush=True)
+    exp_028 calls this once per (cutoff, model family), so every cell of its grid
+    is computed and written exactly as exp_027's run was. ``extra`` is appended
+    to config.json for what only such a caller knows.
+    """
+    print(f"cohorts: {len(cohorts)}, estimators: {estimators}, workers: {workers}", flush=True)
     kwargs = dict(
-        seed=args.seed,
-        repeats=args.repeats,
-        background=args.background,
-        vary=args.vary,
+        seed=seed,
+        repeats=repeats,
+        background=background,
+        vary=vary,
         estimators=estimators,
+        model_name=model,
     )
     start = time.perf_counter()
     rows: list[dict] = []
     # map() yields in submission order, so the output equals a sequential run.
-    with ProcessPoolExecutor(max_workers=args.workers) as pool:
+    with ProcessPoolExecutor(max_workers=workers) as pool:
         for cohort, (cohort_rows, seconds) in zip(
             cohorts, pool.map(_timed, cohorts, itertools.repeat(kwargs)), strict=True
         ):
@@ -252,20 +257,20 @@ def main() -> None:
     )
     if "lime" in estimators:
         outputs["lime_noise"] = lime_noise(frame)
-    tb.write_outputs(OUT / run, **outputs)
+    tb.write_outputs(out_dir, **outputs)
     tb.dump_json(
-        OUT / run / "config.json",
+        out_dir / "config.json",
         {
-            "experiment": "exp_027_local_estimator_matrix",
-            "model": ls.MODEL,
-            "vary": args.vary,
-            "fraction": args.fraction,
-            "seed": args.seed,
-            "repeats": args.repeats,
-            "background_size": args.background,
+            "experiment": experiment,
+            "model": model,
+            "vary": vary,
+            "fraction": fraction,
+            "seed": seed,
+            "repeats": repeats,
+            "background_size": background,
             "estimators": list(estimators),
             "cohorts": len(cohorts),
-            "limit_cohorts": args.limit_cohorts,
+            "limit_cohorts": limit_cohorts,
             "students": len(frame),
             "eval_cap": ls.EVAL_CAP,
             "top_k": ls.TOP_K,
@@ -292,13 +297,48 @@ def main() -> None:
                 "tau_b": "scipy Kendall tau-b on |attribution|; constant vectors skipped",
             },
             "bootstrap": {"unit": "cohort", "resamples": N_BOOT, "seed": 0},
-            "workers": args.workers,
+            "workers": workers,
             "wall_seconds": round(wall, 1),
             "versions": {pkg: version(pkg) for pkg in ("shap", "lime", "scikit-learn", "numpy")},
+            **(extra or {}),
         },
     )
 
     print(f"\nwall time {wall:.1f}s for {len(frame)} students")
+    return outputs
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--fraction", type=float, default=0.33)
+    ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--repeats", type=int, default=5)
+    ap.add_argument("--background", type=int, default=50)
+    ap.add_argument("--vary", choices=ls.VARY_MODES, default="background")
+    ap.add_argument("--estimators", default="shap,occlusion,lime,kernelshap_prob")
+    ap.add_argument("--workers", type=int, default=max(1, min(8, (os.cpu_count() or 1) - 2)))
+    ap.add_argument("--limit-cohorts", type=int, default=None, help="first N cohorts only")
+    ap.add_argument("--run", default=None, help="output subfolder; defaults to f<pct>_<vary>")
+    args = ap.parse_args()
+    run = args.run or f"f{int(round(args.fraction * 100))}_{args.vary}"
+    estimators = tuple(args.estimators.split(","))
+    if estimators == ls.DEFAULT_ESTIMATORS:
+        # cohort_students writes only exp_025's legacy columns for this pair.
+        ap.error("shap,occlusion alone is exp_025 (run_local_stability); add an estimator")
+
+    outputs = run_matrix(
+        OUT / run,
+        ls.load_cohorts(args.fraction)[: args.limit_cohorts],
+        fraction=args.fraction,
+        seed=args.seed,
+        repeats=args.repeats,
+        background=args.background,
+        vary=args.vary,
+        estimators=estimators,
+        workers=args.workers,
+        limit_cohorts=args.limit_cohorts,
+    )
+    matrix = outputs["matrix"]
     print("\n=== agreement matrix (diagonal = self across repeats, off = cross) ===")
     print(matrix.round(3).to_string(index=False))
     for metric in ("tau_strict", "tau_b"):
@@ -309,7 +349,7 @@ def main() -> None:
     if "lime" in estimators:
         print("\n=== LIME seed-only noise floor ===")
         print(outputs["lime_noise"].round(3).to_string(index=False))
-    _compare_with_exp025(frame, run)
+    _compare_with_exp025(outputs["students"], run)
 
 
 if __name__ == "__main__":

@@ -108,6 +108,19 @@ Per institution (τ-b):
    occlusion–LIME 0.158), while SHAP's own agreement across refits drops to
    0.430 — the same level as its agreement with LIME.
 
+Update after week 3 (exp_028_local_sensitivity, cutoffs 0.25/0.33/0.50 ×
+GBM/LR/RF): the answer-1 headline (every pair below both methods'
+self-agreement) holds for the tree ensembles at every cutoff; with logistic
+regression every cross cell is higher and SHAP–LIME's interval overlaps LIME's
+self-agreement. Answer 2 (ties) holds in all nine configs; answer 3 (output
+space) in all six where it can be evaluated (not for RF, whose raw output is
+already a probability). Two details are early-cutoff GBM results: that SHAP
+agrees with both second methods at a similar level (for LR, for RF at 0.33/0.50
+and for GBM at 0.50, student-weighted SHAP–LIME is above SHAP–occlusion with
+disjoint intervals), and answer 4's "no institution effect for SHAP–LIME" (in
+the other seven configs at least two large institutions are separated, and in
+all three LR configs and RF at 0.50 OULAD is above every other one).
+
 ## Limitations
 
 - LIME is run with library defaults (quartile discretisation, default kernel

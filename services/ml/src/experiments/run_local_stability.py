@@ -43,6 +43,7 @@ import pandas as pd
 import shap
 from lime.lime_tabular import LimeTabularExplainer
 from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
 
 from src.experiments import transfer_benchmark as tb
 from src.experiments.models import build_classification_model
@@ -74,6 +75,19 @@ def _order(scores: np.ndarray) -> list[str]:
 
 
 def _shap_matrix(model, x_eval: np.ndarray, background: np.ndarray) -> np.ndarray:
+    """Exact interventional Shapley values of the model's raw output, for every family.
+
+    Raw output is log-odds for gradient boosting, the mean tree probability for a
+    random forest (sklearn's forest has no other), and the decision function for
+    logistic regression. The trees are walked by TreeSHAP. Logistic regression
+    has none, so KernelSHAP enumerates all 2^7 - 2 coalitions instead: exact as
+    well, and for a linear model equal to coef * (z - mean_bg z) in scaled space.
+    One meaning across families is what lets exp_028 compare them.
+    """
+    if isinstance(model, Pipeline):  # logistic regression behind its scaler
+        explainer = shap.KernelExplainer(model.decision_function, background)
+        # l1_reg=False for the reason given in _kernelshap_prob_matrix.
+        return np.asarray(explainer.shap_values(x_eval, nsamples="auto", l1_reg=False, silent=True))
     values = shap.TreeExplainer(
         model, data=background, feature_perturbation="interventional"
     ).shap_values(x_eval, check_additivity=False)
@@ -151,6 +165,21 @@ ESTIMATORS: dict[str, Callable[..., np.ndarray]] = {
 DEFAULT_ESTIMATORS: tuple[str, ...] = ("shap", "occlusion")  # exp_025's pair
 
 
+def _build(model_name: str, seed: int):
+    """The model factory's estimator, single-threaded when it can thread (random forest).
+
+    A threaded forest sums its trees' probabilities in whatever order the threads
+    finish, so predict_proba is not bit-reproducible and an occlusion that crosses
+    no split leaves a 1e-16 residue instead of an exact zero, which tau-b and the
+    tie counts would read as a ranking. One thread grows the same trees (their
+    seeds are drawn up front), and the cohort pool already fills the cores.
+    """
+    model = build_classification_model(model_name, seed=seed)
+    if "n_jobs" in model.get_params(deep=False):
+        model.set_params(n_jobs=1)
+    return model
+
+
 def _mean_pairwise_tau(orders: list[list[str]]) -> float | None:
     taus = []
     for a, b in itertools.combinations(range(len(orders)), 2):
@@ -187,6 +216,7 @@ def cohort_students(
     background: int,
     vary: str = "background",
     estimators: tuple[str, ...] = DEFAULT_ESTIMATORS,
+    model_name: str = MODEL,
 ) -> list[dict]:
     """Per-student stability under one source of variation.
 
@@ -219,6 +249,8 @@ def cohort_students(
     vectors (self_taub_<e>, cross_taub_<a>__<b>; a repeat with a constant vector
     is skipped), plus tied_<e> (share of repeats with any exact tie) and
     zeros_<e> (mean exact zeros per repeat) to show how much there is to fix.
+
+    ``model_name`` is the family fitted, in every mode; exp_028 varies it.
     """
     if vary not in VARY_MODES:
         raise ValueError(f"vary must be one of {VARY_MODES}, got {vary!r}")
@@ -238,7 +270,7 @@ def cohort_students(
         evaluate = evaluate[:EVAL_CAP]
 
     x_train, x_eval = x_all[train], x_all[evaluate]
-    model = build_classification_model(MODEL, seed=seed).fit(x_train, y[train])
+    model = _build(model_name, seed).fit(x_train, y[train])
 
     # The flagged set is meant to be the riskiest FLAG_RATE of the cohort; a
     # student's distance to that cut is the first thing a gate would key on.
@@ -277,9 +309,7 @@ def cohort_students(
             boot = rng.choice(len(x_train), size=len(x_train), replace=True)
             if len(set(y[train][boot])) < 2:
                 boot = np.arange(len(x_train))
-            fitted = build_classification_model(MODEL, seed=seed).fit(
-                x_train[boot], y[train][boot]
-            )
+            fitted = _build(model_name, seed).fit(x_train[boot], y[train][boot])
 
         if repeat == 0:
             first_model, first_bg = fitted, bg

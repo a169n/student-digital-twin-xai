@@ -125,6 +125,16 @@ is reported:
    them and must not be compared across institutions without naming it — the
    local counterpart of the SIDe 2026 paper's finding for global rankings.
 
+Update after week 3 (exp_028_local_sensitivity): the gate's within-institution
+signal (point 1) holds at every cutoff and for every model family in each of the
+four large institutions. "One global threshold is at least as good" holds
+against LIME everywhere, but against occlusion at the 0.50 cutoff per-cohort
+calibration gains about 0.02. LIME collapsing the spread is clear only for GBM
+at the 0.25 and 0.33 cutoffs. What holds throughout (post hoc, four large
+institutions) is point 2's mechanism: OULAD has the lowest occlusion and the
+highest LIME self-agreement in every configuration, and is lowest for
+SHAP–occlusion and highest (8 of 9) for SHAP–LIME.
+
 Note: the practice plan quotes the spread as 0.24–0.58; the artifacts give
 0.229–0.573.
 

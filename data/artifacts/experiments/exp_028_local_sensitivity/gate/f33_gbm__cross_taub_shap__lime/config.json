@@ -1,0 +1,70 @@
+{
+  "source": "data/artifacts/experiments/exp_028_local_sensitivity/f33_gbm/students.csv",
+  "gate_signal": "self_tau_shap",
+  "quality": [
+    "cross_taub_shap__lime",
+    "cross_jaccard_top3_shap__lime"
+  ],
+  "gate_tau": 0.8,
+  "thresholds": [
+    0.0,
+    0.05,
+    0.1,
+    0.15,
+    0.2,
+    0.25,
+    0.3,
+    0.35,
+    0.4,
+    0.45,
+    0.5,
+    0.55,
+    0.6,
+    0.65,
+    0.7,
+    0.75,
+    0.8,
+    0.85,
+    0.9,
+    0.95,
+    1.0
+  ],
+  "target_coverages": [
+    1.0,
+    0.95,
+    0.9,
+    0.85,
+    0.8,
+    0.75,
+    0.7,
+    0.65,
+    0.6,
+    0.55,
+    0.5,
+    0.45,
+    0.4,
+    0.35,
+    0.3,
+    0.25,
+    0.2,
+    0.15,
+    0.1,
+    0.05
+  ],
+  "c_star": 0.5552842105263158,
+  "tie_break_seed": 0,
+  "bootstrap": {
+    "resamples": 1000,
+    "seed": 0,
+    "unit": "cohort, with replacement, within institution",
+    "interval": "percentile 2.5-97.5",
+    "c_star_held_fixed": true,
+    "undefined_replicates": "left out of the interval; <metric>_n_boot counts the replicates each interval rests on"
+  },
+  "students_used": 11875,
+  "dropped_rows": {
+    "cross_tau": 0,
+    "cross_jaccard_top3": 0
+  },
+  "small_institution_flag": "Zambia"
+}

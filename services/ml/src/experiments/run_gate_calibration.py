@@ -350,8 +350,13 @@ def output_name(source: Path, run: str, quality: str) -> str:
     return f"{''.join(source.name.split('_')[:2])}_{run}__{quality}"
 
 
-def analyse(run: str, source: Path = SRC, quality: str = DEFAULT_QUALITY) -> dict:
+def analyse(
+    run: str, source: Path = SRC, quality: str = DEFAULT_QUALITY, out: Path | None = None
+) -> dict:
+    """``out`` sends the outputs outside OUT (exp_028 keeps its gate analyses with
+    its own runs), where robustness(), which reads only OUT, never picks them up."""
     name = output_name(source, run, quality)
+    out = out or OUT / name
     print(f"\n##### {name} #####", flush=True)
     d, dropped = load(source / run / "students.csv", quality)
     curve = curves(d)
@@ -379,7 +384,7 @@ def analyse(run: str, source: Path = SRC, quality: str = DEFAULT_QUALITY) -> dic
     )
     row = headline(name, d, c_star, op, sp, sig)
     tb.write_outputs(
-        OUT / name,
+        out,
         curves=curve,
         operating_point=op,
         spread=sp,
@@ -387,7 +392,7 @@ def analyse(run: str, source: Path = SRC, quality: str = DEFAULT_QUALITY) -> dic
         summary=pd.DataFrame([row]),
     )
     tb.dump_json(
-        OUT / name / "config.json",
+        out / "config.json",
         {
             "source": str((source / run / "students.csv").relative_to(REPO)),
             "gate_signal": "self_tau_shap",

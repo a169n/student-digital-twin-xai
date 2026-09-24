@@ -1,0 +1,52 @@
+{
+  "experiment": "exp_028_local_sensitivity",
+  "fractions": [
+    0.25,
+    0.33,
+    0.5
+  ],
+  "models": [
+    "gradient_boosting",
+    "logistic_regression",
+    "random_forest"
+  ],
+  "per_config": {
+    "seed": 0,
+    "repeats": 5,
+    "background": 50,
+    "vary": "background",
+    "estimators": [
+      "shap",
+      "occlusion",
+      "lime",
+      "kernelshap_prob"
+    ]
+  },
+  "limit_cohorts": null,
+  "workers": 8,
+  "model_threads": "one thread per fit (run_local_stability._build sets n_jobs=1 on the random forest); the cohort pool is the parallelism. A threaded forest's predict_proba is not bit-reproducible and leaves 1e-16 residues where occlusion should be exactly zero.",
+  "shap_output": {
+    "gradient_boosting": "TreeSHAP, interventional, on log-odds",
+    "logistic_regression": "KernelSHAP over all 126 coalitions on decision_function (log-odds)",
+    "random_forest": "TreeSHAP, interventional, on the mean tree probability"
+  },
+  "reference": "f33_gbm/students.csv == data/artifacts/experiments/exp_027_local_estimator_matrix/f33_background/students.csv",
+  "gate": {
+    "analysis": "run_gate_calibration.analyse, into gate/<config>__<quality>/",
+    "qualities": [
+      "cross_taub_shap__occlusion",
+      "cross_taub_shap__lime"
+    ]
+  },
+  "auc": "mean over cohorts of roc_auc_score(y, p_risk); p_risk is P(pass)",
+  "weak_model_auc": 0.6,
+  "criteria": {
+    "C1": "C1 every cross pair sits below both members' self-agreement.\n\nRule: for each of shap-occlusion, shap-lime and occlusion-lime, the tau-b\ncross interval's ci_high < min(ci_low of the two members' tau-b self\nintervals). Intervals are exp_027's cohort-bootstrap 95 % from matrix.csv.",
+    "C2": "C2 occlusion-LIME is the lowest pair.\n\nRule: its tau-b mean is strictly the smallest of the three cross means AND its\nci_high < ci_low of both SHAP pairs (shap-occlusion, shap-lime).",
+    "C3": "C3 occlusion ties do not drive SHAP-occlusion agreement.\n\nRule: |tau-b - tau_strict| < 0.03 for pooled shap-occlusion.",
+    "C4": "C4 output space explains little of the SHAP-occlusion gap.\n\nRule: |tau-b(kernelshap_prob, occlusion) - tau-b(shap, occlusion)| < 0.03\npooled. not_evaluable for the random forest: its raw output already is the\nprobability, so the difference is zero by construction, not by measurement.",
+    "C5": "C5 the gate signal is informative within institutions.\n\nRule: for BOTH qualities (shap-occlusion, shap-lime), the mean within-cohort\nSpearman(self_tau_shap, quality) has cohort-bootstrap ci_low > 0 in every\nlarge institution (KU Leuven, OULAD, Oviedo, UKZN). not_evaluable when any of\nthose intervals is undefined (institution absent, or its signal constant).",
+    "C6": "C6 cohort calibration adds nothing over one global threshold.\n\nRule: calibrated-minus-global retained agreement at c* has pooled ci_low <= 0\nfor both qualities. not_evaluable when c* < 0.05 for either quality: the\nmatched operating point then shows almost nobody and compares nothing.",
+    "C7": "C7 the SHAP-occlusion institution spread is not replicated by SHAP-LIME.\n\nRule: no-gate spread without Zambia for shap-lime < 0.5 x that for\nshap-occlusion. not_evaluable with fewer than two large institutions (the\nspread of one institution is zero by construction) or an undefined spread."
+  }
+}

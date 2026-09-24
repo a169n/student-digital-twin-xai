@@ -1,0 +1,58 @@
+{
+  "experiment": "exp_028_local_sensitivity",
+  "model": "logistic_regression",
+  "vary": "background",
+  "fraction": 0.5,
+  "seed": 0,
+  "repeats": 5,
+  "background_size": 50,
+  "estimators": [
+    "shap",
+    "occlusion",
+    "lime",
+    "kernelshap_prob"
+  ],
+  "cohorts": 63,
+  "limit_cohorts": null,
+  "students": 11875,
+  "eval_cap": 400,
+  "top_k": 3,
+  "flag_rate": 0.2,
+  "lime": {
+    "training_data": "the repeat's background sample",
+    "discretize_continuous": true,
+    "discretizer": "quartile",
+    "kernel_width": "default 0.75 * sqrt(n_features)",
+    "num_samples": 5000,
+    "num_features": 7,
+    "labels": [
+      1
+    ],
+    "random_state": "seed in every repeat; seed + 1 for lime_seed_tau"
+  },
+  "kernelshap_prob": {
+    "output": "predict_proba[:, 1]",
+    "nsamples": "auto",
+    "coalitions_enumerated": 126,
+    "l1_reg": false
+  },
+  "agreement": {
+    "tau_strict": "Kendall tau on factor-list positions (exp_025); ties by index",
+    "tau_b": "scipy Kendall tau-b on |attribution|; constant vectors skipped"
+  },
+  "bootstrap": {
+    "unit": "cohort",
+    "resamples": 1000,
+    "seed": 0
+  },
+  "workers": 8,
+  "wall_seconds": 141.3,
+  "versions": {
+    "shap": "0.51.0",
+    "lime": "0.2.0.1",
+    "scikit-learn": "1.9.0",
+    "numpy": "2.4.6"
+  },
+  "shap": "KernelSHAP over all 126 coalitions on decision_function (log-odds)",
+  "model_threads": "one thread per fit (run_local_stability._build sets n_jobs=1 on the random forest); the cohort pool is the parallelism. A threaded forest's predict_proba is not bit-reproducible and leaves 1e-16 residues where occlusion should be exactly zero."
+}
