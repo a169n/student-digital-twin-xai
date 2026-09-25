@@ -3,12 +3,12 @@ import { CaseList } from "@/components/review/case-list";
 import { PlatformUnavailableNotice } from "@/components/common/platform-unavailable";
 import { XaiDisclaimer } from "@/components/student/xai-disclaimer";
 import { tryLoadReviewCase, tryLoadReviewCases } from "@/lib/review/loaders";
-import { resolveCase } from "@/lib/review/select";
+import { filterCases, resolveCase } from "@/lib/review/select";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Explanation review" };
 
-type SearchParams = { case?: string; institution?: string; verdict?: string };
+type SearchParams = { case?: string; institution?: string; course?: string; verdict?: string };
 
 export default async function ReviewPage({ searchParams }: { searchParams: SearchParams }) {
   const cases = await tryLoadReviewCases();
@@ -31,18 +31,14 @@ export default async function ReviewPage({ searchParams }: { searchParams: Searc
     );
   }
 
-  const visible = cases.filter(
-    (c) =>
-      (!searchParams.institution || c.institution === searchParams.institution) &&
-      (!searchParams.verdict || c.verdict === searchParams.verdict)
-  );
-  // Visible cases first, so a blank ?case= opens the first one the filters show.
-  const ids = [...visible, ...cases.filter((c) => !visible.includes(c))].map((c) => c.caseId);
-  const selected = resolveCase(ids, searchParams.case);
+  const visible = filterCases(cases, searchParams);
+  const ids = (list: typeof cases) => list.map((c) => c.caseId);
+  // A blank ?case= opens the first case the filters show, and none if they show nothing.
+  const selected = resolveCase(ids(cases), searchParams.case, ids(visible));
   const selectedId = selected.id;
   const load = selected.known
     ? await tryLoadReviewCase(selectedId)
-    : { status: "not_found" as const };
+    : { status: selectedId ? ("not_found" as const) : ("none" as const) };
   const universities = new Set(cases.map((c) => c.institution)).size;
 
   return (
@@ -64,6 +60,7 @@ export default async function ReviewPage({ searchParams }: { searchParams: Searc
           all={cases}
           selectedId={selectedId}
           institution={searchParams.institution}
+          course={searchParams.course}
           verdict={searchParams.verdict}
         />
         <section className="review-main" aria-live="polite">
@@ -73,6 +70,11 @@ export default async function ReviewPage({ searchParams }: { searchParams: Searc
             <div className="missing-notice">
               <h2>Case not found</h2>
               <p>There is no review case called “{selectedId}”. Pick a student from the list.</p>
+            </div>
+          ) : load.status === "none" ? (
+            <div className="missing-notice">
+              <h2>No student to show</h2>
+              <p>No students match these filters. Change the course or explanation filter.</p>
             </div>
           ) : (
             <PlatformUnavailableNotice />

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib
+import json
 import uuid
 from collections.abc import Iterator
 from pathlib import Path
@@ -16,9 +17,9 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 TMP = REPO_ROOT / ".tmp_api_tests"
 
 
-def _client(monkeypatch: pytest.MonkeyPatch, with_payload: bool) -> TestClient:
+def _client(monkeypatch: pytest.MonkeyPatch, with_payload: bool, run: str = "") -> TestClient:
     TMP.mkdir(parents=True, exist_ok=True)
-    run = uuid.uuid4().hex
+    run = run or uuid.uuid4().hex
     payload = TMP / f"review_{run}.json"
     if with_payload:
         write_review_payload(payload)
@@ -115,3 +116,18 @@ def test_decisions_do_not_follow_a_pseudonym_to_another_student(client: TestClie
         import_review_payload(session, payload_path=payload)
     assert client.get("/api/review/cases/OU-1").json()["decisions"] == []
     assert client.get("/api/review/cases").json()[0]["latestDecision"] is None
+
+
+def test_startup_reimports_a_changed_payload(monkeypatch: pytest.MonkeyPatch) -> None:
+    """A re-export must reach a database that already holds the previous cases."""
+    run = uuid.uuid4().hex
+    with _client(monkeypatch, with_payload=True, run=run) as c:
+        assert len(c.get("/api/review/cases").json()) == 2
+    path = TMP / f"review_{run}.json"
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    payload["cases"] = payload["cases"][:1]
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    with _client(monkeypatch, with_payload=False, run=run) as c:
+        assert [x["caseId"] for x in c.get("/api/review/cases").json()] == ["OU-1"]
+    get_settings.cache_clear()
+    reset_engine_for_tests()

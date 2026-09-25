@@ -2,11 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from sqlalchemy import select
-
 from src.core.config import get_settings
 from src.db import init_db
-from src.db.models import ReviewCaseRecord
 from src.db.session import get_sessionmaker
 from src.domain.platform.repository import PlatformRepository
 from src.importer.research_payload import ImportSummary, import_research_payload
@@ -32,16 +29,14 @@ def initialize_platform_store() -> ImportSummary | None:
 
 
 def initialize_review_store() -> int | None:
-    """Load the review payload once, if it exists and nothing is loaded yet.
+    """Load the review payload on every start, so a re-export always reaches the screen.
 
-    Separate from the research seed above, which returns early once students
-    exist, so an existing database still picks up review cases.
+    The frozen payload is the source of truth and the import is cheap; teacher
+    decisions are keyed to the source student and survive it.
     """
     init_db()
     payload_path = Path(get_settings().review_payload_path)
     if not payload_path.exists():
         return None
     with get_sessionmaker()() as session:
-        if session.scalar(select(ReviewCaseRecord.case_id).limit(1)) is not None:
-            return None
         return import_review_payload(session, payload_path=payload_path)

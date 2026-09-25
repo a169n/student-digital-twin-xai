@@ -32,7 +32,13 @@ from sklearn.model_selection import train_test_split
 
 from src.experiments import run_local_stability as ls
 from src.experiments import transfer_benchmark as tb
-from src.experiments.run_transfer_ladder import load_ku, load_oulad, load_oviedo, load_ukzn
+from src.experiments.run_transfer_ladder import (
+    load_ku,
+    load_oulad,
+    load_oviedo,
+    load_ukzn,
+    load_zambia,
+)
 
 REPO = ls.REPO
 OUT = REPO / "data" / "artifacts" / "research_demo" / "teacher_review_payload.json"
@@ -55,9 +61,10 @@ GATE_SUMMARY = (
     / "summary.csv"
 )
 FRACTION, SEED, REPEATS, BACKGROUND = 0.33, 0, 5, 50
-# Zambia is left out: two cohorts, 40 evaluation students.
-INSTITUTIONS = {"OULAD": "OU", "KU Leuven": "KU", "UKZN": "UK", "Oviedo": "OV"}
-FLAGGED_PERCENTILES = (90, 65, 35, 10)
+INSTITUTIONS = {"OULAD": "OU", "KU Leuven": "KU", "UKZN": "UK", "Oviedo": "OV", "Zambia": "ZM"}
+# Cohort ids of these end in an academic year ("1819"), the others in a calendar run.
+ACADEMIC_YEAR_IDS = {"KU Leuven", "Oviedo"}
+FLAGGED_PERCENTILES = (75, 25)
 UNFLAGGED_PERCENTILE = 75
 CALM_MAX_RANK = 0.5  # the non-flagged example comes from the lower half of course risk
 FEATURE_LABELS = {
@@ -70,14 +77,22 @@ FEATURE_LABELS = {
     "weeks_since_active": "Weeks since last activity",
 }
 SELECTION_RULE = (
-    "Per institution (OULAD, KU Leuven, UKZN, Oviedo): among flagged students (top 20 % "
-    "risk of the cohort), the students closest to the 90th, 65th, 35th and 10th "
-    "percentiles of self_tau; plus, from the lower half of the course's risk ranking, "
-    "the student closest to the 75th percentile. Risk ranks use midranks for ties; "
-    "self_tau ties are broken by a seeded shuffle (seed 0). Students without a defined "
-    "self_tau are never picked, nor are students from courses where the model ranks "
-    "no better than chance (AUC <= 0.5)."
+    "Per course, in every course of the five institutions where the model ranks students "
+    "better than chance (AUC > 0.5): among flagged students (top 20 % risk of the course), "
+    "the students closest to the 75th and 25th percentiles of self_tau; plus, from the "
+    "lower half of the course's risk ranking, the student closest to the 75th percentile. "
+    "A course with fewer such students gives the ones it has. Risk ranks use midranks for "
+    "ties; self_tau ties are broken by a seeded shuffle (seed 0). Students without a "
+    "defined self_tau are never picked."
 )
+
+
+def course_label(cohort_id: str, institution: str, module: str) -> str:
+    """The module plus its run, so two years of one course never share a label."""
+    run = cohort_id.rsplit("_", 1)[1]
+    if institution in ACADEMIC_YEAR_IDS:
+        run = f"20{run[:2]}/{run[2:]}"
+    return f"{module} {run}"
 
 
 def _risk_ranks(risk: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
@@ -141,7 +156,7 @@ def cohort_explanations(cohort: tb.Cohort) -> pd.DataFrame | None:
                 "institution": cohort.institution,
                 "cohort_id": cohort.cohort_id,
                 "student_row": int(student_row),
-                "course": cohort.module,
+                "course": course_label(cohort.cohort_id, cohort.institution, cohort.module),
                 "cohort_size": cohort.n,
                 "pass_rate": float(y.mean()),
                 "model_auc": auc,
@@ -176,23 +191,25 @@ def _closest(pool: pd.DataFrame, target: float, taken: set, seed: int) -> pd.Ser
 
 
 def select_cases(frame: pd.DataFrame) -> pd.DataFrame:
-    """Four flagged students across the reliability range and one non-flagged, per institution."""
+    """Two flagged students across the reliability range and one calm one, per course."""
     # A course where the model ranks students no better than chance (AUC <= 0.5)
     # has nothing to explain; 0.5 is the definition of chance, not a tuned cut.
     frame = frame.dropna(subset=["self_tau"])
     frame = frame[frame["model_auc"] > 0.5].reset_index(drop=True)
     picked, taken = [], set()
     for inst in INSTITUTIONS:
-        pool = frame[frame["institution"] == inst]
-        flagged = pool[pool["flagged"]]
-        # The calm example must look calm: a large tied block at maximal risk can sit
-        # below the flag's midrank cut, so non-flagged alone is not enough.
-        calm = pool[~pool["flagged"] & (pool["risk_rank_pct"] <= CALM_MAX_RANK)]
-        for q in FLAGGED_PERCENTILES:
-            target = float(np.percentile(flagged["self_tau"], q))
-            picked.append(_closest(flagged, target, taken, SEED))
-        target = float(np.percentile(calm["self_tau"], UNFLAGGED_PERCENTILE))
-        picked.append(_closest(calm, target, taken, SEED))
+        courses = frame[frame["institution"] == inst]
+        for _, pool in courses.groupby("cohort_id", sort=True):
+            flagged = pool[pool["flagged"]]
+            # The calm example must look calm: a large tied block at maximal risk can sit
+            # below the flag's midrank cut, so non-flagged alone is not enough.
+            calm = pool[~pool["flagged"] & (pool["risk_rank_pct"] <= CALM_MAX_RANK)]
+            for q in FLAGGED_PERCENTILES[: len(flagged)]:
+                target = float(np.percentile(flagged["self_tau"], q))
+                picked.append(_closest(flagged, target, taken, SEED))
+            if len(calm):
+                target = float(np.percentile(calm["self_tau"], UNFLAGGED_PERCENTILE))
+                picked.append(_closest(calm, target, taken, SEED))
     return pd.DataFrame(picked).reset_index(drop=True)
 
 
@@ -266,7 +283,7 @@ def build_case(row: pd.Series, case_id: str) -> dict:
 
 def course_weeks() -> dict[str, tuple[int, int]]:
     """Cutoff week and course length per cohort, as tb.cutoff_rows computes them."""
-    weekly = {**load_oulad(), **load_ku(), **load_ukzn(), **load_oviedo()}
+    weekly = {**load_oulad(), **load_ku(), **load_ukzn(), **load_oviedo(), **load_zambia()}
     out = {}
     for cid, frame in weekly.items():
         n_weeks = int(frame["n_weeks"].max())
@@ -304,6 +321,11 @@ def main() -> None:
     frame["n_weeks"] = frame["cohort_id"].map(lambda c: weeks[c][1])
 
     chosen = select_cases(frame)
+    eligible = frame.loc[frame["model_auc"] > 0.5, "cohort_id"].unique()
+    per_course = chosen["cohort_id"].value_counts().reindex(eligible, fill_value=0)
+    per_slot = len(FLAGGED_PERCENTILES) + 1
+    for cid, n in per_course[per_course < per_slot].sort_index().items():
+        print(f"{cid}: {n} of {per_slot} cases (course has too few eligible students)")
     cases, counter = [], Counter()
     for _, row in chosen.iterrows():
         prefix = INSTITUTIONS[row["institution"]]

@@ -99,16 +99,18 @@ This starts `web`, `api`, `ml`, and `postgres` services defined in `docker-compo
 
 ## 7. Teacher explanation-review screen (`/review`)
 
-The screen reads 20 precomputed cases from a frozen payload. Generate it once
-(it is already committed in `data/artifacts/research_demo/teacher_review_payload.json`):
+The screen reads 163 precomputed cases from a frozen payload: up to three students
+per course, from every course of the five universities where the model ranks
+students better than chance (55 courses). Generate it once (it is already committed
+in `data/artifacts/research_demo/teacher_review_payload.json`):
 
 ```powershell
 cd services\ml
 uv run python -m src.export.export_teacher_review_payload
 ```
 
-The API imports the payload on startup when no review cases are loaded yet;
-`uv run python -m src.import_research_payload` re-imports it explicitly.
+The API re-imports the payload on every start, so a fresh export shows up after a
+restart; `uv run python -m src.import_research_payload` re-imports it explicitly.
 Teacher decisions are stored in the local SQLite store and survive a re-import.
 Then start the API and the web app as in sections 4 and 5 and open
 `http://localhost:3000/review`.

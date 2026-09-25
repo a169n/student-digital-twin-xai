@@ -97,3 +97,45 @@ test("the screen frames the score as repeatability and records no decision by de
   const factors = fs.readFileSync(path.join(web, "components", "review", "factor-list.tsx"), "utf-8");
   assert.match(factors, /depends\s+on\s+the\s+other\s+factors/);
 });
+
+test("the course filter narrows within a university and lists only that university's runs", () => {
+  const cases = [
+    { caseId: "OU-1", institution: "OULAD", course: "BBB 2013J", verdict: "stable" },
+    { caseId: "OU-2", institution: "OULAD", course: "BBB 2014B", verdict: "unstable" },
+    { caseId: "OU-3", institution: "OULAD", course: "BBB 2013J", verdict: "unstable" },
+    { caseId: "UK-1", institution: "UKZN", course: "ISTN101 2019", verdict: "stable" }
+  ];
+  const ids = (list) => list.map((c) => c.caseId);
+  assert.deepEqual(select.coursesOf(cases, "OULAD"), ["BBB 2013J", "BBB 2014B"]);
+  assert.deepEqual(select.coursesOf(cases, undefined), []);
+  assert.deepEqual(ids(select.filterCases(cases, { institution: "OULAD" })), [
+    "OU-1",
+    "OU-2",
+    "OU-3"
+  ]);
+  assert.deepEqual(
+    ids(
+      select.filterCases(cases, { institution: "OULAD", course: "BBB 2013J", verdict: "unstable" })
+    ),
+    ["OU-3"]
+  );
+  assert.deepEqual(ids(select.filterCases(cases, {})), ["OU-1", "OU-2", "OU-3", "UK-1"]);
+});
+
+test("a blank case id opens the first visible case, and none when the filters match nothing", () => {
+  const all = ["OU-1", "OU-2", "UK-1"];
+  assert.deepEqual(select.resolveCase(all, undefined, ["OU-2"]), { id: "OU-2", known: true });
+  assert.deepEqual(select.resolveCase(all, undefined, []), { id: "", known: false });
+  // An explicit id hidden by the filters still opens.
+  assert.deepEqual(select.resolveCase(all, "UK-1", ["OU-2"]), { id: "UK-1", known: true });
+  const page = fs.readFileSync(path.join(web, "app", "review", "page.tsx"), "utf-8");
+  assert.match(page, /resolveCase\([^;]*visible/);
+});
+
+test("below the two-column breakpoint the student list scrolls instead of pushing the card away", () => {
+  const css = fs.readFileSync(path.join(web, "app", "globals.css"), "utf-8");
+  assert.match(
+    css,
+    /@media \(max-width: 1023px\)\s*\{\s*\.review-list__items\s*\{[^}]*max-height:[^}]*overflow-y: auto/
+  );
+});

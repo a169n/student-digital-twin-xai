@@ -1855,10 +1855,16 @@ h4 {
   color: var(--surface);
 }
 
+.review-list__count {
+  margin: 4px 0 0;
+  color: var(--app-muted);
+  font-size: 13px;
+}
+
 .review-list__items {
   display: grid;
   gap: 2px;
-  margin-top: 12px;
+  margin-top: 8px;
 }
 
 .review-list__item {
@@ -2288,6 +2294,16 @@ h4 {
 .decision-form__option:focus-within {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
+}
+
+/* One column: the list sits above the card, so it scrolls on its own
+   instead of pushing the card down past 163 students. */
+@media (max-width: 1023px) {
+  .review-list__items {
+    max-height: 40vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
 }
 
 @media (min-width: 1024px) {

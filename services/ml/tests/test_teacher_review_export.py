@@ -10,7 +10,7 @@ def _cohort(n: int = 240, seed: int = 0) -> tb.Cohort:
     x = pd.DataFrame(rng.random((n, len(tb.CANON))) * 10, columns=list(tb.CANON))
     # Passing rises with activity, so risk must fall with it.
     y = (x["cum_active_days"] + rng.normal(0, 1, n) > 5).astype(int).to_numpy()
-    return tb.Cohort(cohort_id="c1", institution="OULAD", module="AAA", X_raw=x, y=y)
+    return tb.Cohort(cohort_id="oulad_AAA_2013J", institution="OULAD", module="AAA", X_raw=x, y=y)
 
 
 def test_risk_is_probability_of_not_passing():
@@ -107,46 +107,77 @@ def test_case_carries_no_student_identifier():
     assert case["context"]["rankedStudents"] == 128
 
 
+def _course(inst: str, cid: str, n: int, auc: float, rng) -> pd.DataFrame:
+    return pd.DataFrame(
+        {
+            "institution": inst,
+            "cohort_id": cid,
+            "student_row": range(n),
+            "self_tau": rng.choice(np.linspace(0.3, 1.0, 8), n),
+            "flagged": [i % 3 == 0 for i in range(n)],
+            "model_auc": auc,
+            # rows 1, 4, 7 … are non-flagged but in the upper half of risk
+            "risk_rank_pct": [
+                0.9 if i % 3 == 0 else (0.7 if i % 3 == 1 else 0.2) for i in range(n)
+            ],
+        }
+    )
+
+
 def _selection_frame():
     rng = np.random.default_rng(1)
     parts = []
     for inst in ex.INSTITUTIONS:
-        n = 60
-        parts.append(
-            pd.DataFrame(
-                {
-                    "institution": inst,
-                    # Cohorts cut across the flag roles, so dropping one leaves every role.
-                    "cohort_id": [f"{inst}_c{i % 4}" for i in range(n)],
-                    "student_row": range(n),
-                    "self_tau": rng.choice(np.linspace(0.3, 1.0, 8), n),
-                    "flagged": [i % 3 == 0 for i in range(n)],
-                    # One cohort per institution sits at chance and must never be picked.
-                    "model_auc": [0.45 if i % 4 == 3 else 0.8 for i in range(n)],
-                    # rows 1, 4, 7 … are non-flagged but in the upper half of risk
-                    "risk_rank_pct": [
-                        0.9 if i % 3 == 0 else (0.7 if i % 3 == 1 else 0.2) for i in range(n)
-                    ],
-                }
-            )
-        )
+        parts += [_course(inst, f"{inst}_c{k}", 30, 0.8, rng) for k in range(2)]
+        parts.append(_course(inst, f"{inst}_chance", 30, 0.45, rng))  # never picked
+        # A small course: one flagged student and one in the upper half, no calm one.
+        parts.append(_course(inst, f"{inst}_small", 2, 0.8, rng))
     frame = pd.concat(parts, ignore_index=True)
     frame.loc[0, "self_tau"] = np.nan  # a constant ranking must never be picked
     return frame
 
 
-def test_selection_is_deterministic_unique_and_complete():
+def test_selection_is_per_course_deterministic_unique_and_complete():
     frame = _selection_frame()
     first, second = ex.select_cases(frame), ex.select_cases(frame)
     pd.testing.assert_frame_equal(first, second)
-    assert len(first) == 5 * len(ex.INSTITUTIONS)
+    assert ex.INSTITUTIONS["Zambia"] == "ZM"
+    assert set(first["institution"]) == set(ex.INSTITUTIONS)
     assert not first.duplicated(["cohort_id", "student_row"]).any()
     assert first["self_tau"].notna().all()
-    for _, g in first.groupby("institution"):
-        assert g["flagged"].sum() == 4 and (~g["flagged"]).sum() == 1
-        # The one calm example comes from the lower half of the course's risk.
-        assert (g.loc[~g["flagged"], "risk_rank_pct"] <= 0.5).all()
     assert (first["model_auc"] > 0.5).all()
+    for cid, g in first.groupby("cohort_id"):
+        if cid.endswith("_small"):
+            assert g["flagged"].tolist() == [True]  # takes what the course has
+        else:
+            assert g["flagged"].sum() == 2 and (~g["flagged"]).sum() == 1
+        # The calm example comes from the lower half of the course's risk.
+        assert (g.loc[~g["flagged"], "risk_rank_pct"] <= 0.5).all()
+    assert len(first) == len(ex.INSTITUTIONS) * (2 * 3 + 1)
+
+
+def test_flagged_picks_sit_closest_to_the_course_reliability_percentiles():
+    frame = _selection_frame()
+    chosen = ex.select_cases(frame)
+    pool = frame.dropna(subset=["self_tau"])
+    for cid in (f"{inst}_c0" for inst in ex.INSTITUTIONS):
+        flagged = pool[(pool["cohort_id"] == cid) & pool["flagged"]]["self_tau"]
+        picks = chosen[(chosen["cohort_id"] == cid) & chosen["flagged"]]["self_tau"].tolist()
+        for q, tau in zip(ex.FLAGGED_PERCENTILES, picks, strict=True):
+            target = np.percentile(flagged, q)
+            assert abs(tau - target) == (flagged - target).abs().min()
+
+
+def test_course_label_names_the_run_not_just_the_module():
+    cases = {
+        ("oulad_BBB_2013J", "OULAD", "BBB"): "BBB 2013J",
+        ("ku_Globaleconom_2021", "KU Leuven", "Globaleconom"): "Globaleconom 2020/21",
+        ("oviedo_C1112_1415", "Oviedo", "C1112"): "C1112 2014/15",
+        ("ukzn_ISTN101_2021", "UKZN", "ISTN101"): "ISTN101 2021",
+        ("zambia_ICT1110_2020", "Zambia", "ICT1110"): "ICT1110 2020",
+    }
+    for (cid, inst, module), label in cases.items():
+        assert ex.course_label(cid, inst, module) == label
 
 
 def test_tied_risks_share_a_midrank_and_flagging_follows_it():
